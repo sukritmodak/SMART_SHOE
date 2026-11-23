@@ -1,156 +1,75 @@
-# SMART SHOE — Parent Safety Dashboard
+# SMART SHOE — Direct USB / Bluetooth Dashboard
 
-A GitHub Pages dashboard and Windows bridge for the original ESP32 (ESP32-D0WD-V3) SMART SHOE prototype.
+A local Windows dashboard for the original ESP32 SMART SHOE prototype. **Firebase has been removed from the application code and data path.** The ESP32 connects directly to the Windows computer through USB Serial or Bluetooth Classic SPP COM port.
 
-## Important: ESP32 flash-size configuration
+## Run the live dashboard
 
-The original ESP32 board in this project has **4 MB (32 Mb) flash**. The firmware must be built with a 4 MB flash-size setting. If a binary is built with a 16 MB header, the board reports:
+1. Download or clone this repository to your Windows computer.
+2. Install Python 3 if needed.
+3. Open Command Prompt in the repository folder and install the only dependency:
 
-`Detected size(4096k) smaller than the size in the binary image header(16384k)`
+   ```bat
+   py -m pip install --upgrade pyserial
+   ```
 
-This is a firmware build-configuration mismatch, not a sensor or Bluetooth-code error.
+4. Close Arduino Serial Monitor.
+5. Start the bridge:
 
-### Arduino IDE settings
+   ```bat
+   py bridge\\smartshoe_bridge.py
+   ```
 
-Open `SMART_SHOE_CLASSIC.ino` and select:
+6. Choose `1` for USB cable or `2` for Bluetooth Classic.
+7. Select the correct COM port. For Bluetooth, pair `SmartShoe` in Windows first and choose its **outgoing** SPP COM port.
+8. Open **http://127.0.0.1:8080** in Chrome or Edge.
+9. Keep the command window open while monitoring.
 
-| Arduino IDE menu | Setting |
-|---|---|
-| Tools → Board | ESP32 Arduino → ESP32 Dev Module |
-| Tools → Flash Size | **4MB (32Mb)** |
-| Tools → Flash Mode | DIO |
-| Tools → Flash Frequency | 40MHz |
-| Tools → Partition Scheme | Default 4MB with spiffs |
-| Tools → Upload Speed | 115200 |
+The Python program reads the selected COM port and serves the dashboard locally. The page polls the local bridge for live sensor packets. No Firebase login, API key, database rules, cloud upload or internet account is required. Internet is needed only for online map tiles.
 
-If your installed ESP32 board package presents a different menu layout, select the equivalent 4 MB flash option. Do not select a 16 MB flash setting.
+## Live map and GPS
 
-Then select **Tools → Erase All Flash Before Sketch Upload → Enabled** (if available), upload the sketch again, and set this option back to Disabled for normal future uploads. Erasing flash removes stored settings/data.
+The current ESP32 firmware sends four ultrasonic distances only: `front,left,right,lower`. It has no GPS receiver, so it cannot independently report the shoe's geographic position.
 
-### Reproducible PlatformIO build
+The dashboard's **Start live map** button uses browser geolocation (phone/laptop GPS, if available) and draws a live marker and movement trail. This marks the phone/laptop carrying or running the dashboard, not the shoe independently. A laptop without GPS may provide only approximate or no location.
 
-The repository includes `platformio.ini`, configured for the original ESP32 with a 4 MB flash header. With PlatformIO installed, run from the repository root:
+For independent shoe mapping, add a GPS module such as NEO-6M to the shoe and update the firmware to send latitude and longitude. The local bridge already accepts an optional six-field packet:
+`front,left,right,lower,latitude,longitude`.
+The present four-sensor firmware does not send those GPS fields yet.
+
+## ESP32 firmware
+
+Open `SMART_SHOE_CLASSIC.ino` in Arduino IDE. For the original ESP32-D0WD-V3 select:
+
+- Board: ESP32 Dev Module
+- Flash Size: **4MB (32Mb)**
+- Flash Mode: DIO
+- Flash Frequency: 40MHz
+- Partition Scheme: Default 4MB with spiffs
+- Upload Speed: 115200
+
+If available, set Erase All Flash Before Sketch Upload to Enabled for one clean upload, then return it to Disabled. This corrects the 4 MB hardware / 16 MB firmware-header mismatch.
+
+The sketch preserves the sensor pin map and outputs four comma-separated readings at 115200 baud over USB Serial and Bluetooth Classic SPP. HC-SR04 ECHO outputs must be reduced to 3.3 V using a voltage divider; share common ground.
+
+## Optional PlatformIO build
 
 ```bash
+python -m pip install --upgrade platformio
 pio run
 ```
 
-To upload (choose the correct port):
+The `platformio.ini` sets the target flash size to 4 MB.
 
-```bash
-pio run -t upload --upload-port COM7
-```
+## Dashboard hosting
 
-Replace `COM7` with the ESP32's actual USB COM port. PlatformIO configuration does not change Arduino IDE menu selections; configure Arduino IDE separately using the table above.
-
-## Website
-
-After GitHub Pages is enabled, open:
-
-https://sukritmodak.github.io/SMART_SHOE/
-
-In **Repository → Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**. The workflow `.github/workflows/deploy-pages.yml` deploys the root `index.html` on pushes to `main`.
-
-## System architecture
-
-```text
-ESP32 sensor firmware
-  ├── USB Serial ───────────┐
-  └── Bluetooth Classic SPP ┤
-                            v
-                   Windows Python bridge
-                            |
-                            v
-                    Firebase Realtime DB
-                            |
-                            v
-                    GitHub Pages dashboard
-```
-
-GitHub Pages cannot directly enumerate or open Windows COM ports. The local Python bridge handles the USB or Bluetooth COM port and uploads readings to Firebase. Keep the bridge terminal open while using the dashboard.
-
-## Firmware and sensor protocol
-
-The root file `SMART_SHOE_CLASSIC.ino` is for the original ESP32 (ESP32-D0WD-V3), not ESP32-S3. It uses:
-
-- Classic Bluetooth SPP device name: `SmartShoe`
-- USB Serial baud rate: 115200
-- Four ultrasonic readings in this CSV order: `front,left,right,lower`
-- Newline-terminated CSV output every 500 ms
-- Active-HIGH buzzer alert when any valid measured distance is at or below 80 cm
-- Existing sensor pin mapping retained
-
-Example packet:
-
-```text
-45.2,30.5,80.0,25.4
-```
-
-HC-SR04 ECHO pins output 5 V and must be reduced to 3.3 V with a voltage divider before connecting to ESP32 GPIO. All modules must share ground.
-
-## Windows bridge setup (USB cable or Bluetooth)
-
-Install dependencies:
-
-```bat
-py -m pip install --upgrade pyserial requests
-```
-
-Run the unified bridge from the repository root:
-
-```bat
-py bridge\\smartshoe_bridge.py
-```
-
-Choose:
-- `1` for USB Serial
-- `2` for Bluetooth Classic SPP
-
-Select the matching COM port. For Bluetooth, first pair **SmartShoe** in Windows Bluetooth settings and choose its **outgoing** SPP COM port, not the incoming port. Enter the Firebase Email/Password account when prompted. Close Arduino Serial Monitor before opening the same COM port in the bridge.
-
-The bridge uploads to Firebase path `devices/smartshoe_001`. It writes `sensor_data` and `device_status`, including the selected transport.
-
-## Firebase configuration
-
-Project ID: `smart-shoe-af984`
-
-Realtime Database URL:
-
-`https://smart-shoe-af984-default-rtdb.asia-southeast1.firebasedatabase.app`
-
-The browser dashboard and bridge use Firebase Email/Password Authentication. Enable that provider in Firebase Authentication and ensure the signed-in account has the required database permissions. Add `sukritmodak.github.io` to Firebase Authentication authorized domains if needed.
-
-A basic authenticated-only prototype rule for this device path is:
-
-```json
-{
-  "rules": {
-    "devices": {
-      "smartshoe_001": {
-        ".read": "auth != null",
-        ".write": "auth != null"
-      }
-    }
-  }
-}
-```
-
-This is a prototype rule, not a production access-control design. Use separate identities and narrowly scoped rules for a real deployment. Never enable public read/write access or put service-account credentials in this repository.
-
-## Dashboard capabilities and limitations
-
-The dashboard reads the device record from Firebase and displays the four ultrasonic distances, obstacle status and radar visualization. Demo readings are simulated and labelled as demo data.
-
-The ESP32 firmware sends ultrasonic distances only; it does not independently provide GPS, step count, accelerometer data or battery level. The dashboard must not be treated as showing shoe GPS unless a valid location source is actually uploaded. Phone-based location sharing, if used, locates the phone rather than the shoe.
+The GitHub Pages workflow can still publish the static dashboard, but **GitHub Pages cannot directly access a Windows COM port**. For direct COM operation, use the local dashboard at `http://127.0.0.1:8080` while the Python bridge is running.
 
 ## Troubleshooting
 
-- **Flash-size mismatch / reboot loop:** select 4 MB flash in Arduino IDE, erase flash once, and upload again. Check that the selected board is the original ESP32, not ESP32-S3.
-- **Bluetooth device not visible:** restart the ESP32, remove any stale Windows pairing, and pair `SmartShoe` again.
-- **No Bluetooth data:** choose the Windows outgoing SPP COM port and check that the bridge reports incoming CSV packets.
-- **COM port cannot open:** close Arduino Serial Monitor and other serial applications.
-- **No sensor values:** check the wiring, common ground, 3.3 V-safe ECHO dividers, and CSV output at 115200 baud.
-- **Firebase authentication/permission error:** verify the Email/Password provider, account credentials, database URL and authenticated database rules.
-- **Dashboard not updated:** confirm GitHub Pages uses GitHub Actions and that the latest Actions deployment succeeded.
+- COM port unavailable: close Arduino Serial Monitor and other serial programs.
+- Bluetooth not connecting: pair `SmartShoe` and select its outgoing Bluetooth SPP COM port.
+- No live sensor data: confirm the firmware is uploaded, baud rate is 115200, and the selected COM port is correct.
+- Flash mismatch: rebuild/upload with 4 MB Flash Size, not 16 MB.
+- Map not locating: allow browser location permission; phone/laptop location requires an available GPS/location provider.
 
-This is an academic prototype, not a certified child-safety or emergency-response system. Do not rely on it as the sole safety measure.
+This is an academic prototype, not a certified child-safety or emergency-response system.
