@@ -19,7 +19,7 @@ button{border:1px solid #35516c;background:#172c42;color:var(--text);border-radi
 .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 13px}.section-head h2{font-size:16px;margin:0;letter-spacing:-.02em}.section-head small{color:var(--muted);font-size:10px;letter-spacing:.12em}.tag{font-size:9px;letter-spacing:.12em;font-weight:900;padding:6px 9px;border:1px solid #2a5365;background:#102d3e;color:var(--cyan);border-radius:8px}
 .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{min-width:0;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#14263aee,#0d1929f5);padding:18px;box-shadow:var(--shadow)}.metric-label{font-size:9px;color:var(--muted);font-weight:900;letter-spacing:.16em}.metric{font-size:clamp(23px,2.8vw,34px);font-weight:850;letter-spacing:-.05em;margin:12px 0 5px;overflow-wrap:anywhere}.metric small{font-size:12px;color:var(--muted);letter-spacing:0}.hint{font-size:11px;color:var(--muted);line-height:1.5}.cyan{color:var(--cyan)}.green{color:var(--green)}.amber{color:var(--amber)}.red{color:var(--red)}
 .two-col{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:14px}.three-col{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.map-card{padding:12px}.map-wrap{height:390px;border-radius:13px;overflow:hidden;border:1px solid #2a4157;background:#0a1725;position:relative}#map{height:100%;width:100%;z-index:1}.map-caption{padding:10px 4px 2px;color:var(--muted);font-size:11px;line-height:1.55}.map-status{position:absolute;z-index:500;top:12px;left:12px;padding:7px 10px;background:#081725e8;border:1px solid #3b536b;border-radius:8px;color:#e7f5ff;font-size:10px;pointer-events:none;backdrop-filter:blur(8px)}
+.map-card{padding:12px}.map-wrap{height:390px;border-radius:13px;overflow:hidden;border:1px solid #2a4157;background:#0a1725;position:relative}#map{height:100%;width:100%;z-index:1}.map-caption{padding:10px 4px 2px;color:var(--muted);font-size:11px;line-height:1.55}.map-actions{display:flex;gap:9px;flex-wrap:wrap;padding:4px 2px 12px}.gps-status{font-size:11px;color:var(--muted);align-self:center}.voice-card{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}.voice-card h3{margin:0 0 7px;font-size:16px}.voice-card p{margin:0;color:var(--muted);font-size:11px;line-height:1.6;max-width:620px}.voice-live{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:10px;margin-top:10px}.voice-live:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--muted)}.voice-live.active:before{background:var(--green);box-shadow:0 0 12px var(--green)}.map-status{position:absolute;z-index:500;top:12px;left:12px;padding:7px 10px;background:#081725e8;border:1px solid #3b536b;border-radius:8px;color:#e7f5ff;font-size:10px;pointer-events:none;backdrop-filter:blur(8px)}
 .sensor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sensor{background:#0a1725;border:1px solid #263d53;padding:14px;border-radius:13px;position:relative;overflow:hidden}.sensor:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}.sensor.warn:before{background:var(--amber)}.sensor.danger-state:before{background:var(--red)}.sensor-label{font-size:9px;color:var(--muted);letter-spacing:.14em;font-weight:900}.sensor-value{font-size:25px;font-weight:850;margin:9px 0 3px}.sensor-value small{font-size:11px;color:var(--muted);font-weight:600}.sensor-foot{font-size:10px;color:var(--muted)}
 .radar-card{padding:17px}.radar-stage{height:355px;border-radius:15px;border:1px solid #29445c;background:radial-gradient(ellipse at 50% 48%,#142e43 0,#0a1929 66%,#081522 100%);display:grid;place-items:center;overflow:hidden;position:relative}.radar-stage:after{content:"";position:absolute;inset:0;background:linear-gradient(#ffffff04 1px,transparent 1px),linear-gradient(90deg,#ffffff04 1px,transparent 1px);background-size:28px 28px;pointer-events:none}#radar{width:min(100%,350px);height:auto;position:relative;z-index:1}.radar-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:10px}.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.field label{font-size:9px;color:var(--muted);font-weight:900;letter-spacing:.14em}.field input{width:100%;background:#081522;border:1px solid #2b4258;border-radius:10px;padding:12px;color:var(--text);outline:none;font:13px system-ui, sans-serif}.field input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #4de1e817}.error{color:#ff9eae;font-size:11px;line-height:1.5;min-height:18px;margin-top:10px;overflow-wrap:anywhere}.success{color:var(--green)}.status-list{margin-top:12px}.status-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:11px 0;border-bottom:1px solid #ffffff10;font-size:11px}.status-row:last-child{border:0}.status-row span{color:var(--muted);text-align:right;overflow-wrap:anywhere}
@@ -51,7 +51,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  </div>
 
  <div class="section-head"><h2>Location map</h2><span class="tag">OPENSTREETMAP</span></div>
- <div class="card map-card"><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">The map is ready. A live marker requires actual latitude and longitude from the device or a paired phone.</div></div>
+ <div class="card map-card"><div class="map-actions"><button class="primary" id="gpsStartBtn">⌖ Share phone live location</button><button class="soft" id="gpsStopBtn" disabled>Stop location sharing</button><span class="gps-status" id="gpsStatus">Phone GPS not started</span></div><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">The map is ready. A live marker requires actual latitude and longitude from the device or a paired phone.</div></div>
 
  <div class="section-head"><h2>Four-direction obstacle monitor</h2><small>FRONT · LEFT · RIGHT · LOWER</small></div>
  <div class="two-col">
@@ -75,6 +75,9 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
    <div class="fineprint">Radar is a schematic range view, not a camera or a 3D scan. Distances are drawn from the four sensor directions.</div>
   </div>
  </div>
+
+ <div class="section-head"><h2>Accessible voice guidance</h2><span class="tag">FOR BLIND / LOW-VISION USERS</span></div>
+ <div class="card voice-card"><div><h3>Spoken obstacle warnings</h3><p>Enable audio once. When an obstacle approaches within 30 cm, the phone speaks the direction and distance, then updates the warning as it gets closer. Keep phone media volume audible.</p><div class="voice-live" id="voiceStatus">Voice alerts are off</div></div><div class="actions"><button class="primary" id="voiceBtn">🔊 Enable voice alerts</button><button class="soft" id="voiceTestBtn">Test announcement</button></div></div>
 
  <div class="section-head"><h2>Device connections</h2><small>CONNECT THROUGH FIREBASE OR BLE</small></div>
  <div class="two-col">
@@ -116,11 +119,79 @@ const CHARACTERISTIC_UUID='12345678-1234-1234-1234-123456789001';
 let map=null,marker=null,route=null,mapMode='',demoTimer=null,cloudTimer=null,tokenTimer=null;
 let bleDevice=null,bleCharacteristic=null,idToken='',refreshToken='',demoIndex=0;
 let mapReady=false,lastSource='';
+let phoneGpsWatch=null,lastGpsUpload=0,voiceEnabled=false,lastAnnounced={front:Infinity,left:Infinity,right:Infinity,lower:Infinity},lastSpeechAt=0;
 
 function addEvent(message){const row=document.createElement('div'),label=document.createElement('span'),time=document.createElement('time');row.className='event';label.textContent=message;time.textContent=new Date().toLocaleTimeString();row.append(label,time);$('events').prepend(row);while($('events').children.length>35)$('events').lastElementChild.remove()}
 function setConnection(ok,label){$('liveLamp').classList.toggle('on',!!ok);$('connectionText').textContent=label}
 function numberOrNull(value){if(value===null||value===undefined||value==='')return null;const n=Number(value);return Number.isFinite(n)?n:null}
 function mapMessage(text,badge){$('mapNote').textContent=text;$('mapBadge').textContent=badge}
+function startPhoneGPS(){
+ if(!navigator.geolocation){$('gpsStatus').textContent='GPS is not supported by this browser';return}
+ if(!window.isSecureContext){$('gpsStatus').textContent='GPS requires HTTPS';addEvent('Phone GPS needs a secure HTTPS page');return}
+ if(phoneGpsWatch!==null)return;
+ $('gpsStatus').textContent='Requesting phone location permission…';
+ phoneGpsWatch=navigator.geolocation.watchPosition(async position=>{
+  const {latitude,longitude,accuracy}=position.coords;
+  const ok=putMapPoint(latitude,longitude,'PHONE GPS · live position','live',!marker);
+  $('gpsStatus').textContent='Live phone GPS · accuracy ±'+Math.round(accuracy)+' m';
+  $('gpsStartBtn').disabled=true;$('gpsStopBtn').disabled=false;
+  if(ok){$('locationState').textContent='Phone GPS live';$('locationState').className='metric green';$('coordinates').textContent=latitude.toFixed(5)+', '+longitude.toFixed(5)+' · ±'+Math.round(accuracy)+' m'}
+  // Share coordinates with the parent dashboard through the authenticated RTDB device record.
+  if(idToken&&Date.now()-lastGpsUpload>=4000){
+   lastGpsUpload=Date.now();
+   try{
+    const payload={lat:latitude,lon:longitude,accuracy_m:Math.round(accuracy),source:'phone_gps',timestamp:Date.now()};
+    const response=await fetch(DATABASE_URL+'/devices/'+encodeURIComponent(DEVICE_ID)+'/location.json?auth='+encodeURIComponent(idToken),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!response.ok){const err=await response.json().catch(()=>({}));throw new Error(err.error||('HTTP '+response.status))}
+    $('gpsStatus').textContent='GPS live · shared to Firebase · ±'+Math.round(accuracy)+' m';
+   }catch(error){$('gpsStatus').textContent='GPS visible here, Firebase share failed: '+error.message}
+  }else if(!idToken){$('gpsStatus').textContent='GPS live on this phone · sign in to Firebase to share remotely'}
+ },error=>{
+  const messages={1:'Location permission denied. Allow location access in browser settings.',2:'Phone GPS location is unavailable. Check location services.',3:'Phone GPS request timed out. Try again.'};
+  $('gpsStatus').textContent=messages[error.code]||error.message;
+  $('gpsStartBtn').disabled=false;phoneGpsWatch=null;addEvent('Phone GPS error · '+$('gpsStatus').textContent);
+ },{enableHighAccuracy:true,maximumAge:2000,timeout:20000});
+ addEvent('Phone GPS sharing requested');
+}
+function stopPhoneGPS(){
+ if(phoneGpsWatch!==null)navigator.geolocation.clearWatch(phoneGpsWatch);
+ phoneGpsWatch=null;$('gpsStartBtn').disabled=false;$('gpsStopBtn').disabled=true;$('gpsStatus').textContent='Phone GPS sharing stopped';addEvent('Phone GPS sharing stopped');
+}
+const DANGER_LEVELS=[30,20,10,8,7,6,5,4,3,2,1];
+function speakMessage(message){
+ if(!voiceEnabled||!('speechSynthesis'in window))return;
+ const now=Date.now();if(now-lastSpeechAt<1000)return;lastSpeechAt=now;
+ window.speechSynthesis.cancel();
+ const utterance=new SpeechSynthesisUtterance(message);
+ utterance.lang='en-IN';utterance.rate=.88;utterance.pitch=1;utterance.volume=1;
+ window.speechSynthesis.speak(utterance);
+ if('vibrate'in navigator)navigator.vibrate([180,90,180]);
+}
+function checkVoiceWarnings(values){
+ const dirs=['front','left','right','lower'];
+ dirs.forEach(dir=>{const v=values[dir];if(v===null||v>35)lastAnnounced[dir]=Infinity});
+ if(!voiceEnabled)return;
+ const candidates=dirs.map(dir=>({dir,value:values[dir]})).filter(x=>x.value!==null&&x.value>=0&&x.value<=30).sort((a,b)=>a.value-b.value);
+ if(!candidates.length)return;
+ const nearest=candidates[0],level=DANGER_LEVELS.filter(t=>nearest.value<=t).pop();
+ if(level!==undefined&&level<lastAnnounced[nearest.dir]){
+  lastAnnounced[nearest.dir]=level;
+  const direction={front:'Front',left:'Left',right:'Right',lower:'Lower'}[nearest.dir];
+  speakMessage(direction+' danger. '+level+' centimetres.');
+  $('voiceStatus').textContent='Speaking: '+direction+' danger · '+level+' cm';$('voiceStatus').classList.add('active');
+  addEvent('Voice warning · '+direction+' danger · '+level+' cm');
+ }
+}
+function enableVoice(){
+ if(!('speechSynthesis'in window)){$('voiceStatus').textContent='Speech synthesis is not supported in this browser';return}
+ voiceEnabled=!voiceEnabled;
+ $('voiceBtn').textContent=voiceEnabled?'🔇 Disable voice alerts':'🔊 Enable voice alerts';
+ $('voiceStatus').textContent=voiceEnabled?'Voice alerts enabled · waiting for obstacle':'Voice alerts are off';
+ $('voiceStatus').classList.toggle('active',voiceEnabled);
+ if(voiceEnabled){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('Voice alerts enabled. Obstacle warnings are active.');u.lang='en-IN';u.volume=1;window.speechSynthesis.speak(u);addEvent('Voice alerts enabled')}
+ else{window.speechSynthesis.cancel();addEvent('Voice alerts disabled')}
+}
+function testVoice(){if(!voiceEnabled){$('voiceStatus').textContent='Enable voice alerts first';return}speakMessage('Front danger. 30 centimetres.');}
 function initMap(){
  if(!window.L){mapMessage('The map library did not load. Check internet access or allow cdn.jsdelivr.net, then refresh the page.','MAP LIBRARY UNAVAILABLE');return}
  try{
@@ -197,7 +268,7 @@ function renderSensors(sensor,source,status){
  $('nearest').innerHTML=nearest===null?'— <small>cm</small>':nearest.toFixed(1)+' <small>cm</small>';
  $('nearest').className='metric '+(nearest===null?'amber':nearest<50?'red':nearest<120?'amber':'green');
  $('obstacleState').textContent=nearest===null?'No valid sensor reading':nearest<50?'Warning · obstacle very close':nearest<120?'Caution · obstacle detected':'No close obstacle detected';
- drawRadar(values);$('lastUpdate').textContent=new Date().toLocaleTimeString();$('source').textContent=source;
+ checkVoiceWarnings(values);drawRadar(values);$('lastUpdate').textContent=new Date().toLocaleTimeString();$('source').textContent=source;
  $('modeTag').textContent=source.toUpperCase();lastSource=source;
  if(status){
   $('deviceState').textContent=status.online===true?'Online':status.online===false?'Offline':'Unknown';
@@ -318,6 +389,8 @@ function startDemo(){
 }
 $('loginBtn').addEventListener('click',firebaseLogin);$('logoutBtn').addEventListener('click',firebaseLogout);
 $('bleBtn').addEventListener('click',connectBLE);$('disconnectBtn').addEventListener('click',disconnectBLE);$('demoBtn').addEventListener('click',startDemo);
+$('gpsStartBtn').addEventListener('click',startPhoneGPS);$('gpsStopBtn').addEventListener('click',stopPhoneGPS);
+$('voiceBtn').addEventListener('click',enableVoice);$('voiceTestBtn').addEventListener('click',testVoice);
 $('password').addEventListener('keydown',e=>{if(e.key==='Enter')firebaseLogin()});
 setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString(),1000);
 $('bleSupport').textContent=navigator.bluetooth?'Available in this browser':'Use Chrome/Edge over HTTPS';
