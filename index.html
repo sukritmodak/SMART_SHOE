@@ -79,7 +79,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  <div class="section-head"><h2>Accessible voice guidance</h2><span class="tag">FOR BLIND / LOW-VISION USERS</span></div>
  <div class="card voice-card"><div><h3>Spoken obstacle warnings</h3><p>Enable audio once. When an obstacle approaches within 30 cm, the phone speaks the direction and distance, then updates the warning as it gets closer. Keep phone media volume audible.</p><div class="voice-live" id="voiceStatus">Voice alerts are off</div></div><div class="actions"><button class="primary" id="voiceBtn">🔊 Enable voice alerts</button><button class="soft" id="voiceTestBtn">Test announcement</button></div></div>
 
- <div class="section-head"><h2>Device connections</h2><small>FIREBASE CLOUD + CLASSIC BLUETOOTH SPP</small></div>
+ <div class="section-head"><h2>Device connections</h2><small>FIREBASE CLOUD + USB / BLUETOOTH SERIAL</small></div>
  <div class="two-col">
   <div class="card">
    <div class="section-head" style="margin:0 0 8px"><h2>Firebase cloud</h2><span class="tag">WI-FI</span></div>
@@ -93,10 +93,10 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
    <div class="fineprint">Uses Firebase Email/Password Authentication and reads <code>devices/smartshoe_001</code>. Password is used only for sign-in and is not stored in this page. A database permission error means your Realtime Database Rules need to allow this signed-in account to read the device path.</div>
   </div>
   <div class="card">
-   <div class="section-head" style="margin:0 0 8px"><h2>Classic Bluetooth SPP bridge</h2><span class="tag">SPP · COM PORT</span></div>
-   <p class="hint">This dashboard receives Classic Bluetooth data through the Windows Bluetooth COM-port bridge. Pair the ESP32 as <b>SmartShoe</b>, then run the bridge on your computer.</p>
-   <div class="status-list"><div class="status-row"><b>Transport</b><span>Classic Bluetooth SPP</span></div><div class="status-row"><b>Bridge status</b><span id="bleStatus">Waiting for Firebase data</span></div></div>
-   <div class="fineprint">Run <code>python bridge/smartshoe_classic_bridge.py COM7</code> (replace COM7 with the outgoing Bluetooth COM port). The bridge sends the existing <code>front,left,right,lower</code> readings to Firebase. GitHub Pages cannot access a Classic Bluetooth COM port directly.</div>
+   <div class="section-head" style="margin:0 0 8px"><h2>USB / Bluetooth COM-port bridge</h2><span class="tag">SELECT TRANSPORT</span></div>
+   <p class="hint">Choose how your ESP32 is connected when you start the Windows bridge: USB cable (USB Serial) or Bluetooth (Classic SPP). The bridge lists the available Windows COM ports so you can select the correct one.</p>
+   <div class="status-list"><div class="status-row"><b>Transport</b><span>USB Serial or Bluetooth SPP</span></div><div class="status-row"><b>Bridge status</b><span id="bleStatus">Waiting for Firebase data</span></div></div>
+   <div class="fineprint">Run <code>py bridge\\smartshoe_bridge.py</code> from the downloaded project folder. In the terminal, choose <b>1 for USB cable</b> or <b>2 for Bluetooth</b>, then select the COM port from the detected list. For Bluetooth, choose the Windows <b>outgoing</b> COM port. GitHub Pages cannot directly open Windows COM ports, so this small local bridge is required.</div>
   </div>
  </div>
 
@@ -104,7 +104,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  <div class="card activity" id="events"><div class="event"><span>Dashboard initialized</span><time>Just now</time></div></div>
  <div class="notice"><span class="notice-icon">⚠</span><div><strong>Prototype notice.</strong> This is an academic prototype, not a certified child-safety or emergency-response service. Secure Firebase Database Rules are required. Do not use public read/write rules or rely on this dashboard as the only safety measure.</div></div>
 </main>
-<footer>SMART SHOE · Parent Safety Dashboard · GitHub Pages · Firebase Realtime Database · ESP32 Classic Bluetooth SPP · © Prototype interface</footer>
+<footer>SMART SHOE · Parent Safety Dashboard · GitHub Pages · Firebase Realtime Database · ESP32 USB Serial / Classic Bluetooth SPP · © Prototype interface</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
