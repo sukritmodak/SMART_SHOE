@@ -99,7 +99,7 @@ void setup() {
 
 // Call this after reading the four ultrasonic sensors:
 void sendDistances(float front, float left, float right, float lower) {
-  SerialBT.printf("%.1f,%.1f,%.1f,%.1f\\n", front, left, right, lower);
+  SerialBT.printf("%.1f,%.1f,%.1f,%.1f\n", front, left, right, lower);
 }
 ```
 
