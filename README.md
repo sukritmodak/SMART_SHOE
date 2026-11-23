@@ -109,7 +109,7 @@ void sendDistances(float front, float left, float right, float lower) {
 }
 ```
 
-Keep the existing ultrasonic pin mapping and sensor measurement code. Replace BLE advertising/notifications with the SPP send function above. This Classic Bluetooth method is for the original ESP32 (ESP32-D0WD-V3); ESP32-S3 does not support Bluetooth Classic SPP.
+The repository root contains `SMART_SHOE_CLASSIC.ino`, which already applies this SPP method while retaining the original sensor pin mapping. This is for the original ESP32 (ESP32-D0WD-V3); ESP32-S3 does not support Bluetooth Classic SPP.
 
 ### Windows bridge setup
 
@@ -152,8 +152,8 @@ The ESP32 firmware sends four ultrasonic distances to the Windows bridge; the br
 - **Firebase sign-in failed:** check Email/Password Authentication, account credentials, API key/project, and browser network access.
 - **Firebase permission denied:** check that Realtime Database exists and its Rules allow authenticated reads for `devices/smartshoe_001`.
 - **No device record:** confirm the ESP32 has successfully authenticated and uploaded to the same database URL and device ID.
-- **BLE device not listed:** ensure the ESP32 is powered, advertising, and using the service UUID above. Use HTTPS and a supported browser.
-- **BLE connects but values do not change:** verify the characteristic UUID and that notifications contain four comma-separated numeric values in front,left,right,lower order.
+- **SmartShoe not listed in Windows Bluetooth:** restart the ESP32, remove any old pairing, pair `SmartShoe` again, and check the outgoing COM port.
+- **Bridge connects but values do not change:** open Arduino Serial Monitor at 115200 baud and confirm the four readings change; then check that the bridge uses the outgoing COM port.
 
 ## Safety and privacy
 
@@ -165,8 +165,8 @@ The dashboard can use the **phone's own GPS** while the shoe sends obstacle dist
 
 1. Open the GitHub Pages dashboard on an Android phone in Chrome (HTTPS).
 2. Sign in to Firebase with an account allowed to read/write `devices/smartshoe_001`.
-3. Connect the shoe using **Connect SmartShoe BLE**. The website continues to receive the existing `front,left,right,lower` BLE distance packet; no ESP32 GPS module is needed for phone-based location.
+3. Keep the Windows Classic Bluetooth SPP bridge running. The website reads shoe sensor values from Firebase; no BLE browser connection is used. No ESP32 GPS module is needed for phone-based location.
 4. Tap **Share phone live location** and allow the browser's location permission. The phone browser uses Geolocation API and writes `lat`, `lon`, `accuracy_m`, `source`, and `timestamp` to `devices/smartshoe_001/location` in Realtime Database. A parent dashboard signed into the same project can then read and show this location.
 5. Tap **Enable voice alerts** once (a user action is required by browser audio policies). When a valid sensor reading reaches 30 cm or less, the browser speaks the direction and distance. Thresholds are 30, 20, 10, 8, 7, 6, 5, 4, 3, 2 and 1 cm. The browser's speech engine and phone media volume control loudness.
 
-**Important limitations:** keep the phone with the person wearing the shoe; phone GPS locates the phone, not the shoe independently. Location sharing needs HTTPS, location permission, internet access and Firebase authentication/database rules that permit the signed-in user to write the location child path. Web Bluetooth is supported by compatible browsers such as Chrome on Android; iOS browser support is limited. Voice announcements need the page open and the browser active; this is a prototype feature, not a certified assistive or emergency system. Sensor distances are ultrasonic measurements, not object identification.
+**Important limitations:** keep the phone with the person wearing the shoe; phone GPS locates the phone, not the shoe independently. Location sharing needs HTTPS, location permission, internet access and Firebase authentication/database rules that permit the signed-in user to write the location child path. The shoe-to-dashboard connection uses the Windows Classic Bluetooth SPP bridge; it does not use Web Bluetooth. Voice announcements need the page open and the browser active; this is a prototype feature, not a certified assistive or emergency system. Sensor distances are ultrasonic measurements, not object identification.
