@@ -1,157 +1,332 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07111f"><title>SMART SHOE | Live Monitor</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07131d">
+<title>SUKRIT'S CREATION | SMART SHOE</title>
+<link id="leaflet-css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <style>
-:root{color-scheme:dark;--bg:#07111f;--panel:#101f31;--line:#263d55;--muted:#9aafc5;--text:#eff7ff;--cyan:#4de1e8;--green:#55dda5;--amber:#ffc46b;--red:#ff7186}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0,#173b53,transparent 34%),var(--bg);color:var(--text);font:14px system-ui,Segoe UI,sans-serif}header{padding:17px clamp(16px,4vw,54px);border-bottom:1px solid #ffffff18;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#07111feF;position:sticky;top:0;z-index:1000}.brand{font-weight:900;letter-spacing:.13em}.brand small{display:block;color:var(--muted);font-size:9px;margin-top:4px}.pill{border:1px solid var(--line);border-radius:99px;padding:8px 12px;color:var(--muted);font-size:11px}main{max-width:1400px;margin:auto;padding:26px clamp(14px,3vw,44px) 55px}.hero{display:flex;justify-content:space-between;align-items:end;gap:18px;flex-wrap:wrap;margin-bottom:20px}.eyebrow{color:var(--cyan);font-size:10px;letter-spacing:.2em;font-weight:900}.hero h1{font-size:clamp(28px,4vw,42px);margin:8px 0}.hero p{color:var(--muted);margin:0;max-width:720px;line-height:1.6}.actions{display:flex;gap:9px;flex-wrap:wrap}button{border:1px solid #36516b;background:#182e45;color:var(--text);padding:11px 15px;border-radius:10px;font-weight:750;cursor:pointer}button.primary{background:linear-gradient(120deg,var(--cyan),#66a5ff);border:0;color:#061421}button:disabled{opacity:.45}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:linear-gradient(145deg,#14283dee,#0d1b2bf5);border:1px solid var(--line);border-radius:16px;padding:17px;min-width:0}.label{font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:900}.value{font-size:clamp(24px,3vw,34px);font-weight:900;margin:10px 0 4px;overflow-wrap:anywhere}.hint{font-size:11px;color:var(--muted);line-height:1.5}.section{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:28px 0 12px}.section h2{font-size:16px;margin:0}.tag{color:var(--cyan);font-size:9px;letter-spacing:.12em;border:1px solid #285064;border-radius:7px;padding:6px 8px}.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:13px}.mapbox{height:440px;border:1px solid var(--line);border-radius:12px;overflow:hidden}#map{height:100%;width:100%}.map-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.sensor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.sensor{padding:15px;border-radius:12px;background:#091827;border:1px solid #263d55}.sensor .value{font-size:27px}.sensor.near{border-color:var(--red)}.sensor.warn{border-color:var(--amber)}.sensor.clear{border-color:#2e775f}.statusline{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #ffffff12;font-size:11px;gap:12px}.statusline span{color:var(--muted);text-align:right}.notice{margin:18px 0;padding:13px 15px;border:1px solid #36566a;background:#102638;border-radius:12px;color:#c4dce9;font-size:12px;line-height:1.65}.good{color:var(--green)}.bad{color:var(--red)}footer{border-top:1px solid #ffffff18;padding:20px clamp(16px,4vw,54px);color:var(--muted);font-size:10px;line-height:1.6}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:560px){.grid{gap:8px}.card{padding:13px}.mapbox{height:340px}.value{font-size:24px}}
-.alert-banner{display:flex;align-items:center;gap:12px;margin:16px 0;padding:15px 17px;border:1px solid #2e775f;background:#0d2b27;border-radius:13px}.alert-banner.active{border-color:#ff7186;background:#351923;animation:alertPulse 1.2s infinite}.alert-icon{font-size:25px}.alert-title{font-weight:900;letter-spacing:.08em}.alert-detail{color:#c3d3df;font-size:12px;margin-top:4px}.alert-tools{margin-left:auto}.alert-list{display:grid;gap:7px;margin-top:12px}.alert-item{padding:9px 11px;border-radius:9px;background:#351923;border:1px solid #914457;color:#ffdce2;font-size:12px}.alert-item.critical{background:#51121e;border-color:#ff7186;font-weight:900}.alert-item.warning{background:#382a17;border-color:#bd8840;color:#ffe0a8}.radar-wrap{background:radial-gradient(circle at 50% 48%,#12364a 0,#081725 68%);border:1px solid #28718a;border-radius:16px;padding:14px;box-shadow:inset 0 0 35px #16c9d522,0 12px 35px #0005}.radar-svg{filter:drop-shadow(0 0 12px #1ed7df22)}.radar-sweep{transform-origin:210px 150px;animation:radarSpin 2.2s linear infinite}.radar-sweep path{fill:url(#sweepFill);stroke:#58f4e6;stroke-width:1.2}.radar-ring{animation:ringPulse 2.4s ease-out infinite;transform-origin:210px 150px}.radar-blip{filter:drop-shadow(0 0 7px currentColor)}.radar-blip-core{animation:blipPulse 1s ease-in-out infinite alternate}@keyframes radarSpin{to{transform:rotate(360deg)}}@keyframes ringPulse{0%,100%{opacity:.22;transform:scale(.96)}50%{opacity:.65;transform:scale(1.04)}}@keyframes blipPulse{to{opacity:.55;transform:scale(1.35)}}.radar-svg{display:block;width:100%;height:auto;max-height:340px}.radar-legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}.legend-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.sensor.alert{border-color:var(--amber);background:#2c2418}.sensor.danger{border-color:#ff7186;background:#351923}.sensor.critical{border-color:#ff344f;background:#501321;box-shadow:0 0 18px #ff344f55}.sound-on{border-color:#55dda5;color:#55dda5}@keyframes alertPulse{50%{box-shadow:0 0 18px #ff718655}}.direction-alerts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.direction-alert{padding:17px;border:2px solid #2e775f;border-radius:13px;background:#0d2b27;min-height:104px}.direction-alert .direction-name{font-size:12px;letter-spacing:.12em;font-weight:950;color:#bcd0df}.direction-alert .direction-message{font-size:clamp(17px,2vw,23px);font-weight:1000;margin-top:10px;line-height:1.2}.direction-alert .direction-distance{font-size:13px;margin-top:6px;color:#d5e2ed}.direction-alert.warning{border-color:#bd8840;background:#382a17}.direction-alert.warning .direction-message{color:#ffe0a8}.direction-alert.danger{border-color:#ff7186;background:#351923}.direction-alert.danger .direction-message{color:#ffb9c5}.direction-alert.critical{border-color:#ff344f;background:#501321;box-shadow:0 0 18px #ff344f44}.direction-alert.critical .direction-message{color:#fff}.direction-alert.clear .direction-message{color:#8cf0c1}@media(max-width:560px){.direction-alerts{grid-template-columns:1fr}}</style></head>
+:root{--bg:#07131d;--panel:#0d202c;--panel2:#102936;--line:#244451;--text:#effbff;--muted:#91aeb8;--cyan:#50e2e0;--mint:#63e6ad;--amber:#ffc66d;--red:#ff7185;--blue:#75aaff;--shadow:0 18px 48px #0005}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% -5%,#164052 0,transparent 34%),radial-gradient(ellipse at 100% 20%,#112b42 0,transparent 30%),var(--bg);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button{font:inherit;cursor:pointer;color:inherit}.topbar{position:sticky;top:0;z-index:900;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px clamp(16px,4vw,54px);border-bottom:1px solid #ffffff16;background:#07131deF;backdrop-filter:blur(16px)}.brand{display:flex;align-items:center;gap:11px;font-weight:950;letter-spacing:.12em}.brand-mark{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#17485a,#102d3b);border:1px solid #3a7180;font-size:20px}.brand small{display:block;font-size:9px;letter-spacing:.18em;color:var(--muted);font-weight:800;margin-top:2px}.top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.status-chip,.eyebrow,.tag{font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:850}.status-chip{border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted)}.status-chip.online{border-color:#286e58;color:var(--mint);background:#0c3027}.status-chip.offline{color:var(--amber)}main{max-width:1480px;margin:auto;padding:28px clamp(14px,3vw,42px) 64px}.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:22px;align-items:stretch;margin-bottom:20px}.hero-copy,.connect-card,.panel,.metric{background:linear-gradient(145deg,#122d3aee,#0b1d29f5);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow)}.hero-copy{padding:clamp(22px,4vw,38px);position:relative;overflow:hidden}.hero-copy:after{content:"";position:absolute;width:270px;height:270px;border:1px solid #54e0df22;border-radius:50%;right:-90px;top:-100px;box-shadow:0 0 0 25px #54e0df08,0 0 0 55px #54e0df06}.eyebrow{color:var(--cyan)}h1{font-size:clamp(30px,4vw,52px);line-height:1.04;letter-spacing:-.045em;margin:12px 0}.hero-copy p{color:var(--muted);max-width:680px;margin:0;font-size:14px}.hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:23px}.btn{border:1px solid #345564;background:#142f3d;padding:11px 15px;border-radius:11px;font-size:12px;font-weight:850;transition:.18s}.btn:hover{transform:translateY(-1px);border-color:var(--cyan)}.btn.primary{background:linear-gradient(120deg,var(--cyan),#83b9ff);color:#06141d;border:0}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.btn.active{border-color:var(--mint);color:var(--mint)}.connect-card{padding:21px;display:flex;flex-direction:column;justify-content:space-between}.connect-card h2{font-size:16px;margin:0 0 5px}.connect-card p{font-size:12px;color:var(--muted);margin:0 0 15px}.step{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-top:1px solid #ffffff12}.step-num{width:25px;height:25px;flex:0 0 25px;border-radius:8px;display:grid;place-items:center;background:#153b49;color:var(--cyan);font-weight:900;font-size:11px}.step b{font-size:12px;display:block}.step span{font-size:11px;color:var(--muted)}.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 2px 12px}.section-head h2{font-size:17px;letter-spacing:-.02em;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:3px 0 0}.tag{color:var(--cyan);border:1px solid #285365;border-radius:8px;padding:6px 9px;white-space:nowrap}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.metric{padding:17px 18px}.metric-label{font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:900}.metric-value{font-size:clamp(24px,3vw,34px);font-weight:950;letter-spacing:-.04em;margin:8px 0 1px}.metric-sub{font-size:11px;color:var(--muted)}.good{color:var(--mint)}.warn{color:var(--amber)}.bad{color:var(--red)}.alert-panel{margin-top:14px;border:1px solid #286e58;background:linear-gradient(120deg,#0c3027,#102a2d);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:13px}.alert-panel.active{border-color:#a84c61;background:linear-gradient(120deg,#381b29,#241c2b);box-shadow:0 0 30px #ff71851b}.alert-symbol{width:42px;height:42px;border-radius:13px;background:#ffffff0b;display:grid;place-items:center;font-size:22px}.alert-copy{min-width:0;flex:1}.alert-copy strong{font-size:14px;letter-spacing:.04em}.alert-copy p{margin:3px 0 0;color:#b5cbd2;font-size:12px}.alert-actions{display:flex;gap:8px;flex-wrap:wrap}.directions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:12px}.direction{border:1px solid #286e58;background:#0b2926;border-radius:14px;padding:15px;min-height:112px;position:relative;overflow:hidden}.direction:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-45px;bottom:-52px;background:#64e6ad0b}.direction.warning{border-color:#9a713c;background:#2c2519}.direction.danger{border-color:#a84c61;background:#351b27}.direction.critical{border-color:#ff415e;background:#4a1725;box-shadow:inset 0 0 22px #ff415e19}.dir-name{font-size:9px;color:var(--muted);letter-spacing:.15em;font-weight:950}.dir-state{font-size:17px;font-weight:950;margin-top:9px}.dir-distance{font-size:11px;color:#c3d5da;margin-top:2px}.workspace{display:grid;grid-template-columns:1.1fr .9fr;gap:13px;align-items:stretch}.panel{padding:18px;min-width:0}.panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.panel-title h3{font-size:14px;margin:0}.panel-title span{font-size:9px;letter-spacing:.12em;color:var(--muted)}.radar-stage{border:1px solid #245568;border-radius:16px;background:radial-gradient(circle at 50% 48%,#154456 0,#0a202c 65%,#071923 100%);overflow:hidden;position:relative}.radar-svg{display:block;width:100%;height:auto;min-height:260px}.radar-sweep{transform-origin:250px 190px;animation:sweep 3s linear infinite}.radar-blip{filter:drop-shadow(0 0 8px currentColor)}.radar-pulse{transform-origin:center;animation:blip 1.1s ease-in-out infinite alternate}@keyframes sweep{to{transform:rotate(360deg)}}@keyframes blip{to{opacity:.35;transform:scale(1.55)}}.radar-caption{display:flex;gap:13px;flex-wrap:wrap;padding:10px 3px 0;color:var(--muted);font-size:10px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}.map-panel{padding:0;overflow:hidden}.map-head{padding:18px 18px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.map-head h3{font-size:14px;margin:0}.map-actions{display:flex;gap:7px;flex-wrap:wrap}.map-actions .btn{padding:8px 10px;font-size:10px}.map-status{padding:0 18px 11px;font-size:11px;color:var(--muted)}#map{height:390px;width:100%;background:#102531;z-index:1}.map-foot{padding:11px 18px 15px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:10px}.leaflet-container{background:#102531;font:inherit}.leaflet-control-attribution{font-size:9px!important}.map-fallback{display:none;padding:30px;text-align:center;color:var(--muted);min-height:300px}.map-fallback a{color:var(--cyan)}.sensor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sensor-box{padding:15px;border:1px solid var(--line);border-radius:13px;background:#091a25}.sensor-box.warning{border-color:#9a713c}.sensor-box.danger,.sensor-box.critical{border-color:#a84c61}.sensor-top{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.13em}.sensor-num{font-size:27px;font-weight:950;margin:7px 0 2px}.sensor-state{font-size:10px;color:var(--muted)}.bar{height:5px;border-radius:9px;background:#1b3541;margin-top:11px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--mint);border-radius:9px;transition:width .2s}.sensor-box.warning .bar i{background:var(--amber)}.sensor-box.danger .bar i,.sensor-box.critical .bar i{background:var(--red)}.chart-wrap{height:210px;border:1px solid var(--line);border-radius:13px;background:#081923;padding:8px}#historyChart{width:100%;height:100%;display:block}.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:10px}.legend .dot{vertical-align:middle}.diagnostics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.diag{padding:13px;border-radius:12px;border:1px solid var(--line);background:#091a25}.diag small{font-size:9px;color:var(--muted);letter-spacing:.12em;font-weight:900}.diag strong{display:block;font-size:13px;margin-top:5px;overflow-wrap:anywhere}.raw{font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;background:#06131c;border:1px solid var(--line);border-radius:12px;padding:12px;color:#9de9df;min-height:42px;overflow-wrap:anywhere}.helper{color:var(--muted);font-size:11px;line-height:1.6}.footer{margin-top:32px;padding:19px 5px;border-top:1px solid #ffffff17;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:10px}.toast{position:fixed;right:18px;bottom:18px;z-index:2000;max-width:min(360px,calc(100vw - 36px));padding:13px 16px;border:1px solid #3c6b7b;border-radius:12px;background:#102b38;color:var(--text);box-shadow:var(--shadow);display:none}.toast.show{display:block;animation:toastIn .2s ease-out}@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@media(max-width:1000px){.hero{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.directions{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.metrics{grid-template-columns:repeat(2,1fr)}.directions{grid-template-columns:repeat(2,1fr)}.diagnostics{grid-template-columns:1fr 1fr}.alert-panel{align-items:flex-start;flex-wrap:wrap}.alert-actions{width:100%}#map{height:330px}.topbar{align-items:flex-start}.status-chip{font-size:9px}}@media(max-width:390px){.metrics{grid-template-columns:1fr 1fr}.metric{padding:13px}.metric-value{font-size:23px}.directions{gap:7px}.direction{padding:12px}.dir-state{font-size:14px}.diagnostics{grid-template-columns:1fr}}
+</style>
+</head>
 <body>
-<header><div class="brand">👟 SMART SHOE<small>SUKRIT’S CREATION · COPYRIGHT 2026</small></div><div class="pill" id="connection">● Waiting for direct Bluetooth connection</div></header>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">👟</div><div>SMART SHOE<small>SUKRIT’S CREATION · 2026</small></div></div>
+  <div class="top-right"><span class="status-chip offline" id="connectionStatus">● DEVICE OFFLINE</span><span class="status-chip" id="mapChip">MAP STANDBY</span></div>
+</header>
 <main>
-<section class="hero"><div><div class="eyebrow">DIRECT BLUETOOTH RAW DATA</div><h1>SMART SHOE Dashboard</h1><p>Live four-direction obstacle readings and location tracking. No Firebase account or cloud database is used. Connect the ESP32 to this Windows computer by USB cable or Bluetooth Classic COM port.</p></div><div class="actions"><button class="primary" id="connectBt">Connect Bluetooth COM</button><button id="disconnectBt" disabled>Disconnect</button><button id="locate">⌖ Start live map</button><button id="stoploc" disabled>Stop map tracking</button></div></section>
-<div class="notice"><b>Quick connection:</b> Pair <b>SmartShoe</b> in Windows Bluetooth settings, then select its outgoing COM port using <b>Connect Bluetooth COM</b>. Live sensor readings, multi-direction alerts and mapping update directly in this dashboard.</div>
-<div class="grid">
- <div class="card"><div class="label">NEAREST OBSTACLE</div><div class="value" id="nearest">— cm</div><div class="hint" id="nearestHint">Waiting for sensor packet</div></div>
- <div class="card"><div class="label">DEVICE CONNECTION</div><div class="value" id="device">Offline</div><div class="hint" id="transport">No COM data</div></div>
- <div class="card"><div class="label">LOCATION SOURCE</div><div class="value" id="gpsState">Not started</div><div class="hint" id="gpsAccuracy">Allow location permission to map the phone</div></div>
- <div class="card"><div class="label">LAST SENSOR UPDATE</div><div class="value" id="updated">—</div><div class="hint" id="packetCount">0 packets received</div></div>
-</div>
-<div class="alert-banner" id="alertBanner"><div class="alert-icon" id="alertIcon">✓</div><div><div class="alert-title" id="alertTitle">NO CLOSE OBSTACLE</div><div class="alert-detail" id="alertDetail">Voice alerts activate when a sensor detects an obstacle at 20 cm or closer.</div></div><button id="soundToggle" class="alert-tools">Enable sound</button></div><div class="alert-list" id="alertList"></div>\n<div class="section"><h2>Live location map & movement trail</h2><span class="tag">OPENSTREETMAP</span></div>
-<div class="card"><div class="map-controls"><span class="hint" id="mapStatus">Map is ready. Press Start live map and allow browser location.</span><button id="center">Center map</button><button id="clearTrail">Clear trail</button></div><div class="mapbox"><div id="map"></div></div><p class="hint" id="mapNote">Live position and movement trail update from the browser location service.</p></div>
-<div class="section"><h2>Direction-wise spoken alerts</h2><span class="tag">CLEAR TEXT ALERTS</span></div><div class="direction-alerts"><div class="direction-alert clear" id="alert-front"><div class="direction-name">FRONT SIDE</div><div class="direction-message" id="msg-front">FRONT SIDE — WAITING</div><div class="direction-distance" id="dist-front">Distance: -- cm</div></div><div class="direction-alert clear" id="alert-right"><div class="direction-name">RIGHT SIDE</div><div class="direction-message" id="msg-right">RIGHT SIDE — WAITING</div><div class="direction-distance" id="dist-right">Distance: -- cm</div></div><div class="direction-alert clear" id="alert-left"><div class="direction-name">LEFT SIDE</div><div class="direction-message" id="msg-left">LEFT SIDE — WAITING</div><div class="direction-distance" id="dist-left">Distance: -- cm</div></div><div class="direction-alert clear" id="alert-lower"><div class="direction-name">DOWN SIDE</div><div class="direction-message" id="msg-lower">DOWN SIDE — WAITING</div><div class="direction-distance" id="dist-lower">Distance: -- cm</div></div></div>\n<div class="section"><h2>Live shoe sensor data</h2><span class="tag">ULTRASONIC · CENTIMETRES</span></div>
-<div class="section"><h2>Live obstacle radar</h2><span class="tag">360° SCANNING · 4 SENSOR ZONES</span></div><div class="card"><p class="hint">Animated proximity radar. Each sensor marker moves with its measured distance and changes colour with obstacle severity.</p><div class="radar-wrap"><svg id="radar" class="radar-svg" viewBox="0 0 420 300" role="img" aria-label="Live shoe obstacle map"><rect x="1" y="1" width="418" height="298" rx="12" fill="#0b1c2c" stroke="#263d55"/><path d="M210 20V280M25 150H395" stroke="#29435a" stroke-dasharray="4 6"/><circle cx="210" cy="150" r="65" fill="none" stroke="#29435a" stroke-dasharray="4 5"/><rect x="185" y="112" width="50" height="76" rx="20" fill="#234d63" stroke="#4de1e8" stroke-width="2"/><text x="210" y="153" text-anchor="middle" font-size="12" fill="#eff7ff">SHOE</text><text x="210" y="18" text-anchor="middle" font-size="11" fill="#9aafc5">FRONT</text><text x="18" y="154" font-size="11" fill="#9aafc5">LEFT</text><text x="402" y="154" text-anchor="end" font-size="11" fill="#9aafc5">RIGHT</text><text x="210" y="294" text-anchor="middle" font-size="11" fill="#9aafc5">DOWN / GROUND</text></svg><div class="radar-legend"><span><i class="legend-dot" style="background:#55dda5"></i>Clear</span><span><i class="legend-dot" style="background:#ffc46b"></i>Below 20 cm</span><span><i class="legend-dot" style="background:#ff7186"></i>10 cm or less</span><span><i class="legend-dot" style="background:#ff344f"></i>5 cm or less</span></div></div></div>\n<div class="layout"><div class="card"><div class="sensor-grid">
- <div class="sensor" id="box-front"><div class="label">FRONT</div><div class="value" id="front">— cm</div><div class="hint">Forward obstacle</div></div>
- <div class="sensor" id="box-left"><div class="label">LEFT</div><div class="value" id="left">— cm</div><div class="hint">Left-side obstacle</div></div>
- <div class="sensor" id="box-right"><div class="label">RIGHT</div><div class="value" id="right">— cm</div><div class="hint">Right-side obstacle</div></div>
- <div class="sensor" id="box-lower"><div class="label">DOWN</div><div class="value" id="lower">— cm</div><div class="hint">Downward obstacle</div>
- </div><div class="statusline"><b>Device ID</b><span>SMART_SHOE_001</span></div><div class="statusline"><b>COM transport</b><span id="portMode">Bluetooth not connected</span></div></div>
-<div class="card"><div class="label">OBSTACLE SUMMARY</div><div class="value" id="warning">No data</div><p class="hint" id="warningText">The nearest valid sensor reading will appear here.</p><div class="section"><h2>Raw Bluetooth packet</h2></div><div class="statusline"><b>Expected format</b><span>4 sensor values; optional ,lat,lon</span></div><div class="statusline"><b>Baud rate</b><span>115200</span></div><div class="statusline"><b>Update interval</b><span>Target 50 ms · sensor scan dependent</span></div><div class="statusline"><b>Raw data stream</b><span id="bridgeState">Waiting for browser COM permission</span></div></div></div>
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">INTELLIGENT MOBILITY · LIVE SAFETY SYSTEM</div>
+      <h1>Move freely.<br><span style="color:var(--cyan)">Stay aware.</span></h1>
+      <p>A real-time four-direction obstacle awareness dashboard with instant spoken warnings, a live proximity radar and location tracking.</p>
+      <div class="hero-actions">
+        <button class="btn primary" id="connectBtn">Connect SmartShoe</button>
+        <button class="btn" id="disconnectBtn" disabled>Disconnect</button>
+        <button class="btn" id="voiceBtn">Enable voice alerts</button>
+      </div>
+    </div>
+    <aside class="connect-card">
+      <div><h2>Quick connection guide</h2><p>Connect your original ESP32 over Windows Bluetooth Classic.</p></div>
+      <div class="step"><div class="step-num">01</div><div><b>Pair the device</b><span>Open Windows Bluetooth settings and pair “SmartShoe”.</span></div></div>
+      <div class="step"><div class="step-num">02</div><div><b>Select its outgoing COM port</b><span>Press Connect SmartShoe and choose the Bluetooth serial port.</span></div></div>
+      <div class="step"><div class="step-num">03</div><div><b>Enable voice alerts</b><span>Allow browser audio and keep this dashboard open.</span></div></div>
+    </aside>
+  </section>
 
-</main><footer>© 2026 SUKRIT’S CREATION. All rights reserved.</footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <div class="section-head"><div><h2>01 / System overview</h2><p>Live status from the incoming ESP32 sensor stream</p></div><span class="tag">LIVE MONITOR</span></div>
+  <section class="metrics">
+    <div class="metric"><div class="metric-label">NEAREST OBSTACLE</div><div class="metric-value" id="nearestValue">— cm</div><div class="metric-sub" id="nearestSide">Waiting for data</div></div>
+    <div class="metric"><div class="metric-label">ACTIVE DIRECTIONS</div><div class="metric-value" id="activeCount">0 / 4</div><div class="metric-sub">Obstacles within 20 cm</div></div>
+    <div class="metric"><div class="metric-label">DATA UPDATE RATE</div><div class="metric-value" id="rateValue">— Hz</div><div class="metric-sub" id="rateHint">Measured from incoming packets</div></div>
+    <div class="metric"><div class="metric-label">LOCATION STATUS</div><div class="metric-value" id="locationValue">STANDBY</div><div class="metric-sub" id="locationHint">Waiting for location permission</div></div>
+  </section>
+
+  <section class="alert-panel" id="alertPanel">
+    <div class="alert-symbol" id="alertSymbol">✓</div>
+    <div class="alert-copy"><strong id="alertHeading">SYSTEM CLEAR</strong><p id="alertMessage">Connect the shoe to start live obstacle monitoring.</p></div>
+    <div class="alert-actions"><button class="btn" id="repeatAlertBtn">Repeat warning</button></div>
+  </section>
+  <section class="directions" aria-label="Four direction alerts">
+    <div class="direction" id="direction-front"><div class="dir-name">01 · FRONT</div><div class="dir-state" id="state-front">WAITING</div><div class="dir-distance" id="distance-front">— cm</div></div>
+    <div class="direction" id="direction-left"><div class="dir-name">02 · LEFT</div><div class="dir-state" id="state-left">WAITING</div><div class="dir-distance" id="distance-left">— cm</div></div>
+    <div class="direction" id="direction-right"><div class="dir-name">03 · RIGHT</div><div class="dir-state" id="state-right">WAITING</div><div class="dir-distance" id="distance-right">— cm</div></div>
+    <div class="direction" id="direction-lower"><div class="dir-name">04 · DOWN / GROUND</div><div class="dir-state" id="state-lower">WAITING</div><div class="dir-distance" id="distance-lower">— cm</div></div>
+  </section>
+
+  <div class="section-head"><div><h2>02 / Spatial awareness</h2><p>Proximity radar and location tracking</p></div><span class="tag">4-SENSOR FIELD</span></div>
+  <section class="workspace">
+    <article class="panel">
+      <div class="panel-title"><h3>360° proximity radar</h3><span>LIVE SENSOR POSITIONS</span></div>
+      <div class="radar-stage">
+        <svg id="radarSvg" class="radar-svg" viewBox="0 0 500 380" role="img" aria-label="Animated four direction obstacle radar">
+          <defs><radialGradient id="radarBg"><stop offset="0" stop-color="#174c5d"/><stop offset="1" stop-color="#071923"/></radialGradient><linearGradient id="radarSweep" x1="0" y1="0" x2="0" y2="-1"><stop offset="0" stop-color="#50e2e0" stop-opacity="0"/><stop offset="1" stop-color="#50e2e0" stop-opacity=".42"/></linearGradient></defs>
+          <rect width="500" height="380" fill="url(#radarBg)"/>
+          <g fill="none" stroke="#28586a" stroke-width="1"><circle cx="250" cy="190" r="45"/><circle cx="250" cy="190" r="90"/><circle cx="250" cy="190" r="135"/><path d="M250 18V362M30 190H470M95 35L405 345M405 35L95 345" stroke-dasharray="3 7"/></g>
+          <g class="radar-sweep"><path d="M250 190 L250 20 A170 170 0 0 1 370 70 Z" fill="url(#radarSweep)" stroke="#50e2e0" stroke-width="1"/></g>
+          <g id="radarMarkers"></g>
+          <g><path d="M250 155 C228 155 224 177 228 202 L235 230 Q250 241 265 230 L272 202 C276 177 272 155 250 155Z" fill="#153d4d" stroke="#7cebe5" stroke-width="2"/><path d="M238 171Q250 164 262 171" fill="none" stroke="#7cebe5" stroke-width="2"/><text x="250" y="198" fill="#effbff" text-anchor="middle" font-size="11" font-weight="900">SHOE</text></g>
+          <g fill="#9ab9c4" font-size="10" font-weight="800" letter-spacing="1"><text x="250" y="15" text-anchor="middle">FRONT</text><text x="18" y="194">LEFT</text><text x="482" y="194" text-anchor="end">RIGHT</text><text x="250" y="375" text-anchor="middle">DOWN / GROUND</text></g>
+        </svg>
+      </div>
+      <div class="radar-caption"><span><i class="dot" style="background:#63e6ad"></i>CLEAR</span><span><i class="dot" style="background:#ffc66d"></i>WARNING</span><span><i class="dot" style="background:#ff7185"></i>DANGER</span><span><i class="dot" style="background:#ff415e"></i>CRITICAL</span></div>
+    </article>
+
+    <article class="panel map-panel">
+      <div class="map-head"><h3>Live location map</h3><div class="map-actions"><button class="btn primary" id="locateBtn">Locate me</button><button class="btn" id="followBtn">Follow: ON</button><button class="btn" id="clearTrailBtn">Clear trail</button></div></div>
+      <div class="map-status" id="mapStatus">Loading interactive map…</div>
+      <div id="map"></div>
+      <div class="map-fallback" id="mapFallback">The interactive map library could not load. Check your internet connection, then <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">open OpenStreetMap</a>.</div>
+      <div class="map-foot"><span id="mapCoordinates">Coordinates: not available</span><span id="mapAccuracy">GPS accuracy: —</span></div>
+    </article>
+  </section>
+
+  <div class="section-head"><div><h2>03 / Sensor intelligence</h2><p>Individual readings and recent measurement history</p></div><span class="tag">CENTIMETRES</span></div>
+  <section class="workspace">
+    <article class="panel"><div class="panel-title"><h3>Four-channel sensor readings</h3><span>ULTRASONIC DISTANCE</span></div>
+      <div class="sensor-grid">
+        <div class="sensor-box" id="sensor-front"><div class="sensor-top"><span>FRONT SENSOR</span><span id="sensor-status-front">—</span></div><div class="sensor-num" id="sensor-value-front">— cm</div><div class="sensor-state" id="sensor-text-front">No reading yet</div><div class="bar"><i id="bar-front"></i></div></div>
+        <div class="sensor-box" id="sensor-left"><div class="sensor-top"><span>LEFT SENSOR</span><span id="sensor-status-left">—</span></div><div class="sensor-num" id="sensor-value-left">— cm</div><div class="sensor-state" id="sensor-text-left">No reading yet</div><div class="bar"><i id="bar-left"></i></div></div>
+        <div class="sensor-box" id="sensor-right"><div class="sensor-top"><span>RIGHT SENSOR</span><span id="sensor-status-right">—</span></div><div class="sensor-num" id="sensor-value-right">— cm</div><div class="sensor-state" id="sensor-text-right">No reading yet</div><div class="bar"><i id="bar-right"></i></div></div>
+        <div class="sensor-box" id="sensor-lower"><div class="sensor-top"><span>DOWN SENSOR</span><span id="sensor-status-lower">—</span></div><div class="sensor-num" id="sensor-value-lower">— cm</div><div class="sensor-state" id="sensor-text-lower">No reading yet</div><div class="bar"><i id="bar-lower"></i></div></div>
+      </div>
+    </article>
+    <article class="panel"><div class="panel-title"><h3>Live distance history</h3><span>LAST 60 PACKETS</span></div><div class="chart-wrap"><canvas id="historyChart"></canvas></div><div class="legend"><span><i class="dot" style="background:#50e2e0"></i>Front</span><span><i class="dot" style="background:#ffc66d"></i>Left</span><span><i class="dot" style="background:#75aaff"></i>Right</span><span><i class="dot" style="background:#63e6ad"></i>Down</span></div></article>
+  </section>
+
+  <div class="section-head"><div><h2>04 / Connection diagnostics</h2><p>Connection quality and incoming serial packet details</p></div><span class="tag">DEVICE HEALTH</span></div>
+  <section class="panel">
+    <div class="diagnostics">
+      <div class="diag"><small>CONNECTION TYPE</small><strong id="diagTransport">Bluetooth Classic SPP</strong></div>
+      <div class="diag"><small>BAUD RATE</small><strong>115200</strong></div>
+      <div class="diag"><small>PACKETS RECEIVED</small><strong id="diagPackets">0</strong></div>
+      <div class="diag"><small>LAST PACKET</small><strong id="diagLast">Waiting</strong></div>
+      <div class="diag"><small>VOICE ALERTS</small><strong id="diagVoice">Disabled</strong></div>
+      <div class="diag"><small>GPS SOURCE</small><strong id="diagGps">Not connected</strong></div>
+    </div>
+    <div class="panel-title" style="margin-top:18px"><h3>Raw serial packet</h3><span>front,left,right,lower[,lat,lon]</span></div>
+    <div class="raw" id="rawPacket">No serial packet received yet.</div>
+    <p class="helper">The dashboard reads the existing four-distance CSV format directly. If latitude and longitude are also included as fields five and six, the map can show those device coordinates. Otherwise, the map uses the browser's location service when you press Locate me.</p>
+  </section>
+  <footer class="footer"><span>© 2026 SUKRIT’S CREATION. All rights reserved.</span><span>SMART SHOE · LIVE OBSTACLE AWARENESS</span></footer>
+</main>
+<div class="toast" id="toast"></div>
 <script>
-const $=id=>document.getElementById(id);let packetCount=0,lastPacket=0,watchId=null,phoneMarker=null,shoeMarker=null,trail=null,shoeTrail=null,trailPoints=[],shoePoints=[],lastPosition=null;
-const map=L.map('map').setView([23.0,78.0],5);L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:20,attribution:'© OpenStreetMap © CARTO'}).addTo(map);trail=L.polyline([],{color:'#35d5e4',weight:4}).addTo(map);shoeTrail=L.polyline([],{color:'#ffb45c',weight:4,dashArray:'7 7'}).addTo(map);
-function showPosition(pos){const lat=pos.coords.latitude,lon=pos.coords.longitude,acc=pos.coords.accuracy;lastPosition=[lat,lon];if(!phoneMarker)phoneMarker=L.marker(lastPosition).addTo(map).bindPopup('Live phone GPS position');else phoneMarker.setLatLng(lastPosition);trailPoints.push(lastPosition);if(trailPoints.length>1500)trailPoints.shift();trail.setLatLngs(trailPoints);map.setView(lastPosition,Math.max(map.getZoom(),16));$('gpsState').textContent='LIVE';$('gpsState').className='value good';$('gpsAccuracy').textContent='±'+Math.round(acc)+' m accuracy';$('mapStatus').textContent='Live phone GPS · '+lat.toFixed(6)+', '+lon.toFixed(6);$('locate').disabled=true;$('stoploc').disabled=false}
-$('locate').onclick=()=>{if(!navigator.geolocation){$('mapStatus').textContent='This browser does not support GPS';return}if(!window.isSecureContext){$('mapStatus').textContent='Location requires HTTPS or localhost';return}watchId=navigator.geolocation.watchPosition(showPosition,e=>{$('mapStatus').textContent='GPS error: '+e.message;$('gpsState').textContent='Unavailable'},{enableHighAccuracy:true,maximumAge:1000,timeout:15000});$('mapStatus').textContent='Requesting location permission…'};
-$('stoploc').onclick=()=>{if(watchId!==null)navigator.geolocation.clearWatch(watchId);watchId=null;$('locate').disabled=false;$('stoploc').disabled=true;$('gpsState').textContent='Stopped';$('mapStatus').textContent='Location tracking stopped'};
-$('center').onclick=()=>{if(lastPosition)map.setView(lastPosition,17);else map.setView([23,78],5)};
-$('clearTrail').onclick=()=>{trailPoints=[];shoePoints=[];trail.setLatLngs([]);shoeTrail.setLatLngs([])};
-let soundEnabled=false,lastSpeechSignature="",lastSpeechAt=0;
-$("soundToggle").textContent="Enable fast voice alerts";
-$("soundToggle").onclick=()=>{if(!("speechSynthesis" in window)){$("alertDetail").textContent="Voice alerts are not supported in this browser.";return;}soundEnabled=!soundEnabled;$("soundToggle").textContent=soundEnabled?"FAST VOICE ON":"Enable fast voice alerts";$("soundToggle").classList.toggle("sound-on",soundEnabled);if(!soundEnabled)window.speechSynthesis.cancel();else{const u=new SpeechSynthesisUtterance("Voice alerts enabled");u.lang="en-US";u.rate=1.18;u.volume=1;window.speechSynthesis.speak(u);}};
-function speakObstacleAlerts(active){if(!soundEnabled||!("speechSynthesis" in window)||!active.length)return;const now=Date.now();const ordered=["front","right","left","lower"].filter(k=>active.some(([d])=>d===k));const items=ordered.map(k=>[k,active.find(([d])=>d===k)[1]]);const signature=items.map(([k,v])=>k+":"+Math.floor(v/5)).join("|");if(signature===lastSpeechSignature||now-lastSpeechAt<300)return;lastSpeechSignature=signature;lastSpeechAt=now;const names={front:"front",right:"right",left:"left",lower:"down"};const sides=items.map(([k])=>names[k]);let phrase;if(sides.length===1){phrase="Warning. Obstacle detected on the "+sides[0]+" side.";}else{phrase="Warning. Multiple obstacles detected at the same time: "+sides.slice(0,-1).join(", ")+" and "+sides[sides.length-1]+" sides.";}const distances=items.map(([k,v])=>names[k]+" "+Math.round(v)+" centimeters").join(". ");window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(phrase+" "+distances+".");u.lang="en-US";u.rate=1.22;u.pitch=1;u.volume=1;window.speechSynthesis.speak(u);}
-function render(data){
- const d=data.sensor_data||data;
- if(Number.isFinite(d.latitude)&&Number.isFinite(d.longitude)){const p=[d.latitude,d.longitude];if(!shoeMarker)shoeMarker=L.marker(p).addTo(map).bindPopup('ESP32 shoe GPS position');else shoeMarker.setLatLng(p);shoePoints.push(p);if(shoePoints.length>1500)shoePoints.shift();shoeTrail.setLatLngs(shoePoints);$('mapStatus').textContent='ESP32 shoe GPS · '+p[0].toFixed(6)+', '+p[1].toFixed(6);$('gpsState').textContent='SHOE GPS';$('gpsState').className='value good';$('gpsAccuracy').textContent='Coordinates received from ESP32 serial packet';if(!lastPosition)map.setView(p,17)}
- const vals={front:+d.front,left:+d.left,right:+d.right,lower:+d.lower};
- const valid=Object.entries(vals).filter(([k,v])=>Number.isFinite(v)&&v>=0&&v<999);
- const active=valid.filter(([k,v])=>v<=20).sort((a,b)=>a[1]-b[1]);
- const severity=v=>v<=5?"critical":v<=10?"danger":v<=20?"warning":"clear";
- const names={front:"FRONT SIDE",right:"RIGHT SIDE",left:"LEFT SIDE",lower:"DOWN SIDE"};
- for(const k of ["front","right","left","lower"]){
-   const v=vals[k],ok=Number.isFinite(v)&&v>=0&&v<999;
-   const card=$("alert-"+k),message=$("msg-"+k),distance=$("dist-"+k);
-   if(!ok){card.className="direction-alert clear";message.textContent=names[k]+" — NO DATA";distance.textContent="Distance: -- cm";continue}
-   const level=severity(v);card.className="direction-alert "+level;
-   message.textContent=level==="clear"?names[k]+" CLEAR":names[k]+" WARNING";
-   if(level==="danger")message.textContent=names[k]+" DANGER";
-   if(level==="critical")message.textContent=names[k]+" CRITICAL ALERT";
-   distance.textContent="DISTANCE: "+v.toFixed(1)+" CM";
- }
- for(const k of ['front','left','right','lower']){
-   const v=vals[k],el=$('box-'+k),ok=Number.isFinite(v)&&v>=0&&v<999;
-   $(k).textContent=ok?v.toFixed(1)+' cm':'No echo';
-   el.className='sensor '+(ok?severity(v):'');
- }
- if(valid.length){const [direction,near]=valid.reduce((a,b)=>a[1]<=b[1]?a:b);$('nearest').textContent=near.toFixed(1)+' cm';$('nearestHint').textContent='Nearest: '+direction.toUpperCase()}else{$('nearest').textContent='— cm';$('nearestHint').textContent='No valid echo'}
- const banner=$('alertBanner'),list=$('alertList');
- if(active.length){
-   const descriptions=active.map(([k,v])=>({k,v,s:severity(v)}));
-   const signature=descriptions.map(x=>x.k+':'+x.s).join('|');
-   banner.className='alert-banner active';
-   const most=descriptions[0];
-   $('alertIcon').textContent=most.s==='critical'?'🚨':'⚠️';
-   $('alertTitle').textContent=active.length>1?'MULTIPLE OBSTACLES DETECTED':most.s==='critical'?'CRITICAL OBSTACLE':most.s==='danger'?'DANGER — VERY CLOSE':'OBSTACLE ALERT';
-   $('alertDetail').textContent=active.length>1?'MULTIPLE OBSTACLES: '+descriptions.map(x=>x.k.toUpperCase()+' '+x.v.toFixed(0)+' cm').join(' · '):'Obstacle detected: '+descriptions[0].k.toUpperCase()+' · '+descriptions[0].v.toFixed(0)+' cm';
-   list.innerHTML=descriptions.map(x=>'<div class="alert-item '+x.s+'">'+x.k.toUpperCase()+' · '+x.v.toFixed(1)+' cm · '+(x.s==='critical'?'CRITICAL (≤5 cm)':x.s==='danger'?'DANGER (≤10 cm)':'WARNING (<20 cm)')+'</div>').join('');
-   speakObstacleAlerts(active);
-   $('warning').textContent=most.s==='critical'?'CRITICAL':most.s==='danger'?'DANGER':'ALERT';
-   $('warning').className='value bad';$('warningText').textContent=descriptions.map(x=>x.k.toUpperCase()+' '+x.v.toFixed(1)+' cm').join(' · ');
- }else{
-   banner.className='alert-banner';$('alertIcon').textContent='✓';$('alertTitle').textContent='NO CLOSE OBSTACLE';$('alertDetail').textContent='All valid sensor readings are greater than 20 cm.';list.innerHTML='';
-   $('warning').textContent=valid.length?'CLEAR':'NO DATA';$('warning').className='value good';$('warningText').textContent=valid.length?'No obstacle is at or within 20 cm.':'Waiting for valid sensor readings.';lastAlertSignature='';lastSpeechSignature='';
- }
- const svg=$('radar'),cx=210,cy=150,dirs={front:[0,-1],left:[-1,0],right:[1,0],lower:[0,1]};
- const parts=['<defs><radialGradient id="radarBg"><stop offset="0" stop-color="#123c4e"/><stop offset="1" stop-color="#071725"/></radialGradient><linearGradient id="sweepFill" x1="0" y1="0" x2="0" y2="-1"><stop offset="0" stop-color="#4de1e8" stop-opacity=".02"/><stop offset="1" stop-color="#4de1e8" stop-opacity=".38"/></linearGradient></defs>','<rect x="1" y="1" width="418" height="298" rx="12" fill="url(#radarBg)" stroke="#28718a"/>','<g stroke="#286078" fill="none"><circle cx="210" cy="150" r="35"/><circle cx="210" cy="150" r="70"/><circle cx="210" cy="150" r="105"/><path d="M210 12V288M25 150H395M112 52L308 248M308 52L112 248" stroke-dasharray="3 7"/></g>','<circle class="radar-ring" cx="210" cy="150" r="105" fill="none" stroke="#4de1e8" stroke-width="1.5"/>','<g class="radar-sweep"><path d="M210 150 L210 18 A132 132 0 0 1 303.3 56.7 Z"/></g>','<rect x="185" y="112" width="50" height="76" rx="20" fill="#234d63" stroke="#75f4ec" stroke-width="2"/><text x="210" y="153" text-anchor="middle" font-size="12" font-weight="bold" fill="#eff7ff">SHOE</text>','<text x="210" y="15" text-anchor="middle" font-size="11" fill="#9aafc5">FRONT</text>','<text x="18" y="154" font-size="11" fill="#9aafc5">LEFT</text>','<text x="402" y="154" text-anchor="end" font-size="11" fill="#9aafc5">RIGHT</text>','<text x="210" y="294" text-anchor="middle" font-size="11" fill="#9aafc5">DOWN / GROUND</text>'];
- for(const [k,v] of Object.entries(vals)){if(!Number.isFinite(v)||v<0||v>=999)continue;const [dx,dy]=dirs[k],dist=Math.min(v,150),x=cx+dx*dist*.85,y=cy+dy*dist*.85,s=severity(v),color=s==='critical'?'#ff344f':s==='danger'?'#ff7186':s==='warning'?'#ffc46b':'#55dda5';parts.push('<g class="radar-blip" style="color:'+color+'"><circle class="radar-blip-core" cx="'+x+'" cy="'+y+'" r="'+(s==='critical'?13:10)+'" fill="'+color+'" opacity=".25"/><circle cx="'+x+'" cy="'+y+'" r="'+(s==='critical'?7:5)+'" fill="'+color+'" stroke="#ffffff" stroke-width="1.8"/><text x="'+x+'" y="'+(y-13)+'" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">'+k.toUpperCase()+' '+v.toFixed(0)+'cm</text></g>')}
- svg.innerHTML=parts.join('');
- packetCount++;lastPacket=Number(data.received_at)?Number(data.received_at)*1000:Date.now();$('updated').textContent=new Date().toLocaleTimeString();$('packetCount').textContent=packetCount+' packets received';$('device').textContent='ONLINE';$('device').className='value good';$('connection').textContent='● ESP32 data live';$('connection').className='pill good';$('transport').textContent=data.transport_label||'Serial COM';$('portMode').textContent=data.transport_label||'Serial COM';$('bridgeState').textContent='Connected · '+data.port;
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const keys=['front','left','right','lower'];
+const labels={front:'Front',left:'Left',right:'Right',lower:'Down'};
+const history={front:[],left:[],right:[],lower:[]};
+let packetTotal=0,lastPacketTime=0,rateSamples=[],lastRaw='',lastAlertSignature='',voiceEnabled=false,lastSpeechAt=0;
+let port=null,reader=null,reading=false,rawBuffer='',map=null,tileLayer=null,browserMarker=null,deviceMarker=null,browserTrail=null,deviceTrail=null,browserPoints=[],devicePoints=[],watchId=null,followMap=true,lastBrowserPosition=null,lastDevicePosition=null;
+function toast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3300);}
+function setConnection(online,message){const el=$('connectionStatus');el.textContent=online?'● DEVICE CONNECTED':'● DEVICE OFFLINE';el.className='status-chip '+(online?'online':'offline');if(message)toast(message);}
+function level(v){if(!Number.isFinite(v)||v<0||v>=999)return 'nodata';if(v<=5)return 'critical';if(v<=10)return 'danger';if(v<=20)return 'warning';return 'clear';}
+function valid(v){return Number.isFinite(v)&&v>=0&&v<999;}
+function speak(text){if(!voiceEnabled||!('speechSynthesis'in window))return;const now=Date.now();if(now-lastSpeechAt<350)return;lastSpeechAt=now;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=1.18;u.pitch=1;u.volume=1;window.speechSynthesis.speak(u);}
+function currentActive(values){return keys.filter(k=>valid(values[k])&&values[k]<=20).map(k=>({key:k,value:values[k]}));}
+function updateVoice(active){
+ const signature=active.map(x=>x.key+':'+Math.floor(x.value/5)).join('|');
+ if(!active.length){lastAlertSignature='';return;}
+ if(signature===lastAlertSignature)return;
+ lastAlertSignature=signature;
+ const names=active.map(x=>labels[x.key].toLowerCase());
+ let phrase;
+ if(active.length===1)phrase='Warning. Obstacle detected on the '+names[0]+' side.';
+ else phrase='Warning. Multiple obstacles detected at the same time: '+names.slice(0,-1).join(', ')+' and '+names[names.length-1]+' sides.';
+ const measurements=active.map(x=>names[active.indexOf(x)]+' '+Math.round(x.value)+' centimetres').join('. ');
+ speak(phrase+' '+measurements+'.');
 }
-let serialPort=null,serialReader=null,serialKeepReading=false,rawBuffer="";
-function parseRawPacket(line){
- const clean=line.trim().replace(/\0/g,"");if(!clean)return null;
- const p=clean.split(",").map(x=>x.trim());if(p.length!==4&&p.length!==6)return null;
+function renderDirections(values,active){
+ const activeKeys=active.map(x=>x.key);
+ keys.forEach(k=>{
+  const v=values[k],lv=level(v),card=$('direction-'+k);
+  card.className='direction'+(lv==='clear'||lv==='nodata'?'':' '+lv);
+  $('state-'+k).textContent=lv==='nodata'?'NO DATA':lv==='critical'?'CRITICAL':lv==='danger'?'DANGER':lv==='warning'?'WARNING':'CLEAR';
+  $('distance-'+k).textContent=valid(v)?v.toFixed(1)+' cm':'No echo';
+ });
+ $('activeCount').textContent=active.length+' / 4';
+ const panel=$('alertPanel');
+ if(active.length){
+  const multiple=active.length>1,nearest=active[0];
+  panel.className='alert-panel active';$('alertSymbol').textContent=nearest.value<=5?'🚨':'⚠️';
+  $('alertHeading').textContent=multiple?'MULTIPLE OBSTACLES DETECTED':nearest.value<=5?'CRITICAL OBSTACLE':nearest.value<=10?'DANGER — VERY CLOSE':'OBSTACLE WARNING';
+  $('alertMessage').textContent=active.map(x=>labels[x.key].toUpperCase()+' '+x.value.toFixed(0)+' cm').join('  ·  ');
+ }else{
+  panel.className='alert-panel';$('alertSymbol').textContent='✓';$('alertHeading').textContent='SYSTEM CLEAR';
+  $('alertMessage').textContent='No obstacle is detected within the 20 cm alert zone.';
+ }
+}
+function drawRadar(values){
+ const group=$('radarMarkers'),cx=250,cy=190,dirs={front:[0,-1],left:[-1,0],right:[1,0],lower:[0,1]};
+ let out='';
+ keys.forEach(k=>{
+  const v=values[k];if(!valid(v))return;
+  const vec=dirs[k],distance=Math.max(22,Math.min(155,v*.92)),x=cx+vec[0]*distance,y=cy+vec[1]*distance;
+  const lv=level(v),color=lv==='critical'?'#ff415e':lv==='danger'?'#ff7185':lv==='warning'?'#ffc66d':'#63e6ad';
+  out+='<g class="radar-blip" style="color:'+color+'"><circle class="radar-pulse" cx="'+x+'" cy="'+y+'" r="13" fill="'+color+'" opacity=".3"/><circle cx="'+x+'" cy="'+y+'" r="6.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"/><text x="'+x+'" y="'+(y-16)+'" fill="#effbff" text-anchor="middle" font-size="10" font-weight="900">'+k.toUpperCase()+' '+Math.round(v)+'cm</text></g>';
+ });
+ group.innerHTML=out;
+}
+function updateSensors(values){
+ keys.forEach(k=>{
+  const v=values[k],lv=level(v),card=$('sensor-'+k);
+  card.className='sensor-box'+(lv==='clear'||lv==='nodata'?'':' '+lv);
+  $('sensor-value-'+k).textContent=valid(v)?v.toFixed(1)+' cm':'No echo';
+  $('sensor-status-'+k).textContent=lv==='nodata'?'—':lv.toUpperCase();
+  $('sensor-text-'+k).textContent=lv==='critical'?'Immediate hazard':lv==='danger'?'Very close obstacle':lv==='warning'?'Obstacle inside warning zone':lv==='clear'?'Clear beyond 20 cm':'No valid echo';
+  $('bar-'+k).style.width=valid(v)?(Math.max(3,100-Math.min(v,200)/2))+'%':'0%';
+  history[k].push(valid(v)?Math.min(v,200):null);if(history[k].length>60)history[k].shift();
+ });
+ drawChart();
+}
+function drawChart(){
+ const canvas=$('historyChart'),rect=canvas.getBoundingClientRect();if(!rect.width||!rect.height)return;
+ const dpr=window.devicePixelRatio||1;canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);
+ const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+ const w=rect.width,h=rect.height,pad=24;ctx.clearRect(0,0,w,h);
+ ctx.strokeStyle='#24404c';ctx.lineWidth=1;ctx.fillStyle='#8daab5';ctx.font='9px system-ui';
+ for(let i=0;i<=4;i++){const y=pad+(h-2*pad)*i/4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w-8,y);ctx.stroke();ctx.fillText(String(200-i*50),3,y+3);}
+ const colors={front:'#50e2e0',left:'#ffc66d',right:'#75aaff',lower:'#63e6ad'};
+ keys.forEach(k=>{const a=history[k];ctx.beginPath();ctx.strokeStyle=colors[k];ctx.lineWidth=1.8;let started=false;
+  a.forEach((v,i)=>{if(v===null){started=false;return;}const x=pad+(w-pad-8)*(i/Math.max(1,59)),y=pad+(h-2*pad)*(1-v/200);if(!started){ctx.moveTo(x,y);started=true;}else ctx.lineTo(x,y);});ctx.stroke();
+ });
+}
+function render(packet){
+ const values={front:Number(packet.front),left:Number(packet.left),right:Number(packet.right),lower:Number(packet.lower)};
+ const active=currentActive(values).sort((a,b)=>a.value-b.value);
+ renderDirections(values,active);drawRadar(values);updateSensors(values);updateVoice(active);
+ const all=keys.filter(k=>valid(values[k])).map(k=>({key:k,value:values[k]})).sort((a,b)=>a.value-b.value);
+ if(all.length){$('nearestValue').textContent=all[0].value.toFixed(1)+' cm';$('nearestSide').textContent=labels[all[0].key]+' direction';}
+ else{$('nearestValue').textContent='— cm';$('nearestSide').textContent='No valid echo';}
+ if(packet.latitude!==undefined&&packet.longitude!==undefined)updateDeviceLocation(packet.latitude,packet.longitude);
+ packetTotal++;const now=Date.now();if(lastPacketTime)rateSamples.push(1000/(now-lastPacketTime));if(rateSamples.length>12)rateSamples.shift();lastPacketTime=now;
+ const rate=rateSamples.length?rateSamples.reduce((a,b)=>a+b,0)/rateSamples.length:0;
+ $('rateValue').textContent=rate?rate.toFixed(1)+' Hz':'— Hz';$('rateHint').textContent='Measured packet arrival rate';
+ $('diagPackets').textContent=String(packetTotal);$('diagLast').textContent=new Date().toLocaleTimeString();$('rawPacket').textContent=packet.raw||'Four sensor values received';
+ $('diagTransport').textContent='Bluetooth Classic SPP · COM';$('diagVoice').textContent=voiceEnabled?'Enabled':'Disabled';
+ $('diagGps').textContent=packet.latitude!==undefined?'ESP32 coordinates':watchId!==null?'Browser GPS':'Not connected';
+ $('connectionStatus').textContent='● DEVICE CONNECTED';$('connectionStatus').className='status-chip online';
+}
+function parseLine(line){
+ const clean=line.trim().replace(/\0/g,'');if(!clean)return null;
+ const p=clean.split(',').map(x=>x.trim());if(p.length!==4&&p.length!==6)return null;
  const n=p.map(Number);if(n.some(x=>!Number.isFinite(x)))return null;
  if(n.slice(0,4).some(x=>x<0||x>1000))return null;
- const packet={front:n[0],left:n[1],right:n[2],lower:n[3],received_at:Date.now()/1000,transport_label:"Direct Bluetooth Serial"};
- if(n.length===6&&n[4]>=-90&&n[4]<=90&&n[5]>=-180&&n[5]<=180){packet.latitude=n[4];packet.longitude=n[5]}
+ const packet={front:n[0],left:n[1],right:n[2],lower:n[3],raw:clean};
+ if(n.length===6&&n[4]>=-90&&n[4]<=90&&n[5]>=-180&&n[5]<=180){packet.latitude=n[4];packet.longitude=n[5];}
  return packet;
 }
-function handleRawLine(line){
- const packet=parseRawPacket(line);if(!packet)return;
- $("bridgeState").textContent="Processing raw Bluetooth packet";
- $("portMode").textContent="Bluetooth COM · 115200 baud";
- $("transport").textContent="Direct Bluetooth COM";
- render(packet);
-}
-async function connectBluetooth(){
- if(!("serial" in navigator)){ $("bridgeState").textContent="Web Serial unavailable. Use latest Chrome or Edge on desktop.";return; }
+function consumeLine(line){const p=parseLine(line);if(p)render(p);}
+async function connect(){
+ if(!('serial'in navigator)){toast('Web Serial is not supported. Open this page in Chrome or Edge on desktop.');return;}
  try{
-   serialPort=await navigator.serial.requestPort();
-   await serialPort.open({baudRate:115200, dataBits:8, stopBits:1, parity:"none", flowControl:"none"});
-   $("connectBt").disabled=true;$("disconnectBt").disabled=false;
-   $("bridgeState").textContent="Bluetooth COM opened · waiting for raw data";
-   $("portMode").textContent="Bluetooth COM · 115200 baud";
-   $("transport").textContent="Direct browser connection";
-   $("device").textContent="CONNECTED";$("device").className="value good";
-   $("connection").textContent="● Bluetooth COM connected";$("connection").className="pill good";
-   serialKeepReading=true;const decoder=new TextDecoder();
-   while(serialPort&&serialPort.readable&&serialKeepReading){
-     serialReader=serialPort.readable.getReader();
-     try{
-       while(serialKeepReading){
-         const {value,done}=await serialReader.read();if(done)break;
-         if(value){rawBuffer+=decoder.decode(value,{stream:true});let ix;
-           while((ix=rawBuffer.indexOf("\n"))>=0){const line=rawBuffer.slice(0,ix).replace(/\r/g,"");rawBuffer=rawBuffer.slice(ix+1);handleRawLine(line)}
-           if(rawBuffer.length>4096)rawBuffer=rawBuffer.slice(-1024);
-         }
-       }
-     }catch(err){if(serialKeepReading)throw err}
-     finally{if(serialReader){serialReader.releaseLock();serialReader=null}}
-   }
- }catch(err){
-   $("bridgeState").textContent=err.name==="NotFoundError"?"No COM port selected":("Serial error: "+err.message);
-   $("connection").textContent="● Bluetooth disconnected";$("connection").className="pill bad";
- }finally{
-   $("connectBt").disabled=false;$("disconnectBt").disabled=true;
-   if(serialPort){try{await serialPort.close()}catch(e){}serialPort=null}
-   serialKeepReading=false;
+  port=await navigator.serial.requestPort();
+  await port.open({baudRate:115200,dataBits:8,stopBits:1,parity:'none',flowControl:'none'});
+  reading=true;rawBuffer='';$('connectBtn').disabled=true;$('disconnectBtn').disabled=false;
+  $('diagTransport').textContent='Bluetooth Classic SPP · COM';setConnection(true,'Bluetooth serial port opened. Waiting for sensor data.');
+  const decoder=new TextDecoder();
+  while(reading&&port&&port.readable){
+   reader=port.readable.getReader();
+   try{
+    while(reading){
+     const result=await reader.read();if(result.done)break;
+     if(result.value){
+      rawBuffer+=decoder.decode(result.value,{stream:true});
+      let at;while((at=rawBuffer.indexOf('\n'))>=0){const line=rawBuffer.slice(0,at).replace(/\r/g,'');rawBuffer=rawBuffer.slice(at+1);consumeLine(line);}
+      if(rawBuffer.length>4096)rawBuffer=rawBuffer.slice(-1024);
+     }
+    }
+   }finally{if(reader){reader.releaseLock();reader=null;}}
+  }
+ }catch(err){if(err.name!=='NotFoundError')toast('Serial connection: '+err.message);setConnection(false);}
+ finally{
+  reading=false;$('connectBtn').disabled=false;$('disconnectBtn').disabled=true;
+  if(port){try{await port.close();}catch(e){}port=null;}
  }
 }
-async function disconnectBluetooth(){
- serialKeepReading=false;
- if(serialReader){try{await serialReader.cancel()}catch(e){}}
- if(serialPort){try{await serialPort.close()}catch(e){}}
- $("connectBt").disabled=false;$("disconnectBt").disabled=true;
- $("device").textContent="OFFLINE";$("device").className="value bad";
- $("connection").textContent="● Bluetooth disconnected";$("connection").className="pill";
- $("bridgeState").textContent="Disconnected by user";
+async function disconnect(){
+ reading=false;if(reader){try{await reader.cancel();}catch(e){}}
+ if(port){try{await port.close();}catch(e){}port=null;}
+ $('connectBtn').disabled=false;$('disconnectBtn').disabled=true;setConnection(false,'Bluetooth disconnected.');
 }
-$("connectBt").onclick=connectBluetooth;
-$("disconnectBt").onclick=disconnectBluetooth;
-if("serial" in navigator){navigator.serial.addEventListener("disconnect",()=>{serialKeepReading=false;$("bridgeState").textContent="Bluetooth COM device removed";$("connectBt").disabled=false;$("disconnectBt").disabled=true})}
-</script></body></html>
+$('connectBtn').addEventListener('click',connect);$('disconnectBtn').addEventListener('click',disconnect);
+if('serial'in navigator)navigator.serial.addEventListener('disconnect',()=>{reading=false;setConnection(false,'Bluetooth device was removed.');$('connectBtn').disabled=false;$('disconnectBtn').disabled=true;});
+$('voiceBtn').addEventListener('click',()=>{
+ if(!('speechSynthesis'in window)){toast('This browser does not support speech alerts.');return;}
+ voiceEnabled=!voiceEnabled;$('voiceBtn').textContent=voiceEnabled?'Voice alerts: ON':'Enable voice alerts';$('voiceBtn').classList.toggle('active',voiceEnabled);$('diagVoice').textContent=voiceEnabled?'Enabled':'Disabled';
+ if(voiceEnabled){speak('Voice alerts enabled.');toast('Fast voice alerts enabled.');}else{window.speechSynthesis.cancel();toast('Voice alerts disabled.');}
+});
+$('repeatAlertBtn').addEventListener('click',()=>{
+ const vals={front:Number($('sensor-value-front').textContent.replace(' cm','')),left:Number($('sensor-value-left').textContent.replace(' cm','')),right:Number($('sensor-value-right').textContent.replace(' cm','')),lower:Number($('sensor-value-lower').textContent.replace(' cm',''))};
+ const active=currentActive(vals);if(!active.length){toast('No active obstacle warning to repeat.');return;}
+ const names=active.map(x=>labels[x.key].toLowerCase());speak('Warning. '+(active.length>1?'Multiple obstacles detected: ':'Obstacle detected: ')+names.join(', ')+'.');
+});
+
+function setMapStatus(text,isBad){$('mapStatus').textContent=text;$('mapChip').textContent=isBad?'MAP ISSUE':'MAP READY';$('mapChip').className='status-chip '+(isBad?'offline':'online');}
+function initMap(){
+ if(!window.L){$('map').style.display='none';$('mapFallback').style.display='block';setMapStatus('Map library unavailable. Check your internet connection.',true);return;}
+ try{
+  map=L.map('map',{zoomControl:true,scrollWheelZoom:true}).setView([22.8,82.0],5);
+  tileLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors',crossOrigin:true});
+  tileLayer.addTo(map);
+  tileLayer.on('tileerror',()=>setMapStatus('Map tiles are not loading. Check internet access or reload the page.',true));
+  tileLayer.on('load',()=>setMapStatus(lastBrowserPosition?'Live browser GPS position':'Map loaded · press Locate me to show your position',false));
+  browserTrail=L.polyline([],{color:'#42d8e3',weight:4,opacity:.9}).addTo(map);
+  deviceTrail=L.polyline([],{color:'#ffb45c',weight:4,dashArray:'8 7',opacity:.95}).addTo(map);
+  setTimeout(()=>map.invalidateSize(true),250);window.addEventListener('resize',()=>setTimeout(()=>map.invalidateSize(true),150));
+  setMapStatus('Map loaded · press Locate me to show your position',false);
+ }catch(err){$('map').style.display='none';$('mapFallback').style.display='block';setMapStatus('Map initialization failed: '+err.message,true);}
+}
+function loadLeaflet(){
+ return new Promise(resolve=>{
+  if(window.L){resolve(true);return;}
+  const script=document.createElement('script');script.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';
+  script.onload=()=>resolve(!!window.L);
+  script.onerror=()=>{
+   const second=document.createElement('script');second.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js';
+   second.onload=()=>resolve(!!window.L);second.onerror=()=>resolve(false);document.head.appendChild(second);
+  };document.head.appendChild(script);
+ });
+}
+function locateBrowser(){
+ if(!map){toast('Map is not ready yet.');return;}
+ if(!navigator.geolocation){setMapStatus('This browser does not support location services.',true);return;}
+ if(!window.isSecureContext){setMapStatus('Location access requires HTTPS. Open the GitHub Pages HTTPS website.',true);return;}
+ setMapStatus('Requesting location permission…',false);
+ if(watchId!==null)navigator.geolocation.clearWatch(watchId);
+ watchId=navigator.geolocation.watchPosition(pos=>{
+  const lat=pos.coords.latitude,lon=pos.coords.longitude,point=[lat,lon];lastBrowserPosition=point;
+  if(!browserMarker)browserMarker=L.marker(point).addTo(map).bindPopup('Current browser location');
+  else browserMarker.setLatLng(point);
+  browserPoints.push(point);if(browserPoints.length>800)browserPoints.shift();browserTrail.setLatLngs(browserPoints);
+  if(followMap)map.setView(point,Math.max(map.getZoom(),16));
+  $('locationValue').textContent='LIVE';$('locationValue').className='metric-value good';$('locationHint').textContent='Browser GPS location active';
+  $('mapCoordinates').textContent='Lat '+lat.toFixed(6)+' · Lon '+lon.toFixed(6);$('mapAccuracy').textContent='Accuracy ±'+Math.round(pos.coords.accuracy)+' m';
+  $('diagGps').textContent='Browser GPS';setMapStatus('Live browser location · movement trail recording',false);
+ },err=>{
+  const messages={1:'Location permission denied. Allow location access in browser settings.',2:'Location position unavailable. Move to an open area and retry.',3:'Location request timed out. Press Locate me to retry.'};
+  setMapStatus(messages[err.code]||err.message,true);$('locationValue').textContent='UNAVAILABLE';$('locationValue').className='metric-value warn';$('locationHint').textContent='Check browser location permission';
+ },{enableHighAccuracy:true,maximumAge:1500,timeout:20000});
+}
+function updateDeviceLocation(lat,lon){
+ if(!map)return;const point=[lat,lon];lastDevicePosition=point;
+ if(!deviceMarker)deviceMarker=L.marker(point).addTo(map).bindPopup('ESP32 shoe GPS coordinates');
+ else deviceMarker.setLatLng(point);
+ devicePoints.push(point);if(devicePoints.length>800)devicePoints.shift();deviceTrail.setLatLngs(devicePoints);
+ if(followMap&&!lastBrowserPosition)map.setView(point,Math.max(map.getZoom(),16));
+ $('locationValue').textContent='DEVICE';$('locationValue').className='metric-value good';$('locationHint').textContent='Coordinates received from ESP32';
+ $('mapCoordinates').textContent='Device · '+lat.toFixed(6)+', '+lon.toFixed(6);$('diagGps').textContent='ESP32 GPS';
+}
+$('locateBtn').addEventListener('click',locateBrowser);
+$('followBtn').addEventListener('click',()=>{followMap=!followMap;$('followBtn').textContent='Follow: '+(followMap?'ON':'OFF');if(followMap&&map){const p=lastDevicePosition||lastBrowserPosition;if(p)map.setView(p,Math.max(map.getZoom(),16));}});
+$('clearTrailBtn').addEventListener('click',()=>{browserPoints=[];devicePoints=[];if(browserTrail)browserTrail.setLatLngs([]);if(deviceTrail)deviceTrail.setLatLngs([]);toast('Movement trails cleared.');});
+loadLeaflet().then(ok=>{if(ok)initMap();else initMap();});
+drawChart();window.addEventListener('resize',drawChart);
+})();
+</script>
+</body>
+</html>
