@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""SMART SHOE USB-Serial or Classic Bluetooth SPP -> Firebase bridge.
+"""SMART SHOE bridge: ESP32 USB Serial OR Windows Classic Bluetooth SPP -> Firebase.
 
-Run from the repository root:
-    py -m pip install pyserial requests
-    py bridge\smartshoe_bridge.py
+From the repository root:
+  py -m pip install --upgrade pyserial requests
+  py bridge\\smartshoe_bridge.py
 
-Choose USB cable or Bluetooth, then select the COM port shown by Windows.
-The ESP32 sends: front,left,right,lower\n
+ESP32 line format: front,left,right,lower\n
+For Bluetooth, pair "SmartShoe" in Windows and select its OUTGOING SPP COM port.
 """
 import getpass
 import json
 import os
+import re
 import sys
 import time
 from urllib.parse import urlencode
@@ -28,17 +29,22 @@ REFRESH_URL = "https://securetoken.googleapis.com/v1/token"
 
 
 def firebase_sign_in(email, password):
-    response = requests.post(AUTH_URL, params={"key": API_KEY},
-        json={"email": email, "password": password, "returnSecureToken": True}, timeout=20)
+    response = requests.post(
+        AUTH_URL, params={"key": API_KEY},
+        json={"email": email, "password": password, "returnSecureToken": True},
+        timeout=20,
+    )
     response.raise_for_status()
     data = response.json()
     return data["idToken"], data["refreshToken"], time.time() + int(data.get("expiresIn", "3600")) - 90
 
 
 def refresh_id_token(refresh_token):
-    response = requests.post(REFRESH_URL, params={"key": API_KEY},
+    response = requests.post(
+        REFRESH_URL, params={"key": API_KEY},
         data=urlencode({"grant_type": "refresh_token", "refresh_token": refresh_token}),
-        headers={"Content-Type": "application/x-www-form-urlencoded"}, timeout=20)
+        headers={"Content-Type": "application/x-www-form-urlencoded"}, timeout=20,
+    )
     response.raise_for_status()
     data = response.json()
     return data["id_token"], data.get("refresh_token", refresh_token), time.time() + int(data.get("expires_in", "3600")) - 90
@@ -61,98 +67,142 @@ def upload_readings(session, token, values, transport):
 
 
 def parse_line(line):
-    parts = [part.strip() for part in line.split(",")]
+    # Accept only four numeric comma-separated values; ignore ESP32 boot/debug text.
+    parts = [part.strip() for part in line.strip().split(",")]
     if len(parts) != 4:
         return None
     try:
         values = [float(part) for part in parts]
     except ValueError:
         return None
-    if any(value < 0 or value > 1000 for value in values):
+    if any(not (0 <= value <= 1000) for value in values):
         return None
     return dict(zip(("front", "left", "right", "lower"), values))
 
 
 def choose_transport():
-    print("\nSelect how the ESP32 is connected:")
-    print("  1. USB cable (USB Serial COM port)")
-    print("  2. Bluetooth (Classic Bluetooth outgoing COM port)")
+    print("\nSELECT ESP32 CONNECTION")
+    print("  1. USB cable  — USB Serial COM port")
+    print("  2. Bluetooth  — Classic SPP OUTGOING COM port")
     while True:
         choice = input("Enter 1 or 2: ").strip()
-        if choice in ("1", "2"):
-            return ("usb_serial", "USB Serial") if choice == "1" else ("classic_bluetooth_spp", "Bluetooth SPP")
+        if choice == "1":
+            return "usb_serial", "USB Serial"
+        if choice == "2":
+            return "classic_bluetooth_spp", "Bluetooth Classic SPP"
         print("Please enter 1 or 2.")
 
 
-def choose_port():
+def choose_port(transport):
     ports = list(list_ports.comports())
-    if ports:
-        print("\nDetected Windows serial ports:")
-        for index, port in enumerate(ports, 1):
-            print(f"  {index}. {port.device} — {port.description}")
+    print("\nWINDOWS SERIAL PORTS")
+    if not ports:
+        print("No COM ports detected. Pair SmartShoe or reconnect the USB data cable.")
     else:
-        print("\nNo COM ports detected automatically.")
+        for i, p in enumerate(ports, 1):
+            print(f"  {i}. {p.device:8} | {p.description} | {p.hwid}")
+    if transport == "classic_bluetooth_spp":
+        print("\nIMPORTANT: choose the Bluetooth OUTGOING port for SmartShoe.")
+        print("Do NOT choose an incoming Bluetooth port.")
+    else:
+        print("\nChoose the USB COM port shown under Device Manager > Ports (COM & LPT).")
     while True:
-        answer = input("Select port number or type COM name (e.g. COM6): ").strip()
-        if answer.upper().startswith("COM"):
-            return answer.upper()
+        answer = input("Port number or COM name (e.g. COM7): ").strip().upper()
+        if re.fullmatch(r"COM[0-9]+", answer):
+            return answer
         if answer.isdigit() and 1 <= int(answer) <= len(ports):
             return ports[int(answer) - 1].device
-        print("Invalid selection. Choose a listed number or type a COM name.")
+        print("Invalid selection. Enter a listed number or COM name such as COM7.")
 
 
 def main():
-    print("=" * 52)
-    print("SMART SHOE — USB / BLUETOOTH BRIDGE")
-    print("=" * 52)
-    transport, transport_label = choose_transport()
-    port = choose_port()
+    print("=" * 60)
+    print("SMART SHOE — USB / BLUETOOTH → FIREBASE BRIDGE")
+    print("=" * 60)
+    transport, label = choose_transport()
+    port = choose_port(transport)
+
     email = os.environ.get("SMARTSHOE_FIREBASE_EMAIL") or input("\nFirebase device email: ").strip()
     password = os.environ.get("SMARTSHOE_FIREBASE_PASSWORD") or getpass.getpass("Firebase device password: ")
     if not email or not password:
-        print("Email and password are required.")
+        print("Firebase email and password are required.")
         return 2
 
-    print(f"\nTransport: {transport_label}")
-    print(f"COM port: {port} at {BAUD_RATE} baud")
-    print("Signing in to Firebase…")
+    print(f"\nSelected: {label} on {port}")
+    print("Signing in to Firebase...")
     try:
         token, refresh_token, expiry = firebase_sign_in(email, password)
-        with serial.Serial(port, BAUD_RATE, timeout=1) as device, requests.Session() as session:
+        # Disable hardware flow control: it is not used by ESP32 SPP or USB CSV streaming.
+        with serial.Serial(
+            port=port, baudrate=BAUD_RATE, timeout=1, write_timeout=2,
+            xonxoff=False, rtscts=False, dsrdtr=False,
+        ) as device, requests.Session() as session:
             if transport == "usb_serial":
-                # ESP32 boards often reboot when a USB serial port is opened.
+                print("USB serial opened; waiting 2 seconds for ESP32 auto-reset...")
                 time.sleep(2)
                 device.reset_input_buffer()
-            print(f"{transport_label} connected. Waiting for sensor CSV data…")
-            print("Expected format: front,left,right,lower")
+            else:
+                print("Bluetooth COM port opened. Windows should now establish the SPP link.")
+                time.sleep(2)
+                device.reset_input_buffer()
+
+            print("\nBRIDGE READY — waiting for ESP32 CSV packets")
+            print("Expected: front,left,right,lower")
+            print("Keep this window open. Press Ctrl+C to stop.")
+            valid_count = 0
+            ignored_count = 0
+            last_wait_notice = time.time()
+
             while True:
-                raw = device.readline().decode("utf-8", errors="replace").strip()
-                if not raw:
+                try:
+                    raw_bytes = device.readline()
+                except serial.SerialException:
+                    raise
+                if not raw_bytes:
+                    if time.time() - last_wait_notice >= 8:
+                        print("Still waiting for data. Check ESP32 power, pairing, OUTGOING COM port and firmware.")
+                        last_wait_notice = time.time()
                     if time.time() >= expiry:
                         token, refresh_token, expiry = refresh_id_token(refresh_token)
                         print("Firebase token refreshed.")
                     continue
+
+                raw = raw_bytes.decode("utf-8", errors="replace").strip().replace("\x00", "")
                 readings = parse_line(raw)
                 if readings is None:
+                    ignored_count += 1
+                    if ignored_count <= 5:
+                        print("Ignored non-sensor line:", repr(raw[:100]))
                     continue
+
+                if time.time() >= expiry:
+                    token, refresh_token, expiry = refresh_id_token(refresh_token)
                 try:
-                    if time.time() >= expiry:
-                        token, refresh_token, expiry = refresh_id_token(refresh_token)
                     upload_readings(session, token, readings, transport)
-                    print("Uploaded:", json.dumps(readings))
+                    valid_count += 1
+                    print(f"#{valid_count} uploaded to Firebase:", json.dumps(readings))
                 except requests.RequestException as exc:
-                    print("Firebase upload failed:", exc)
+                    print("FIREBASE UPLOAD ERROR:", exc)
                     time.sleep(2)
+
     except serial.SerialException as exc:
-        print(f"Could not open {port}: {exc}")
-        print("Check the selected COM port and close Arduino Serial Monitor or other programs using it.")
+        print(f"\nCOM PORT ERROR on {port}: {exc}")
+        print("1) Close Arduino Serial Monitor and every other serial program.")
+        print("2) For Bluetooth, pair SmartShoe and use its OUTGOING COM port.")
+        print("3) Remove the old Windows pairing, restart ESP32, then pair again.")
+        print("4) Confirm Windows Device Manager shows the selected COM port.")
+        return 1
+    except requests.HTTPError as exc:
+        detail = exc.response.text[:500] if exc.response is not None else str(exc)
+        print("\nFIREBASE AUTH/HTTP ERROR:", detail)
+        print("Check Email/Password Authentication, the account, API key and database rules.")
         return 1
     except requests.RequestException as exc:
-        print("Firebase connection/authentication failed:", exc)
-        print("Check Email/Password sign-in, internet, API key and Realtime Database Rules.")
+        print("\nNETWORK/FIREBASE ERROR:", exc)
+        print("Check internet access and Firebase configuration.")
         return 1
     except KeyboardInterrupt:
-        print("\nBridge stopped.")
+        print("\nBridge stopped by user.")
         return 0
 
 
