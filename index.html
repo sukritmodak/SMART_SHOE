@@ -424,13 +424,16 @@ try{parentPhone=localStorage.getItem('smartShoeParentPhone')||'';$('parentPhone'
 
 // Independent sports dashboard logic. It reads the existing stepCount and does not alter sensor packets.
 let sportsMode='walking',sportsActive=false,sportsStartTime=0,sportsElapsedMs=0,sportsStepBaseline=0,sportsTimer=null,sportsAudio=null,sportsMusicTimer=null,sportsMusicOn=false,sportsBeatIndex=0;
-const sportsConfig={walking:{stride:0.70,met:3.5},jogging:{stride:0.90,met:7.0},running:{stride:1.05,met:9.8}};
+const sportsConfig={walking:{stride:0.70,met:3.5,stepsPerMinute:100},jogging:{stride:0.90,met:7.0,stepsPerMinute:150},running:{stride:1.05,met:9.8,stepsPerMinute:180}};
 function sportsSessionSteps(){return Math.max(0,stepCount-sportsStepBaseline);}
 function sportsElapsed(){return sportsElapsedMs+(sportsActive?Date.now()-sportsStartTime:0);}
 function sportsFormatTime(ms){const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),r=s%60;return h?String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(r).padStart(2,'0'):String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');}
 function updateSportsStats(){
- const steps=sportsSessionSteps(),elapsed=sportsElapsed(),minutes=elapsed/60000,weight=Math.min(250,Math.max(20,Number($('sportsWeight').value)||70)),cfg=sportsConfig[sportsMode];
- const km=steps*cfg.stride/1000,kcal=cfg.met*3.5*weight/200*minutes,cadence=minutes>0?Math.round(steps/minutes):0;
+ const steps=sportsSessionSteps(),elapsed=sportsElapsed(),weight=Math.min(250,Math.max(20,Number($('sportsWeight').value)||70)),cfg=sportsConfig[sportsMode];
+ // Estimate active exercise time from detected steps, not total wall-clock session time.
+ // Therefore calories stay at zero with zero steps and do not rise while the user is standing still.
+ const activeMinutes=steps/cfg.stepsPerMinute;
+ const km=steps*cfg.stride/1000,kcal=steps>0?cfg.met*3.5*weight/200*activeMinutes:0,cadence=elapsed>0?Math.round(steps/(elapsed/60000)):0;
  $('sportsSteps').textContent=steps.toLocaleString();
  $('sportsDistance').textContent=km.toFixed(2)+' km';
  $('sportsCalories').textContent=kcal.toFixed(1)+' kcal';
