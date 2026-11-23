@@ -56,18 +56,20 @@ def refresh_id_token(refresh_token):
 
 
 def upload_readings(session, token, values):
-    url = f"{DATABASE_URL}/devices/{DEVICE_ID}/sensor_data.json"
-    response = session.put(url, params={"auth": token}, json=values, timeout=15)
-    response.raise_for_status()
-    status_url = f"{DATABASE_URL}/devices/{DEVICE_ID}/device_status.json"
-    status = {
-        "bluetooth": True,
-        "online": True,
-        "transport": "classic_bluetooth_spp",
-        "updated_at": int(time.time() * 1000),
+    # One atomic PATCH keeps sensor values and bridge status in sync.
+    url = f"{DATABASE_URL}/devices/{DEVICE_ID}.json"
+    payload = {
+        "sensor_data": values,
+        "device_status": {
+            "wifi": False,  # Wi-Fi is not used by this SPP bridge architecture.
+            "bluetooth": True,
+            "online": True,
+            "transport": "classic_bluetooth_spp",
+            "updated_at": int(time.time() * 1000),
+        },
     }
-    status_response = session.put(status_url, params={"auth": token}, json=status, timeout=15)
-    status_response.raise_for_status()
+    response = session.patch(url, params={"auth": token}, json=payload, timeout=15)
+    response.raise_for_status()
 
 
 def parse_line(line):
