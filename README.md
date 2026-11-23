@@ -124,7 +124,7 @@ The repository root contains `SMART_SHOE_CLASSIC.ino`, which already applies thi
 4. Start the unified bridge:
 
    ```bat
-   py bridge\\smartshoe_bridge.py
+   py bridge\smartshoe_bridge.py
    ```
 
 5. In the terminal menu, choose:
