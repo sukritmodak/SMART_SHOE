@@ -51,7 +51,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  </div>
 
  <div class="section-head"><h2>Location map</h2><span class="tag">OPENSTREETMAP</span></div>
- <div class="card map-card"><div class="map-actions"><button class="primary" id="gpsStartBtn">⌖ Share phone live location</button><button class="soft" id="gpsStopBtn" disabled>Stop location sharing</button><span class="gps-status" id="gpsStatus">Phone GPS not started</span></div><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">Open this page on the phone, sign in to Firebase, then enable phone GPS sharing. Keep the Windows Classic Bluetooth bridge running for shoe sensor data.</div></div>
+ <div class="card map-card"><div class="map-actions"><button class="primary" id="gpsStartBtn">⌖ Share phone live location</button><button class="soft" id="gpsStopBtn" disabled>Stop location sharing</button><span class="gps-status" id="gpsStatus">Phone GPS not started</span></div><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">Open this page on the phone, sign in to Firebase, then enable phone GPS sharing. Keep the Windows USB / Bluetooth serial bridge running for shoe sensor data.</div></div>
 
  <div class="section-head"><h2>Four-direction obstacle monitor</h2><small>FRONT · LEFT · RIGHT · LOWER</small></div>
  <div class="two-col">
@@ -346,7 +346,7 @@ function firebaseLogout(){
  $('logoutBtn').disabled=true;$('authStatus').textContent='Signed out';$('cloudStatus').textContent='Not connected';$('deviceState').textContent='Offline';
  $('firebaseError').textContent='';$('firebaseError').className='error';setConnection(false,'Not connected');addEvent('Firebase signed out');
 }
-// Classic Bluetooth SPP is handled by bridge/smartshoe_classic_bridge.py; the dashboard reads Firebase.
+// USB Serial or Bluetooth SPP is handled by bridge/smartshoe_bridge.py; the dashboard reads Firebase.
 
 function stopDemo(){if(demoTimer){clearInterval(demoTimer);demoTimer=null}$('demoBtn').textContent='▶  Start demo';if(lastSource==='Simulated demo'){setConnection(false,'Demo stopped');$('modeTag').textContent='DEMO STOPPED'}addEvent('Demo stopped')}
 function startDemo(){
