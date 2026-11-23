@@ -77,12 +77,12 @@ void updateBuzzer() {
 void sendSensorData() {
   // Same CSV packet is available over USB Serial and Bluetooth SPP.
   // The bridge ignores non-CSV boot messages if the board prints any.
-  Serial.printf("%.1f,%.1f,%.1f,%.1f\\n",
+  Serial.printf("%.1f,%.1f,%.1f,%.1f\n",
                 frontDistance, leftDistance,
                 rightDistance, lowerDistance);
 
   if (SerialBT.hasClient()) {
-    SerialBT.printf("%.1f,%.1f,%.1f,%.1f\\n",
+    SerialBT.printf("%.1f,%.1f,%.1f,%.1f\n",
                     frontDistance, leftDistance,
                     rightDistance, lowerDistance);
   }
