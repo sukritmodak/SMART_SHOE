@@ -161,16 +161,34 @@ function renderDirections(values,active){
  }
 }
 function drawRadar(values){
- const group=$('radarMarkers'),cx=250,cy=190,dirs={front:[0,-1],left:[-1,0],right:[1,0],lower:[0,1]};
+ const group=$('radarMarkers'),cx=250,cy=190;
+ const dirs={
+  front:{x:0,y:-1,anchor:'middle',tx:0,ty:-17},
+  left:{x:-1,y:0,anchor:'end',tx:-15,ty:-5},
+  right:{x:1,y:0,anchor:'start',tx:15,ty:-5},
+  lower:{x:0,y:1,anchor:'middle',tx:0,ty:28}
+ };
  let out='';
  keys.forEach(k=>{
-  const v=values[k];if(!valid(v))return;
-  const vec=dirs[k],distance=Math.max(22,Math.min(155,v*.92)),x=cx+vec[0]*distance,y=cy+vec[1]*distance;
-  const lv=level(v),color=lv==='critical'?'#ff415e':lv==='danger'?'#ff7185':lv==='warning'?'#ffc66d':'#63e6ad';
-  out+='<g class="radar-blip" style="color:'+color+'"><circle class="radar-pulse" cx="'+x+'" cy="'+y+'" r="13" fill="'+color+'" opacity=".3"/><circle cx="'+x+'" cy="'+y+'" r="6.5" fill="'+color+'" stroke="#fff" stroke-width="1.5"/><text x="'+x+'" y="'+(y-16)+'" fill="#effbff" text-anchor="middle" font-size="10" font-weight="900">'+k.toUpperCase()+' '+Math.round(v)+'cm</text></g>';
+  const v=values[k],d=dirs[k];
+  const lv=level(v);
+  const color=lv==='critical'?'#ff415e':lv==='danger'?'#ff7185':lv==='warning'?'#ffc66d':lv==='clear'?'#63e6ad':'#718995';
+  // 0–200 cm range; reserve an inner radius so near markers do not cover the shoe.
+  const radius=valid(v)?55+(Math.min(v,200)/200)*100:160;
+  const x=cx+d.x*radius,y=cy+d.y*radius;
+  const label=valid(v)?Math.round(v)+' cm':'NO ECHO';
+  const ex=cx+d.x*(radius-10),ey=cy+d.y*(radius-10);
+  out+='<g class="radar-blip" style="color:'+color+'">';
+  out+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ex+'" y2="'+ey+'" stroke="'+color+'" stroke-width="2" stroke-dasharray="4 5" opacity=".75"/>';
+  out+='<circle cx="'+x+'" cy="'+y+'" r="12" fill="'+color+'" opacity="'+(valid(v)?'.16':'.08')+'"/>';
+  out+='<circle cx="'+x+'" cy="'+y+'" r="6.5" fill="'+(valid(v)?color:'none')+'" stroke="'+color+'" stroke-width="2"/>';
+  if(valid(v))out+='<circle class="radar-pulse" cx="'+x+'" cy="'+y+'" r="13" fill="none" stroke="'+color+'" stroke-width="1.5" opacity=".7"/>';
+  out+='<text x="'+(x+d.tx)+'" y="'+(y+d.ty)+'" fill="#effbff" text-anchor="'+d.anchor+'" font-size="11" font-weight="900">'+k.toUpperCase()+' · '+label+'</text>';
+  out+='</g>';
  });
  group.innerHTML=out;
 }
+
 function updateSensors(values){
  keys.forEach(k=>{
   const v=values[k],lv=level(v),card=$('sensor-'+k);
