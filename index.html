@@ -9,10 +9,10 @@
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0,#173b53,transparent 34%),var(--bg);color:var(--text);font:14px system-ui,Segoe UI,sans-serif}header{padding:17px clamp(16px,4vw,54px);border-bottom:1px solid #ffffff18;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#07111feF;position:sticky;top:0;z-index:1000}.brand{font-weight:900;letter-spacing:.13em}.brand small{display:block;color:var(--muted);font-size:9px;margin-top:4px}.pill{border:1px solid var(--line);border-radius:99px;padding:8px 12px;color:var(--muted);font-size:11px}main{max-width:1400px;margin:auto;padding:26px clamp(14px,3vw,44px) 55px}.hero{display:flex;justify-content:space-between;align-items:end;gap:18px;flex-wrap:wrap;margin-bottom:20px}.eyebrow{color:var(--cyan);font-size:10px;letter-spacing:.2em;font-weight:900}.hero h1{font-size:clamp(28px,4vw,42px);margin:8px 0}.hero p{color:var(--muted);margin:0;max-width:720px;line-height:1.6}.actions{display:flex;gap:9px;flex-wrap:wrap}button{border:1px solid #36516b;background:#182e45;color:var(--text);padding:11px 15px;border-radius:10px;font-weight:750;cursor:pointer}button.primary{background:linear-gradient(120deg,var(--cyan),#66a5ff);border:0;color:#061421}button:disabled{opacity:.45}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:linear-gradient(145deg,#14283dee,#0d1b2bf5);border:1px solid var(--line);border-radius:16px;padding:17px;min-width:0}.label{font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:900}.value{font-size:clamp(24px,3vw,34px);font-weight:900;margin:10px 0 4px;overflow-wrap:anywhere}.hint{font-size:11px;color:var(--muted);line-height:1.5}.section{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:28px 0 12px}.section h2{font-size:16px;margin:0}.tag{color:var(--cyan);font-size:9px;letter-spacing:.12em;border:1px solid #285064;border-radius:7px;padding:6px 8px}.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:13px}.mapbox{height:440px;border:1px solid var(--line);border-radius:12px;overflow:hidden}#map{height:100%;width:100%}.map-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.sensor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.sensor{padding:15px;border-radius:12px;background:#091827;border:1px solid #263d55}.sensor .value{font-size:27px}.sensor.near{border-color:var(--red)}.sensor.warn{border-color:var(--amber)}.sensor.clear{border-color:#2e775f}.statusline{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #ffffff12;font-size:11px;gap:12px}.statusline span{color:var(--muted);text-align:right}.notice{margin:18px 0;padding:13px 15px;border:1px solid #36566a;background:#102638;border-radius:12px;color:#c4dce9;font-size:12px;line-height:1.65}.good{color:var(--green)}.bad{color:var(--red)}footer{border-top:1px solid #ffffff18;padding:20px clamp(16px,4vw,54px);color:var(--muted);font-size:10px;line-height:1.6}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:560px){.grid{gap:8px}.card{padding:13px}.mapbox{height:340px}.value{font-size:24px}}
 .alert-banner{display:flex;align-items:center;gap:12px;margin:16px 0;padding:15px 17px;border:1px solid #2e775f;background:#0d2b27;border-radius:13px}.alert-banner.active{border-color:#ff7186;background:#351923;animation:alertPulse 1.2s infinite}.alert-icon{font-size:25px}.alert-title{font-weight:900;letter-spacing:.08em}.alert-detail{color:#c3d3df;font-size:12px;margin-top:4px}.alert-tools{margin-left:auto}.alert-list{display:grid;gap:7px;margin-top:12px}.alert-item{padding:9px 11px;border-radius:9px;background:#351923;border:1px solid #914457;color:#ffdce2;font-size:12px}.alert-item.critical{background:#51121e;border-color:#ff7186;font-weight:900}.alert-item.warning{background:#382a17;border-color:#bd8840;color:#ffe0a8}.radar-wrap{background:#081725;border:1px solid #263d55;border-radius:13px;padding:12px}.radar-svg{display:block;width:100%;height:auto;max-height:340px}.radar-legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}.legend-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.sensor.alert{border-color:var(--amber);background:#2c2418}.sensor.danger{border-color:#ff7186;background:#351923}.sensor.critical{border-color:#ff344f;background:#501321;box-shadow:0 0 18px #ff344f55}.sound-on{border-color:#55dda5;color:#55dda5}@keyframes alertPulse{50%{box-shadow:0 0 18px #ff718655}}</style></head>
 <body>
-<header><div class="brand">👟 SMART SHOE<small>LOCAL LIVE MONITOR · USB / BLUETOOTH SPP</small></div><div class="pill" id="connection">● Waiting for ESP32 COM data</div></header>
+<header><div class="brand">👟 SMART SHOE<small>DIRECT BROWSER · BLUETOOTH SPP</small></div><div class="pill" id="connection">● Waiting for direct Bluetooth connection</div></header>
 <main>
-<section class="hero"><div><div class="eyebrow">DIRECT SERIAL CONNECTION</div><h1>SMART SHOE Dashboard</h1><p>Live four-direction obstacle readings and location tracking. No Firebase account or cloud database is used. Connect the ESP32 to this Windows computer by USB cable or Bluetooth Classic COM port.</p></div><div class="actions"><button class="primary" id="locate">⌖ Start live map</button><button id="stoploc" disabled>Stop map tracking</button></div></section>
-<div class="notice"><b>Connection:</b> Start <code>py bridge\\smartshoe_bridge.py</code>, select USB or Bluetooth and choose the ESP32 COM port. Keep the Python window open. This page receives readings directly from that local bridge.</div>
+<section class="hero"><div><div class="eyebrow">DIRECT BLUETOOTH RAW DATA</div><h1>SMART SHOE Dashboard</h1><p>Live four-direction obstacle readings and location tracking. No Firebase account or cloud database is used. Connect the ESP32 to this Windows computer by USB cable or Bluetooth Classic COM port.</p></div><div class="actions"><button class="primary" id="connectBt">Connect Bluetooth COM</button><button id="disconnectBt" disabled>Disconnect</button><button id="locate">⌖ Start live map</button><button id="stoploc" disabled>Stop map tracking</button></div></section>
+<div class="notice"><b>Direct connection — no bridge:</b> Pair <b>SmartShoe</b> in Windows Bluetooth settings first. Then click <b>Connect Bluetooth COM</b> and select the ESP32 outgoing Bluetooth serial port in the browser popup. The browser reads raw CSV packets at 115200 baud and processes all four sensor values locally. No Python, CMD, Firebase or intermediate server is used. Use Chrome or Edge on HTTPS or localhost.</div>
 <div class="grid">
  <div class="card"><div class="label">NEAREST OBSTACLE</div><div class="value" id="nearest">— cm</div><div class="hint" id="nearestHint">Waiting for sensor packet</div></div>
  <div class="card"><div class="label">DEVICE CONNECTION</div><div class="value" id="device">Offline</div><div class="hint" id="transport">No COM data</div></div>
@@ -27,10 +27,10 @@
  <div class="sensor" id="box-left"><div class="label">LEFT</div><div class="value" id="left">— cm</div><div class="hint">Left-side obstacle</div></div>
  <div class="sensor" id="box-right"><div class="label">RIGHT</div><div class="value" id="right">— cm</div><div class="hint">Right-side obstacle</div></div>
  <div class="sensor" id="box-lower"><div class="label">LOWER</div><div class="value" id="lower">— cm</div><div class="hint">Ground / downward obstacle</div></div>
- </div><div class="statusline"><b>Device ID</b><span>SMART_SHOE_001</span></div><div class="statusline"><b>COM transport</b><span id="portMode">Waiting</span></div></div>
-<div class="card"><div class="label">OBSTACLE SUMMARY</div><div class="value" id="warning">No data</div><p class="hint" id="warningText">The nearest valid sensor reading will appear here.</p><div class="section"><h2>Serial packet</h2></div><div class="statusline"><b>Expected format</b><span>4 sensor values; optional ,lat,lon</span></div><div class="statusline"><b>Baud rate</b><span>115200</span></div><div class="statusline"><b>Update interval</b><span>Approx. 500 ms</span></div><div class="statusline"><b>Bridge</b><span id="bridgeState">Starting…</span></div></div></div>
+ </div><div class="statusline"><b>Device ID</b><span>SMART_SHOE_001</span></div><div class="statusline"><b>COM transport</b><span id="portMode">Bluetooth not connected</span></div></div>
+<div class="card"><div class="label">OBSTACLE SUMMARY</div><div class="value" id="warning">No data</div><p class="hint" id="warningText">The nearest valid sensor reading will appear here.</p><div class="section"><h2>Raw Bluetooth packet</h2></div><div class="statusline"><b>Expected format</b><span>4 sensor values; optional ,lat,lon</span></div><div class="statusline"><b>Baud rate</b><span>115200</span></div><div class="statusline"><b>Update interval</b><span>Approx. 500 ms</span></div><div class="statusline"><b>Raw data stream</b><span id="bridgeState">Waiting for browser COM permission</span></div></div></div>
 <div class="notice">Prototype limitation: the current ESP32 firmware sends four ultrasonic distances only. It does not contain a GPS receiver. Live map position is therefore provided by the browser's phone/laptop GPS when available. For independent shoe tracking, a GPS module (for example, NEO-6M) and firmware support are required.</div>
-</main><footer>SMART SHOE · Local Windows dashboard · Direct USB Serial / Bluetooth Classic SPP COM connection · No Firebase integration</footer>
+</main><footer>SMART SHOE · Local Windows dashboard · Direct browser Bluetooth Classic SPP COM connection · No Firebase integration</footer>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const $=id=>document.getElementById(id);let packetCount=0,lastPacket=0,watchId=null,phoneMarker=null,shoeMarker=null,trail=null,shoeTrail=null,trailPoints=[],shoePoints=[],lastPosition=null;
@@ -79,6 +79,67 @@ function render(data){
  svg.innerHTML=parts.join('');
  packetCount++;lastPacket=Number(data.received_at)?Number(data.received_at)*1000:Date.now();$('updated').textContent=new Date().toLocaleTimeString();$('packetCount').textContent=packetCount+' packets received';$('device').textContent='ONLINE';$('device').className='value good';$('connection').textContent='● ESP32 data live';$('connection').className='pill good';$('transport').textContent=data.transport_label||'Serial COM';$('portMode').textContent=data.transport_label||'Serial COM';$('bridgeState').textContent='Connected · '+data.port;
 }
-async function poll(){try{const r=await fetch('/api/data',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();if(d.latest&&d.latest.received_at&&d.latest.received_at*1000>lastPacket)render(d.latest);$('bridgeState').textContent=d.bridge_status||'Bridge running';if(d.port)$('portMode').textContent=d.transport_label+' · '+d.port;if(d.error)$('bridgeState').textContent=d.error}catch(e){$('bridgeState').textContent='Local bridge not responding'}}
-setInterval(()=>{if(lastPacket&&Date.now()-lastPacket>3500){$('device').textContent='NO DATA';$('device').className='value bad';$('connection').textContent='● Serial data stopped';$('connection').className='pill bad'}},1000);setInterval(poll,350);poll();
+let serialPort=null,serialReader=null,serialKeepReading=false,rawBuffer="";
+function parseRawPacket(line){
+ const clean=line.trim().replace(/\0/g,"");if(!clean)return null;
+ const p=clean.split(",").map(x=>x.trim());if(p.length!==4&&p.length!==6)return null;
+ const n=p.map(Number);if(n.some(x=>!Number.isFinite(x)))return null;
+ if(n.slice(0,4).some(x=>x<0||x>1000))return null;
+ const packet={front:n[0],left:n[1],right:n[2],lower:n[3],received_at:Date.now()/1000,transport_label:"Direct Bluetooth Serial"};
+ if(n.length===6&&n[4]>=-90&&n[4]<=90&&n[5]>=-180&&n[5]<=180){packet.latitude=n[4];packet.longitude=n[5]}
+ return packet;
+}
+function handleRawLine(line){
+ const packet=parseRawPacket(line);if(!packet)return;
+ $("bridgeState").textContent="Processing raw Bluetooth packet";
+ $("portMode").textContent="Bluetooth COM · 115200 baud";
+ $("transport").textContent="Direct Bluetooth COM";
+ render(packet);
+}
+async function connectBluetooth(){
+ if(!("serial" in navigator)){ $("bridgeState").textContent="Web Serial unavailable. Use latest Chrome or Edge on desktop.";return; }
+ try{
+   serialPort=await navigator.serial.requestPort();
+   await serialPort.open({baudRate:115200, dataBits:8, stopBits:1, parity:"none", flowControl:"none"});
+   $("connectBt").disabled=true;$("disconnectBt").disabled=false;
+   $("bridgeState").textContent="Bluetooth COM opened · waiting for raw data";
+   $("portMode").textContent="Bluetooth COM · 115200 baud";
+   $("transport").textContent="Direct browser connection";
+   $("device").textContent="CONNECTED";$("device").className="value good";
+   $("connection").textContent="● Bluetooth COM connected";$("connection").className="pill good";
+   serialKeepReading=true;const decoder=new TextDecoder();
+   while(serialPort&&serialPort.readable&&serialKeepReading){
+     serialReader=serialPort.readable.getReader();
+     try{
+       while(serialKeepReading){
+         const {value,done}=await serialReader.read();if(done)break;
+         if(value){rawBuffer+=decoder.decode(value,{stream:true});let ix;
+           while((ix=rawBuffer.indexOf("\n"))>=0){const line=rawBuffer.slice(0,ix).replace(/\r/g,"");rawBuffer=rawBuffer.slice(ix+1);handleRawLine(line)}
+           if(rawBuffer.length>4096)rawBuffer=rawBuffer.slice(-1024);
+         }
+       }
+     }catch(err){if(serialKeepReading)throw err}
+     finally{if(serialReader){serialReader.releaseLock();serialReader=null}}
+   }
+ }catch(err){
+   $("bridgeState").textContent=err.name==="NotFoundError"?"No COM port selected":("Serial error: "+err.message);
+   $("connection").textContent="● Bluetooth disconnected";$("connection").className="pill bad";
+ }finally{
+   $("connectBt").disabled=false;$("disconnectBt").disabled=true;
+   if(serialPort){try{await serialPort.close()}catch(e){}serialPort=null}
+   serialKeepReading=false;
+ }
+}
+async function disconnectBluetooth(){
+ serialKeepReading=false;
+ if(serialReader){try{await serialReader.cancel()}catch(e){}}
+ if(serialPort){try{await serialPort.close()}catch(e){}}
+ $("connectBt").disabled=false;$("disconnectBt").disabled=true;
+ $("device").textContent="OFFLINE";$("device").className="value bad";
+ $("connection").textContent="● Bluetooth disconnected";$("connection").className="pill";
+ $("bridgeState").textContent="Disconnected by user";
+}
+$("connectBt").onclick=connectBluetooth;
+$("disconnectBt").onclick=disconnectBluetooth;
+if("serial" in navigator){navigator.serial.addEventListener("disconnect",()=>{serialKeepReading=false;$("bridgeState").textContent="Bluetooth COM device removed";$("connectBt").disabled=false;$("disconnectBt").disabled=true})}
 </script></body></html>
