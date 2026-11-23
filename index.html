@@ -17,12 +17,22 @@
 .parent-note{font-size:11px;color:var(--muted);margin:9px 0 0;line-height:1.5}
 @media(max-width:650px){.parent-grid{grid-template-columns:1fr 1fr}.parent-field{grid-column:1/-1}.parent-grid button{width:100%}}
 
+
+/* SPORTS MODE — isolated styles; existing dashboard styles remain unchanged */
+.sports-section{margin-top:30px;border:1px solid #31576a;border-radius:22px;overflow:hidden;background:radial-gradient(ellipse at 15% 0%,#174c3b 0,transparent 42%),linear-gradient(145deg,#101f2b,#081720);box-shadow:0 22px 55px #0007}
+.sports-hero{padding:clamp(20px,4vw,34px);background:linear-gradient(110deg,#143e35dd,#102b3cbb);border-bottom:1px solid #ffffff18;position:relative;overflow:hidden}
+.sports-hero:after{content:"";position:absolute;right:3%;top:-90px;width:260px;height:260px;border:22px solid #b7ff9b12;border-radius:50%;box-shadow:0 0 0 25px #b7ff9b08}
+.sports-kicker{font-size:10px;letter-spacing:.2em;font-weight:950;color:#a8ff9b}.sports-hero h2{font-size:clamp(28px,4vw,44px);line-height:1.05;margin:8px 0}.sports-hero p{color:#c0d6d0;max-width:650px;margin:0;font-size:12px}
+.sports-controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;position:relative;z-index:1}.sports-mode{border:1px solid #416354;background:#0b2526;color:#d8f2e2;border-radius:999px;padding:10px 17px;font-weight:900;font-size:11px}.sports-mode.selected{background:#c4ff8b;color:#102219;border-color:#c4ff8b;box-shadow:0 0 22px #c4ff8b33}
+.sports-body{padding:18px}.sports-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.sports-stat{padding:17px;border:1px solid #294b50;border-radius:15px;background:linear-gradient(145deg,#122d32,#0b1c27)}.sports-stat small{display:block;color:#9bbab3;font-size:9px;letter-spacing:.14em;font-weight:950}.sports-stat strong{display:block;font-size:clamp(23px,3vw,34px);letter-spacing:-.04em;margin:7px 0 0;color:#d6ffae}.sports-stat span{font-size:10px;color:#91aaa8}.sports-lower{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;margin-top:12px}.sports-card{border:1px solid #294b50;border-radius:15px;background:#0a1c26;padding:16px}.sports-card h3{margin:0 0 12px;font-size:13px}.sports-actions{display:flex;gap:8px;flex-wrap:wrap}.sports-input{border:1px solid #41606a;background:#06151e;color:#effbff;border-radius:10px;padding:10px 12px;width:120px;font:inherit}.sports-note{font-size:10px;color:#91aaa8;line-height:1.6;margin:10px 0 0}.sports-session{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;color:#a8c5bb;font-size:11px}.sports-live{color:#c4ff8b;font-weight:950}.sports-music{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.sports-music p{font-size:11px;color:#9bbab3;margin:4px 0 0}.sports-bars{display:flex;align-items:end;gap:4px;height:32px}.sports-bars i{display:block;width:5px;border-radius:5px;background:#c4ff8b;height:8px;opacity:.6}.sports-bars.playing i{animation:sportsBeat .55s ease-in-out infinite alternate}.sports-bars.playing i:nth-child(2n){animation-delay:.15s}.sports-bars.playing i:nth-child(3n){animation-delay:.3s}@keyframes sportsBeat{to{height:30px;opacity:1}}
+@media(max-width:850px){.sports-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sports-lower{grid-template-columns:1fr}}
+@media(max-width:420px){.sports-body{padding:11px}.sports-stat{padding:13px}.sports-mode{flex:1;padding:10px 8px}}
 </style>
 </head>
 <body>
 <header class="topbar">
   <div class="brand"><div class="brand-mark">👟</div><div>SMART SHOE<small>SUKRIT’S CREATION · 2026</small></div></div>
-  <div class="top-right"><span class="status-chip offline" id="connectionStatus">● DEVICE OFFLINE</span><span class="status-chip" id="mapChip">MAP STANDBY</span></div>
+  <div class="top-right"><button class="btn" id="sportsJumpBtn">🏃 SPORTS MODE</button><span class="status-chip offline" id="connectionStatus">● DEVICE OFFLINE</span><span class="status-chip" id="mapChip">MAP STANDBY</span></div>
 </header>
 <main>
   <section class="hero">
@@ -127,6 +137,51 @@
     <div class="panel-title" style="margin-top:18px"><h3>Raw serial packet</h3><span>front,left,right,lower[,lat,lon]</span></div>
     <div class="raw" id="rawPacket">No serial packet received yet.</div>
     <p class="helper">The dashboard reads the existing four-distance CSV format directly. If latitude and longitude are also included as fields five and six, the map can show those device coordinates. Otherwise, the map uses the browser's location service when you press Locate me.</p>
+  </section>
+  <section class="sports-section" id="sportsDashboard">
+    <div class="sports-hero">
+      <div class="sports-kicker">⚡ SMART SHOE · PERFORMANCE ZONE</div>
+      <h2>SPORTS DASHBOARD</h2>
+      <p>Track your walking, jogging and running session using the shoe’s existing step counter. Distance and calories are estimates based on your steps, selected activity and body weight.</p>
+      <div class="sports-controls" role="group" aria-label="Activity mode">
+        <button class="sports-mode selected" data-sport-mode="walking">🚶 Walking</button>
+        <button class="sports-mode" data-sport-mode="jogging">🏃 Jogging</button>
+        <button class="sports-mode" data-sport-mode="running">🏃‍♂️ Running</button>
+      </div>
+    </div>
+    <div class="sports-body">
+      <div class="sports-session"><span>SESSION STATUS: <b id="sportsSessionStatus" class="sports-live">READY</b></span><span id="sportsModeLabel">WALKING MODE</span></div>
+      <div class="sports-stats">
+        <div class="sports-stat"><small>SESSION STEPS</small><strong id="sportsSteps">0</strong><span>Steps counted after start</span></div>
+        <div class="sports-stat"><small>DISTANCE</small><strong id="sportsDistance">0.00 km</strong><span>Estimated from step length</span></div>
+        <div class="sports-stat"><small>CALORIES BURNT</small><strong id="sportsCalories">0.0 kcal</strong><span>Estimated energy expenditure</span></div>
+        <div class="sports-stat"><small>SESSION TIME</small><strong id="sportsTime">00:00</strong><span id="sportsCadence">0 steps/min</span></div>
+      </div>
+      <div class="sports-lower">
+        <div class="sports-card">
+          <h3>Activity session</h3>
+          <div class="sports-actions">
+            <button class="btn primary" id="sportsStartBtn">▶ Start session</button>
+            <button class="btn" id="sportsStopBtn" disabled>■ Stop session</button>
+            <button class="btn" id="sportsResetBtn">↻ Reset stats</button>
+          </div>
+          <p class="sports-note">Start before you begin moving. The session counts only new steps detected after you press Start. Keep the dashboard connected and open while exercising.</p>
+        </div>
+        <div class="sports-card">
+          <h3>Personal estimate settings</h3>
+          <label for="sportsWeight" class="metric-label">BODY WEIGHT (KG)</label><br>
+          <input class="sports-input" id="sportsWeight" type="number" min="20" max="250" step="0.5" value="70">
+          <p class="sports-note">Calories use an activity-intensity estimate and your entered weight. Distance uses an approximate step length for each mode. These are fitness estimates, not medical measurements.</p>
+        </div>
+      </div>
+      <div class="sports-card" style="margin-top:12px">
+        <div class="sports-music">
+          <div><h3 style="margin:0">🎵 Sports energy beat</h3><p>Original generated workout rhythm · no external song required</p></div>
+          <div style="display:flex;align-items:center;gap:12px"><div class="sports-bars" id="sportsBeatBars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><button class="btn" id="sportsMusicBtn">▶ Music: OFF</button></div>
+        </div>
+        <p class="sports-note">Turn the background beat on or off whenever you like. Audio begins only after you press the music button because browsers require a user gesture.</p>
+      </div>
+    </div>
   </section>
   <footer class="footer"><span>© 2026 SUKRIT’S CREATION. All rights reserved.</span><span>SMART SHOE · LIVE OBSTACLE AWARENESS</span></footer>
 </main>
@@ -365,6 +420,76 @@ $('saveParentBtn').addEventListener('click',()=>{
 });
 $('sendParentBtn').addEventListener('click',sendParentAlert);
 try{parentPhone=localStorage.getItem('smartShoeParentPhone')||'';$('parentPhone').value=parentPhone;}catch(e){}
+
+
+// Independent sports dashboard logic. It reads the existing stepCount and does not alter sensor packets.
+let sportsMode='walking',sportsActive=false,sportsStartTime=0,sportsElapsedMs=0,sportsStepBaseline=0,sportsTimer=null,sportsAudio=null,sportsMusicTimer=null,sportsMusicOn=false,sportsBeatIndex=0;
+const sportsConfig={walking:{stride:0.70,met:3.5},jogging:{stride:0.90,met:7.0},running:{stride:1.05,met:9.8}};
+function sportsSessionSteps(){return Math.max(0,stepCount-sportsStepBaseline);}
+function sportsElapsed(){return sportsElapsedMs+(sportsActive?Date.now()-sportsStartTime:0);}
+function sportsFormatTime(ms){const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),r=s%60;return h?String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(r).padStart(2,'0'):String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');}
+function updateSportsStats(){
+ const steps=sportsSessionSteps(),elapsed=sportsElapsed(),minutes=elapsed/60000,weight=Math.min(250,Math.max(20,Number($('sportsWeight').value)||70)),cfg=sportsConfig[sportsMode];
+ const km=steps*cfg.stride/1000,kcal=cfg.met*3.5*weight/200*minutes,cadence=minutes>0?Math.round(steps/minutes):0;
+ $('sportsSteps').textContent=steps.toLocaleString();
+ $('sportsDistance').textContent=km.toFixed(2)+' km';
+ $('sportsCalories').textContent=kcal.toFixed(1)+' kcal';
+ $('sportsTime').textContent=sportsFormatTime(elapsed);
+ $('sportsCadence').textContent=cadence+' steps/min average';
+ $('sportsSessionStatus').textContent=sportsActive?'SESSION LIVE':elapsed>0?'SESSION PAUSED':'READY';
+ $('sportsSessionStatus').className=sportsActive?'sports-live':'';
+ $('sportsModeLabel').textContent=sportsMode.toUpperCase()+' MODE';
+}
+function setSportsMode(mode){
+ if(!sportsConfig[mode])return;sportsMode=mode;
+ document.querySelectorAll('[data-sport-mode]').forEach(b=>b.classList.toggle('selected',b.dataset.sportMode===mode));
+ updateSportsStats();
+}
+function startSportsSession(){
+ if(sportsActive)return;
+ sportsStepBaseline=stepCount;sportsStartTime=Date.now();sportsActive=true;
+ $('sportsStartBtn').disabled=true;$('sportsStopBtn').disabled=false;
+ if(sportsTimer)clearInterval(sportsTimer);sportsTimer=setInterval(updateSportsStats,500);
+ updateSportsStats();toast('Sports session started. Steps will be counted from now.');
+}
+function stopSportsSession(){
+ if(!sportsActive)return;
+ sportsElapsedMs+=Date.now()-sportsStartTime;sportsActive=false;
+ if(sportsTimer){clearInterval(sportsTimer);sportsTimer=null;}
+ $('sportsStartBtn').disabled=false;$('sportsStopBtn').disabled=true;updateSportsStats();toast('Sports session paused. Your stats are saved on this page.');
+}
+function resetSportsSession(){
+ stopSportsSession();sportsElapsedMs=0;sportsStartTime=0;sportsStepBaseline=stepCount;updateSportsStats();toast('Sports session statistics reset.');
+}
+function sportsTone(freq,duration,type='sine',gain=.06,when=0){
+ if(!sportsAudio)return;const t=sportsAudio.currentTime+when,osc=sportsAudio.createOscillator(),amp=sportsAudio.createGain();
+ osc.type=type;osc.frequency.setValueAtTime(freq,t);amp.gain.setValueAtTime(.0001,t);amp.gain.exponentialRampToValueAtTime(gain,t+.008);amp.gain.exponentialRampToValueAtTime(.0001,t+duration);
+ osc.connect(amp);amp.connect(sportsAudio.destination);osc.start(t);osc.stop(t+duration+.02);
+}
+function sportsBeat(){
+ if(!sportsAudio||sportsAudio.state!=='running')return;
+ const i=sportsBeatIndex++%8;
+ if(i%4===0)sportsTone(75,.18,'sine',.16);
+ else if(i%4===2)sportsTone(180,.09,'triangle',.055);
+ sportsTone(i%2?3200:2400,.025,'square',.009);
+}
+async function toggleSportsMusic(){
+ if(sportsMusicOn){sportsMusicOn=false;if(sportsMusicTimer)clearInterval(sportsMusicTimer);sportsMusicTimer=null;if(sportsAudio){try{await sportsAudio.close();}catch(e){}sportsAudio=null;}$('sportsMusicBtn').textContent='▶ Music: OFF';$('sportsBeatBars').classList.remove('playing');return;}
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC){toast('This browser does not support background audio.');return;}
+  sportsAudio=new AC();await sportsAudio.resume();sportsMusicOn=true;sportsBeatIndex=0;sportsBeat();sportsMusicTimer=setInterval(sportsBeat,360);
+  $('sportsMusicBtn').textContent='Ⅱ Music: ON';$('sportsBeatBars').classList.add('playing');
+ }catch(e){sportsMusicOn=false;toast('Could not start the sports beat: '+e.message);}
+}
+$('sportsJumpBtn').addEventListener('click',()=>{$('sportsDashboard').scrollIntoView({behavior:'smooth',block:'start'});});
+document.querySelectorAll('[data-sport-mode]').forEach(b=>b.addEventListener('click',()=>setSportsMode(b.dataset.sportMode)));
+$('sportsStartBtn').addEventListener('click',startSportsSession);
+$('sportsStopBtn').addEventListener('click',stopSportsSession);
+$('sportsResetBtn').addEventListener('click',resetSportsSession);
+$('sportsMusicBtn').addEventListener('click',toggleSportsMusic);
+$('sportsWeight').addEventListener('input',updateSportsStats);
+window.addEventListener('beforeunload',()=>{if(sportsMusicTimer)clearInterval(sportsMusicTimer);if(sportsTimer)clearInterval(sportsTimer);if(sportsAudio)sportsAudio.close();});
+updateSportsStats();
 
 function setMapStatus(text,isBad){$('mapStatus').textContent=text;$('mapChip').textContent=isBad?'MAP ISSUE':'MAP READY';$('mapChip').className='status-chip '+(isBad?'offline':'online');}
 function initMap(){
