@@ -3,84 +3,108 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07111f">
-<title>SMART SHOE | Parent Safety Dashboard</title>
-<link rel="preconnect" href="https://unpkg.com">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<meta name="theme-color" content="#07101d">
+<title>SMART SHOE | Safety Dashboard</title>
+<link rel="preconnect" href="https://tile.openstreetmap.org">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <style>
-:root{--bg:#07111f;--panel:#101e30;--panel2:#14263b;--line:#263b52;--muted:#8fa4bb;--text:#edf5ff;--cyan:#42d9e8;--green:#45d69a;--amber:#ffbd59;--red:#ff647c}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#132c46 0,transparent 40%),var(--bg);color:var(--text);font:15px Inter,system-ui,Segoe UI,Arial,sans-serif}
-header{min-height:76px;padding:16px 4vw;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:16px;flex-wrap:wrap;background:#07111fdd;position:sticky;top:0;z-index:1000;backdrop-filter:blur(14px)}
-.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.08em}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#42d9e8,#3279d8);display:grid;place-items:center;color:#06111d;font-size:23px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.16em;margin-top:3px}
-.header-right,.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pill{padding:8px 12px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:12px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:7px}.dot.ok{background:var(--green);box-shadow:0 0 12px #45d69a88}
-main{max-width:1500px;margin:auto;padding:26px 4vw 60px}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:22px;flex-wrap:wrap}.eyebrow{color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:.2em}.hero h1{font-size:clamp(26px,4vw,40px);margin:8px 0}.sub{color:var(--muted);max-width:700px;line-height:1.6}
-button{border:1px solid #31506a;background:#17304a;color:var(--text);border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;transition:.2s}button:hover{filter:brightness(1.2);transform:translateY(-1px)}button.primary{background:linear-gradient(135deg,#42d9e8,#3895c9);border:0;color:#04121e}button.danger{border-color:#793c4b;background:#3a1d2a}button:disabled{opacity:.45;cursor:not-allowed}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}.card{background:linear-gradient(155deg,#14263b,#0e1b2c);border:1px solid var(--line);border-radius:17px;padding:18px;min-width:0;box-shadow:0 10px 35px #0002}.metric-label{font-size:11px;color:var(--muted);letter-spacing:.13em;font-weight:800}.metric{font-size:clamp(25px,3vw,35px);font-weight:800;margin:12px 0 5px;letter-spacing:-.04em}.metric small{font-size:13px;color:var(--muted);letter-spacing:0}.hint{font-size:12px;color:var(--muted)}.green{color:var(--green)}.cyan{color:var(--cyan)}.amber{color:var(--amber)}.red{color:var(--red)}
-.section-title{display:flex;justify-content:space-between;align-items:center;margin:25px 0 12px;gap:12px}.section-title h2{font-size:17px;margin:0}.section-title span{font-size:11px;color:var(--muted)}
-.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.9fr);gap:14px}.map-wrap{height:390px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#0a1726}#map{height:100%;width:100%}.map-note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
-.sensor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.sensor{background:#0a1828;border:1px solid var(--line);padding:13px;border-radius:12px}.sensor b{display:block;font-size:24px;margin:8px 0}.sensor span{font-size:11px;color:var(--muted);letter-spacing:.1em}
-.radar-wrap{height:300px;display:grid;place-items:center;background:radial-gradient(circle,#142a40,#0a1726);border-radius:13px;border:1px solid var(--line)}canvas{max-width:100%}
-.field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.field label{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.1em}.field input{width:100%;background:#081522;border:1px solid var(--line);border-radius:9px;padding:12px;color:var(--text);outline:none}.field input:focus{border-color:var(--cyan)}
-.statusline{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid #23374b;font-size:13px}.statusline:last-child{border:0}.statusline span{color:var(--muted);text-align:right;overflow-wrap:anywhere}
-.activity{max-height:220px;overflow:auto}.event{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #23374b;font-size:12px}.event time{color:var(--muted);white-space:nowrap}
-footer{border-top:1px solid var(--line);padding:20px 4vw;color:var(--muted);font-size:11px;line-height:1.6}.notice{padding:12px 14px;background:#102b3b;border:1px solid #22516a;border-radius:12px;color:#b9dbe9;font-size:12px;line-height:1.6;margin:15px 0}.tag{font-size:10px;padding:5px 8px;border-radius:7px;background:#17364b;color:var(--cyan);font-weight:800}
-.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.error{color:#ff9aaa;font-size:12px;min-height:18px;line-height:1.5}.muted{color:var(--muted)}
-@media(max-width:950px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}@media(max-width:520px){main{padding:20px 4vw}.grid{gap:9px}.card{padding:14px}.map-wrap{height:320px}.header-right{width:100%;justify-content:space-between}.hero{align-items:flex-start}.auth-grid{grid-template-columns:1fr}}
+:root{--bg:#07101d;--panel:#101d2d;--panel2:#14263a;--line:#263b52;--muted:#91a6bc;--text:#edf6ff;--cyan:#4de1e8;--blue:#579bff;--green:#53dda4;--amber:#ffc46a;--red:#ff6d83;--shadow:0 18px 50px #0005}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% -8%,#173654 0,transparent 34%),radial-gradient(ellipse at 92% 15%,#102b3c 0,transparent 27%),var(--bg);color:var(--text);font:14px Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+header{height:auto;min-height:76px;padding:14px clamp(16px,4vw,60px);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid #ffffff12;background:#07101ddd;backdrop-filter:blur(18px);position:sticky;top:0;z-index:1000}
+.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:.12em}.brand-icon{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(140deg,var(--cyan),#4188ed);color:#04131e;font-size:24px;box-shadow:0 8px 25px #4de1e833}.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:.2em;margin-top:4px}
+.head-right,.actions,.inline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:11px;background:#0d1a29}.lamp{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px #ffc46a18}.lamp.on{background:var(--green);box-shadow:0 0 0 4px #53dda422,0 0 14px #53dda477}
+main{max-width:1500px;margin:auto;padding:28px clamp(16px,4vw,60px) 64px}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:22px;flex-wrap:wrap;margin:8px 0 24px}.eyebrow{color:var(--cyan);font-size:10px;font-weight:900;letter-spacing:.22em}.hero h1{font-size:clamp(28px,4vw,43px);letter-spacing:-.045em;margin:9px 0 8px}.hero p{color:var(--muted);max-width:680px;line-height:1.65;margin:0}.hero-mark{color:#7e9ab6;font-size:11px;letter-spacing:.12em}
+button{border:1px solid #35516c;background:#172c42;color:var(--text);border-radius:11px;padding:11px 15px;font:700 12px inherit;cursor:pointer;transition:.18s}button:hover{transform:translateY(-1px);filter:brightness(1.15)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.primary{background:linear-gradient(135deg,var(--cyan),#5b9df5);border:0;color:#061421}.soft{background:#102235}.danger{border-color:#704151;background:#321d2a}
+.notice{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid #2a5366;background:linear-gradient(110deg,#102b3b,#102033);border-radius:14px;color:#bdd9e7;font-size:12px;line-height:1.6;margin:18px 0 22px}.notice strong{color:#fff}.notice-icon{font-size:17px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 13px}.section-head h2{font-size:16px;margin:0;letter-spacing:-.02em}.section-head small{color:var(--muted);font-size:10px;letter-spacing:.12em}.tag{font-size:9px;letter-spacing:.12em;font-weight:900;padding:6px 9px;border:1px solid #2a5365;background:#102d3e;color:var(--cyan);border-radius:8px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{min-width:0;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#14263aee,#0d1929f5);padding:18px;box-shadow:var(--shadow)}.metric-label{font-size:9px;color:var(--muted);font-weight:900;letter-spacing:.16em}.metric{font-size:clamp(23px,2.8vw,34px);font-weight:850;letter-spacing:-.05em;margin:12px 0 5px;overflow-wrap:anywhere}.metric small{font-size:12px;color:var(--muted);letter-spacing:0}.hint{font-size:11px;color:var(--muted);line-height:1.5}.cyan{color:var(--cyan)}.green{color:var(--green)}.amber{color:var(--amber)}.red{color:var(--red)}
+.two-col{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:14px}.three-col{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.map-card{padding:12px}.map-wrap{height:390px;border-radius:13px;overflow:hidden;border:1px solid #2a4157;background:#0a1725;position:relative}#map{height:100%;width:100%;z-index:1}.map-caption{padding:10px 4px 2px;color:var(--muted);font-size:11px;line-height:1.55}.map-status{position:absolute;z-index:500;top:12px;left:12px;padding:7px 10px;background:#081725e8;border:1px solid #3b536b;border-radius:8px;color:#e7f5ff;font-size:10px;pointer-events:none;backdrop-filter:blur(8px)}
+.sensor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sensor{background:#0a1725;border:1px solid #263d53;padding:14px;border-radius:13px;position:relative;overflow:hidden}.sensor:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}.sensor.warn:before{background:var(--amber)}.sensor.danger-state:before{background:var(--red)}.sensor-label{font-size:9px;color:var(--muted);letter-spacing:.14em;font-weight:900}.sensor-value{font-size:25px;font-weight:850;margin:9px 0 3px}.sensor-value small{font-size:11px;color:var(--muted);font-weight:600}.sensor-foot{font-size:10px;color:var(--muted)}
+.radar-card{padding:17px}.radar-stage{height:355px;border-radius:15px;border:1px solid #29445c;background:radial-gradient(ellipse at 50% 48%,#142e43 0,#0a1929 66%,#081522 100%);display:grid;place-items:center;overflow:hidden;position:relative}.radar-stage:after{content:"";position:absolute;inset:0;background:linear-gradient(#ffffff04 1px,transparent 1px),linear-gradient(90deg,#ffffff04 1px,transparent 1px);background-size:28px 28px;pointer-events:none}#radar{width:min(100%,350px);height:auto;position:relative;z-index:1}.radar-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:10px}.legend-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:7px;margin:12px 0}.field label{font-size:9px;color:var(--muted);font-weight:900;letter-spacing:.14em}.field input{width:100%;background:#081522;border:1px solid #2b4258;border-radius:10px;padding:12px;color:var(--text);outline:none;font:13px inherit}.field input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #4de1e817}.error{color:#ff9eae;font-size:11px;line-height:1.5;min-height:18px;margin-top:10px;overflow-wrap:anywhere}.success{color:var(--green)}.status-list{margin-top:12px}.status-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:11px 0;border-bottom:1px solid #ffffff10;font-size:11px}.status-row:last-child{border:0}.status-row span{color:var(--muted);text-align:right;overflow-wrap:anywhere}
+.activity{max-height:240px;overflow:auto}.event{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #ffffff10;font-size:11px}.event:last-child{border:0}.event time{color:var(--muted);white-space:nowrap}.fineprint{font-size:10px;color:var(--muted);line-height:1.65;margin-top:14px}
+.leaflet-container{background:#0c1b29}.leaflet-control-attribution{font-size:9px!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#102337;color:#edf6ff}.leaflet-popup-content{font-size:12px}
+footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:var(--muted);font-size:10px;line-height:1.7}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.three-col{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){main{padding-top:20px}.grid{gap:9px}.card{padding:14px}.metric{font-size:25px}.map-wrap{height:320px}.radar-stage{height:320px}.form-grid{grid-template-columns:1fr}.three-col{grid-template-columns:1fr}.head-right{width:100%;justify-content:space-between}.hero{align-items:flex-start}}
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">👟</div><div>SMART SHOE<small>PARENT SAFETY NETWORK</small></div></div><div class="header-right"><span class="pill"><i class="dot" id="liveDot"></i><span id="connectionText">Not connected</span></span><span class="pill" id="clock">--:--:--</span></div></header>
+<header>
+ <div class="brand"><div class="brand-icon">👟</div><div>SMART SHOE<small>PARENT SAFETY NETWORK</small></div></div>
+ <div class="head-right"><span class="chip"><i class="lamp" id="liveLamp"></i><span id="connectionText">Not connected</span></span><span class="chip" id="clock">--:--:--</span></div>
+</header>
 <main>
-<section class="hero"><div><div class="eyebrow">CONNECTED CHILD MONITORING</div><h1>Parent Dashboard</h1><div class="sub">Monitor the SMART SHOE prototype's four ultrasonic sensors, connection status and available location data.</div></div><div class="toolbar"><button class="primary" id="demoBtn">▶ Start demo</button></div></section>
-<div class="notice"><b>Live mode:</b> Connect using Firebase (Wi-Fi) or BLE. Demo mode is simulated and is never presented as real sensor data. The current ESP32 firmware sends four distance readings; it does not include GPS coordinates, steps, accelerometer or battery telemetry.</div>
+ <section class="hero">
+  <div><div class="eyebrow">CONNECTED CHILD MONITORING</div><h1>Parent Dashboard</h1><p>A clear view of obstacle distances, device connectivity and location telemetry from your SMART SHOE prototype.</p></div>
+  <div class="actions"><button class="primary" id="demoBtn">▶ &nbsp;Start demo</button></div>
+ </section>
+ <div class="notice"><span class="notice-icon">ⓘ</span><div><strong>Live data and demo data are kept separate.</strong> Your current ESP32 firmware sends four ultrasonic distances and device status, but no GPS. Live map coordinates appear only when a GPS source uploads them. Demo mode uses clearly labelled simulated coordinates and readings.</div></div>
 
-<div class="section-title"><h2>Live device overview</h2><span class="tag" id="modeTag">WAITING FOR DATA</span></div>
-<div class="grid">
-<div class="card"><div class="metric-label">CHILD LOCATION</div><div class="metric cyan" id="locationState">Not available</div><div class="hint" id="coordinates">This firmware does not send GPS</div></div>
-<div class="card"><div class="metric-label">NEAREST OBSTACLE</div><div class="metric amber" id="nearest">— <small>cm</small></div><div class="hint" id="obstacleState">Waiting for sensor data</div></div>
-<div class="card"><div class="metric-label">DEVICE STATUS</div><div class="metric" id="deviceState">Offline</div><div class="hint" id="deviceStatusHint">Waiting for device status</div></div>
-<div class="card"><div class="metric-label">LAST DASHBOARD UPDATE</div><div class="metric" id="lastUpdate">—</div><div class="hint" id="source">No data source</div></div>
-</div>
+ <div class="section-head"><h2>Device overview</h2><span class="tag" id="modeTag">WAITING FOR DATA</span></div>
+ <div class="grid">
+  <div class="card"><div class="metric-label">LOCATION STATUS</div><div class="metric cyan" id="locationState">Unavailable</div><div class="hint" id="coordinates">No GPS coordinates received</div></div>
+  <div class="card"><div class="metric-label">NEAREST OBSTACLE</div><div class="metric amber" id="nearest">— <small>cm</small></div><div class="hint" id="obstacleState">Waiting for sensor data</div></div>
+  <div class="card"><div class="metric-label">DEVICE STATUS</div><div class="metric" id="deviceState">Offline</div><div class="hint" id="deviceStatusHint">Waiting for device status</div></div>
+  <div class="card"><div class="metric-label">LAST UPDATE</div><div class="metric" id="lastUpdate">—</div><div class="hint" id="source">No data source</div></div>
+ </div>
 
-<div class="section-title"><h2>Location map</h2><span class="tag">OPEN STREET MAP</span></div>
-<div class="card"><div class="map-wrap"><div id="map"></div></div><div class="map-note" id="mapNote">No GPS coordinates received. A map marker will appear only when the shoe or a paired child-side phone uploads latitude and longitude to the database.</div></div>
+ <div class="section-head"><h2>Location map</h2><span class="tag">OPENSTREETMAP</span></div>
+ <div class="card map-card"><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">The map is ready. A live marker requires actual latitude and longitude from the device or a paired phone.</div></div>
 
-<div class="section-title"><h2>Four-direction obstacle monitor</h2><span>LIVE RANGE DATA</span></div>
-<div class="layout">
-<div class="card"><div class="sensor-grid">
-<div class="sensor"><span>FRONT DISTANCE</span><b id="front">— cm</b><div class="hint">Forward obstacle sensor</div></div>
-<div class="sensor"><span>LEFT DISTANCE</span><b id="left">— cm</b><div class="hint">Left obstacle sensor</div></div>
-<div class="sensor"><span>RIGHT DISTANCE</span><b id="right">— cm</b><div class="hint">Right obstacle sensor</div></div>
-<div class="sensor"><span>LOWER DISTANCE</span><b id="lower">— cm</b><div class="hint">Downward obstacle sensor</div></div>
-</div><div class="statusline"><b>Device ID</b><span id="deviceId">smartshoe_001</span></div><div class="statusline"><b>Wi-Fi</b><span id="wifiState">Unknown</span></div><div class="statusline"><b>Bluetooth</b><span id="bleState">Unknown</span></div></div>
-<div class="card"><div class="section-title" style="margin-top:0"><h2>Obstacle radar</h2><span>TOP VIEW · SCHEMATIC</span></div><div class="radar-wrap"><canvas id="radar" width="330" height="280"></canvas></div><div class="map-note">The radar displays the four sensor ranges in their configured directions. It is a range visualization, not a camera or a full 3D reconstruction.</div></div>
-</div>
+ <div class="section-head"><h2>Four-direction obstacle monitor</h2><small>FRONT · LEFT · RIGHT · LOWER</small></div>
+ <div class="two-col">
+  <div class="card">
+   <div class="sensor-grid">
+    <div class="sensor" id="sensor-front"><div class="sensor-label">FRONT DISTANCE</div><div class="sensor-value" id="front">— <small>cm</small></div><div class="sensor-foot">Forward obstacle sensor</div></div>
+    <div class="sensor" id="sensor-left"><div class="sensor-label">LEFT DISTANCE</div><div class="sensor-value" id="left">— <small>cm</small></div><div class="sensor-foot">Left obstacle sensor</div></div>
+    <div class="sensor" id="sensor-right"><div class="sensor-label">RIGHT DISTANCE</div><div class="sensor-value" id="right">— <small>cm</small></div><div class="sensor-foot">Right obstacle sensor</div></div>
+    <div class="sensor" id="sensor-lower"><div class="sensor-label">LOWER DISTANCE</div><div class="sensor-value" id="lower">— <small>cm</small></div><div class="sensor-foot">Downward obstacle sensor</div></div>
+   </div>
+   <div class="status-list">
+    <div class="status-row"><b>Device ID</b><span id="deviceId">smartshoe_001</span></div>
+    <div class="status-row"><b>Wi-Fi</b><span id="wifiState">Unknown</span></div>
+    <div class="status-row"><b>Bluetooth</b><span id="bleState">Unknown</span></div>
+   </div>
+  </div>
+  <div class="card radar-card">
+   <div class="section-head" style="margin:0 0 12px"><h2>Obstacle radar</h2><span class="tag">TOP VIEW</span></div>
+   <div class="radar-stage"><canvas id="radar" width="380" height="340"></canvas></div>
+   <div class="radar-legend"><span><i class="legend-dot" style="background:#53dda4"></i>Clear ≥ 120 cm</span><span><i class="legend-dot" style="background:#ffc46a"></i>Caution 50–119 cm</span><span><i class="legend-dot" style="background:#ff6d83"></i>Near obstacle &lt; 50 cm</span></div>
+   <div class="fineprint">Radar is a schematic range view, not a camera or a 3D scan. Distances are drawn from the four sensor directions.</div>
+  </div>
+ </div>
 
-<div class="section-title"><h2>Connect to your shoe</h2><span>CHOOSE ONE OR BOTH</span></div>
-<div class="layout">
-<div class="card">
-<div class="section-title" style="margin-top:0"><h2>Firebase cloud connection</h2><span class="tag">WI-FI</span></div>
-<div class="field"><label>FIREBASE EMAIL</label><input id="email" type="email" autocomplete="username" placeholder="Your Firebase Authentication email"></div>
-<div class="field"><label>FIREBASE PASSWORD</label><input id="password" type="password" autocomplete="current-password" placeholder="Enter password privately"></div>
-<div class="toolbar"><button class="primary" id="loginBtn">Sign in & connect</button><button id="logoutBtn" disabled>Sign out</button></div>
-<div class="error" id="firebaseError" role="status"></div>
-<div class="statusline"><b>Cloud connection</b><span id="cloudStatus">Not signed in</span></div>
-<div class="map-note">Reads only <code>devices/smartshoe_001</code> from your Realtime Database. Your password is entered at runtime and is not saved in this website.</div>
-</div>
-<div class="card">
-<div class="section-title" style="margin-top:0"><h2>Bluetooth connection</h2><span class="tag">BLE</span></div>
-<div class="toolbar"><button id="bleBtn">Connect ESP32-S3 BLE</button><button id="disconnectBtn" class="danger" disabled>Disconnect</button></div>
-<div class="statusline"><b>BLE status</b><span id="bleStatus">Disconnected</span></div>
-<div class="map-note">Uses the service and characteristic UUIDs in your ESP32 code and reads its comma-separated notification: front,left,right,lower. Use Chrome/Edge over HTTPS with Bluetooth enabled.</div>
-</div>
-</div>
+ <div class="section-head"><h2>Device connections</h2><small>CONNECT THROUGH FIREBASE OR BLE</small></div>
+ <div class="two-col">
+  <div class="card">
+   <div class="section-head" style="margin:0 0 8px"><h2>Firebase cloud</h2><span class="tag">WI-FI</span></div>
+   <div class="form-grid">
+    <div class="field"><label>FIREBASE EMAIL</label><input id="email" type="email" autocomplete="username" placeholder="Firebase account email"></div>
+    <div class="field"><label>FIREBASE PASSWORD</label><input id="password" type="password" autocomplete="current-password" placeholder="Enter password"></div>
+   </div>
+   <div class="actions"><button class="primary" id="loginBtn">Sign in &amp; connect</button><button class="soft" id="logoutBtn" disabled>Sign out</button></div>
+   <div class="error" id="firebaseError" role="status" aria-live="polite"></div>
+   <div class="status-list"><div class="status-row"><b>Authentication</b><span id="authStatus">Not signed in</span></div><div class="status-row"><b>Database read</b><span id="cloudStatus">Not connected</span></div></div>
+   <div class="fineprint">Uses Firebase Email/Password Authentication and reads <code>devices/smartshoe_001</code>. Password is used only for sign-in and is not stored in this page. A database permission error means your Realtime Database Rules need to allow this signed-in account to read the device path.</div>
+  </div>
+  <div class="card">
+   <div class="section-head" style="margin:0 0 8px"><h2>Bluetooth connection</h2><span class="tag">BLE</span></div>
+   <p class="hint">Connect directly to the classic ESP32 board's BLE service. The device name is SmartShoe.</p>
+   <div class="actions"><button class="primary" id="bleBtn">Connect SmartShoe BLE</button><button class="danger" id="disconnectBtn" disabled>Disconnect</button></div>
+   <div class="status-list"><div class="status-row"><b>BLE status</b><span id="bleStatus">Disconnected</span></div><div class="status-row"><b>Browser support</b><span id="bleSupport">Checking…</span></div></div>
+   <div class="fineprint">Requires Chrome or Edge on HTTPS, Bluetooth enabled, and the ESP32 advertising the service UUID in its firmware. Notification format remains <code>front,left,right,lower</code>.</div>
+  </div>
+ </div>
 
-<div class="section-title"><h2>Safety events</h2><span>RECENT DASHBOARD EVENTS</span></div>
-<div class="card activity" id="events"><div class="event"><span>Dashboard initialized</span><time>Just now</time></div></div>
-<div class="notice"><b>Important:</b> This is a prototype, not a certified medical, emergency or child-safety service. Use location tracking only with appropriate knowledge and consent. Secure Firebase Database Rules are required; never make the database publicly writable.</div>
+ <div class="section-head"><h2>Recent safety events</h2><small>LOCAL DASHBOARD ACTIVITY</small></div>
+ <div class="card activity" id="events"><div class="event"><span>Dashboard initialized</span><time>Just now</time></div></div>
+ <div class="notice"><span class="notice-icon">⚠</span><div><strong>Prototype notice.</strong> This is an academic prototype, not a certified child-safety or emergency-response service. Secure Firebase Database Rules are required. Do not use public read/write rules or rely on this dashboard as the only safety measure.</div></div>
 </main>
-<footer>SMART SHOE · Parent Safety Dashboard · GitHub Pages static frontend connected to Firebase Realtime Database and ESP32-S3 BLE.</footer>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<footer>SMART SHOE · Parent Safety Dashboard · GitHub Pages · Firebase Realtime Database · ESP32 BLE · © Prototype interface</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -89,26 +113,213 @@ const DATABASE_URL='https://smart-shoe-af984-default-rtdb.asia-southeast1.fireba
 const DEVICE_ID='smartshoe_001';
 const SERVICE_UUID='12345678-1234-1234-1234-123456789000';
 const CHARACTERISTIC_UUID='12345678-1234-1234-1234-123456789001';
-let map,marker,route,points=[],demoTimer=null,cloudTimer=null,bleDevice=null,bleCharacteristic=null;
-let idToken='',refreshToken='',authTimer=null,lastSensorData=null;
-function initMap(){map=L.map('map').setView([23.5,80.0],4);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);route=L.polyline([],{color:'#42d9e8',weight:4,opacity:.85}).addTo(map)}
-function addEvent(message){const el=document.createElement('div'),a=document.createElement('span'),b=document.createElement('time');el.className='event';a.textContent=message;b.textContent=new Date().toLocaleTimeString();el.append(a,b);$('events').prepend(el);while($('events').children.length>30)$('events').lastChild.remove()}
-function setConnection(ok,message){$('liveDot').className='dot'+(ok?' ok':'');$('connectionText').textContent=message}
+let map=null,marker=null,route=null,demoTimer=null,cloudTimer=null,tokenTimer=null;
+let bleDevice=null,bleCharacteristic=null,idToken='',refreshToken='',demoIndex=0;
+let mapReady=false,lastSource='';
+
+function addEvent(message){const row=document.createElement('div'),label=document.createElement('span'),time=document.createElement('time');row.className='event';label.textContent=message;time.textContent=new Date().toLocaleTimeString();row.append(label,time);$('events').prepend(row);while($('events').children.length>35)$('events').lastElementChild.remove()}
+function setConnection(ok,label){$('liveLamp').classList.toggle('on',!!ok);$('connectionText').textContent=label}
 function numberOrNull(value){if(value===null||value===undefined||value==='')return null;const n=Number(value);return Number.isFinite(n)?n:null}
-function updateLocation(data){const lat=numberOrNull(data.lat??data.latitude??data.gps?.lat??data.location?.lat),lon=numberOrNull(data.lon??data.lng??data.longitude??data.gps?.lon??data.gps?.lng??data.location?.lon??data.location?.lng);if(lat===null||lon===null||Math.abs(lat)>90||Math.abs(lon)>180)return false;const p=[lat,lon];points.push(p);if(points.length>300)points.shift();route.setLatLngs(points);if(!marker)marker=L.marker(p).addTo(map).bindPopup('SMART SHOE location');else marker.setLatLng(p);map.setView(p,16);$('locationState').textContent='GPS available';$('coordinates').textContent=lat.toFixed(6)+', '+lon.toFixed(6);$('mapNote').textContent='Location received from device/cloud telemetry. Accuracy depends on the GPS source.';return true}
-function drawRadar(v={}){const c=$('radar'),ctx=c.getContext('2d'),w=c.width,h=c.height,cx=w/2,cy=h/2+10;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#35536d';ctx.lineWidth=1;[35,70,105].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,2*Math.PI);ctx.stroke()});ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy-110);ctx.moveTo(cx,cy);ctx.lineTo(cx-110,cy);ctx.moveTo(cx,cy);ctx.lineTo(cx+110,cy);ctx.stroke();ctx.fillStyle='#8fa4bb';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText('FRONT',cx,14);ctx.fillText('LEFT',25,cy-8);ctx.fillText('RIGHT',w-28,cy-8);ctx.fillText('SHOE',cx,cy+18);const dirs=[['front',cx,cy,0,-1],['left',cx,cy,-1,0],['right',cx,cy,1,0],['lower',cx,cy,0,1]];dirs.forEach(([key,x0,y0,dx,dy])=>{const n=numberOrNull(v[key]);if(n===null||n<2||n>400)return;const dist=Math.max(12,Math.min(105,n/2.2)),x=x0+dx*dist,y=y0+dy*dist;ctx.fillStyle=n<50?'#ff647c':'#ffbd59';ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#edf5ff';ctx.fillText(n.toFixed(0)+'cm',x,y-12)})}
-function renderSensors(sensor,source,status){if(!sensor||typeof sensor!=='object')return;const values={front:numberOrNull(sensor.front),left:numberOrNull(sensor.left),right:numberOrNull(sensor.right),lower:numberOrNull(sensor.lower)};for(const [key,value] of Object.entries(values))$(key).textContent=value===null||value>=900?'— cm':value.toFixed(1)+' cm';const valid=Object.values(values).filter(v=>v!==null&&v>=2&&v<=400);const nearest=valid.length?Math.min(...valid):null;$('nearest').innerHTML=nearest===null?'— <small>cm</small>':nearest.toFixed(1)+' <small>cm</small>';$('obstacleState').textContent=nearest===null?'No valid range reading':nearest<50?'⚠ Nearby obstacle':nearest<120?'Obstacle detected':'No close obstacle detected';drawRadar(values);$('lastUpdate').textContent=new Date().toLocaleTimeString();$('source').textContent=source;$('modeTag').textContent=source.toUpperCase();lastSensorData=sensor;if(status){$('deviceState').textContent=status.online===true?'Online':'Offline';$('deviceStatusHint').textContent=status.online===true?'Device reports online':'Device status reports offline';$('wifiState').textContent=status.wifi===true?'Connected':status.wifi===false?'Disconnected':'Unknown';$('bleState').textContent=status.bluetooth===true?'Available':status.bluetooth===false?'Unavailable':'Unknown'}else{$('deviceState').textContent='Data received';$('deviceStatusHint').textContent='Sensor readings received'}setConnection(true,source+' live');if(nearest!==null&&nearest<50)addEvent('Obstacle warning: '+nearest.toFixed(0)+' cm')}
-function renderFirebaseDevice(device){if(!device||typeof device!=='object'){throw new Error('No device record found at devices/'+DEVICE_ID+'. Check the device ID and firmware upload.')}const sensor=device.sensor_data||device;const status=device.device_status||null;renderSensors(sensor,'Firebase cloud',status);const loc=device.location||device.gps||sensor.location||sensor.gps;if(loc)updateLocation(loc);$('deviceId').textContent=DEVICE_ID}
-function parseBlePayload(text){const clean=text.trim();if(!clean)return false;try{const obj=JSON.parse(clean);const sensor=obj.sensor_data||obj;renderSensors(sensor,'ESP32-S3 BLE',null);if(obj.location||obj.gps)updateLocation(obj.location||obj.gps);return true}catch(_){}const parts=clean.split(',').map(s=>numberOrNull(s));if(parts.length>=4&&parts.slice(0,4).every(v=>v!==null)){renderSensors({front:parts[0],left:parts[1],right:parts[2],lower:parts[3]},'ESP32-S3 BLE',null);return true}return false}
-async function firebaseLogin(){const email=$('email').value.trim(),password=$('password').value;if(!email||!password){$('firebaseError').textContent='Enter your Firebase email and password.';return}const btn=$('loginBtn');btn.disabled=true;$('firebaseError').textContent='Signing in…';try{const response=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+FIREBASE_API_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,returnSecureToken:true})});const result=await response.json();if(!response.ok)throw new Error(result.error?.message||'Authentication failed');idToken=result.idToken;refreshToken=result.refreshToken;$('password').value='';$('logoutBtn').disabled=false;$('cloudStatus').textContent='Authenticated';$('firebaseError').textContent='';addEvent('Firebase authentication successful');await pollFirebase();if(cloudTimer)clearInterval(cloudTimer);cloudTimer=setInterval(pollFirebase,2000);if(authTimer)clearInterval(authTimer);authTimer=setInterval(refreshFirebaseToken,50*60*1000)}catch(error){$('firebaseError').textContent='Firebase sign-in error: '+error.message;$('cloudStatus').textContent='Sign-in failed';addEvent('Firebase sign-in failed')}finally{btn.disabled=false}}
-async function refreshFirebaseToken(){if(!refreshToken)return;try{const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+FIREBASE_API_KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:refreshToken})});const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'Token refresh failed');idToken=d.id_token;refreshToken=d.refresh_token}catch(e){$('firebaseError').textContent='Session expired. Please sign in again.';firebaseLogout()}}
-async function pollFirebase(){if(!idToken)return;try{const url=DATABASE_URL+'/devices/'+encodeURIComponent(DEVICE_ID)+'.json?auth='+encodeURIComponent(idToken);const response=await fetch(url,{cache:'no-store'});const data=await response.json();if(!response.ok)throw new Error(data?.error||'HTTP '+response.status);renderFirebaseDevice(data);$('cloudStatus').textContent='Connected · updated '+new Date().toLocaleTimeString();$('firebaseError').textContent=''}catch(error){$('cloudStatus').textContent='Read failed';$('firebaseError').textContent='Database read error: '+error.message;setConnection(false,'Firebase read error')}}
-function firebaseLogout(){if(cloudTimer)clearInterval(cloudTimer);if(authTimer)clearInterval(authTimer);cloudTimer=authTimer=null;idToken='';refreshToken='';$('logoutBtn').disabled=true;$('cloudStatus').textContent='Signed out';$('deviceState').textContent='Offline';setConnection(false,'Not connected');addEvent('Firebase signed out')}
-async function connectBLE(){if(!navigator.bluetooth){$('bleStatus').textContent='Web Bluetooth unavailable';addEvent('Use Chrome or Edge on HTTPS for BLE');return}try{bleDevice=await navigator.bluetooth.requestDevice({filters:[{services:[SERVICE_UUID]}]});bleDevice.addEventListener('gattserverdisconnected',()=>{$('bleStatus').textContent='Disconnected';$('disconnectBtn').disabled=true;setConnection(false,'BLE disconnected');addEvent('BLE disconnected')});const server=await bleDevice.gatt.connect();const service=await server.getPrimaryService(SERVICE_UUID);bleCharacteristic=await service.getCharacteristic(CHARACTERISTIC_UUID);await bleCharacteristic.startNotifications();bleCharacteristic.addEventListener('characteristicvaluechanged',event=>{const view=event.target.value;const bytes=new Uint8Array(view.buffer,view.byteOffset,view.byteLength);const text=new TextDecoder().decode(bytes);if(!parseBlePayload(text))addEvent('Unrecognized BLE packet: '+text.slice(0,60))});$('bleStatus').textContent='Connected: '+(bleDevice.name||'SmartShoe');$('disconnectBtn').disabled=false;$('deviceId').textContent=DEVICE_ID;addEvent('ESP32-S3 BLE connected');setConnection(true,'BLE connected')}catch(error){$('bleStatus').textContent=error.message;addEvent('BLE connection error: '+error.message)}}
+function mapMessage(text,badge){$('mapNote').textContent=text;$('mapBadge').textContent=badge}
+function initMap(){
+ if(!window.L){mapMessage('The map library did not load. Check internet access or allow cdn.jsdelivr.net, then refresh the page.','MAP LIBRARY UNAVAILABLE');return}
+ try{
+  map=L.map('map',{zoomControl:true,scrollWheelZoom:true}).setView([22.9734,78.6569],5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors',crossOrigin:true}).addTo(map);
+  route=L.polyline([],{color:'#39cfe0',weight:4,opacity:.9,lineCap:'round'}).addTo(map);
+  mapReady=true;mapMessage('Map ready. Live location appears only when real GPS coordinates arrive.','MAP READY · WAITING FOR GPS');
+  setTimeout(()=>map.invalidateSize(),250);
+ }catch(e){mapMessage('Map initialization failed: '+e.message,'MAP ERROR')}
+}
+function putMapPoint(lat,lon,label,kind,follow){
+ if(!mapReady||!Number.isFinite(lat)||!Number.isFinite(lon)||Math.abs(lat)>90||Math.abs(lon)>180)return false;
+ const point=[lat,lon];
+ if(!marker){marker=L.marker(point).addTo(map)}else marker.setLatLng(point);
+ marker.bindPopup('<b>'+label+'</b><br>'+lat.toFixed(5)+', '+lon.toFixed(5));
+ const latlngs=route.getLatLngs();latlngs.push(point);if(latlngs.length>250)latlngs.shift();route.setLatLngs(latlngs);
+ if(follow)map.setView(point,16);
+ $('locationState').textContent=kind==='demo'?'Demo route':'GPS available';
+ $('locationState').className='metric '+(kind==='demo'?'amber':'green');
+ $('coordinates').textContent=(kind==='demo'?'SIMULATED · ':'')+lat.toFixed(5)+', '+lon.toFixed(5);
+ mapMessage(kind==='demo'?'Simulated demo route only — this is not the shoe’s real position.':'Live GPS coordinates received from device/cloud telemetry.','MAP · '+(kind==='demo'?'DEMO ROUTE':'LIVE GPS'));
+ return true;
+}
+function extractLocation(data){
+ if(!data||typeof data!=='object')return null;
+ const candidates=[data,data.location,data.gps,data.sensor_data,data.device_status].filter(Boolean);
+ for(const o of candidates){
+  const lat=numberOrNull(o.lat??o.latitude??o.gps_lat??o.gpsLatitude);
+  const lon=numberOrNull(o.lon??o.lng??o.longitude??o.gps_lon??o.gpsLongitude);
+  if(lat!==null&&lon!==null&&Math.abs(lat)<=90&&Math.abs(lon)<=180)return {lat,lon};
+ }
+ return null;
+}
+function drawRadar(values){
+ const canvas=$('radar'),ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height,cx=w/2,cy=h/2+2,R=133;
+ ctx.clearRect(0,0,w,h);
+ // Radar rings and cross hairs.
+ ctx.save();ctx.strokeStyle='rgba(116,166,199,.25)';ctx.lineWidth=1;
+ [R*.25,R*.5,R*.75,R].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()});
+ ctx.beginPath();ctx.moveTo(cx-R-12,cy);ctx.lineTo(cx+R+12,cy);ctx.moveTo(cx,cy-R-12);ctx.lineTo(cx,cy+R+12);ctx.stroke();
+ ctx.setLineDash([3,6]);ctx.beginPath();ctx.arc(cx,cy,R+12,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+ // Soft directional wedges.
+ const sectors=[{k:'front',a:-Math.PI/2,label:'FRONT'},{k:'right',a:0,label:'RIGHT'},{k:'lower',a:Math.PI/2,label:'LOWER'},{k:'left',a:Math.PI,label:'LEFT'}];
+ sectors.forEach(s=>{
+  const val=numberOrNull(values[s.k]);if(val===null||val<2||val>=900)return;
+  const d=Math.max(10,Math.min(R,val/400*R));
+  const color=val<50?'#ff6d83':val<120?'#ffc46a':'#53dda4';
+  const x=cx+Math.cos(s.a)*d,y=cy+Math.sin(s.a)*d;
+  const grad=ctx.createLinearGradient(cx,cy,x,y);grad.addColorStop(0,color+'00');grad.addColorStop(1,color+'66');
+  ctx.strokeStyle=grad;ctx.lineWidth=13;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.stroke();
+  ctx.fillStyle=color;ctx.shadowColor=color;ctx.shadowBlur=15;ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle='#eaf6ff';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText(Math.round(val)+' cm',x+Math.cos(s.a)*16,y+Math.sin(s.a)*16);
+ });
+ // Direction labels.
+ ctx.fillStyle='#a9bfd2';ctx.font='bold 10px system-ui';ctx.textAlign='center';
+ ctx.fillText('FRONT',cx,16);ctx.fillText('LOWER',cx,h-12);ctx.fillText('LEFT',18,cy+4);ctx.fillText('RIGHT',w-22,cy+4);
+ // Shoe icon in the middle.
+ ctx.save();ctx.translate(cx,cy);ctx.rotate(-Math.PI/2);ctx.fillStyle='#d9f5ff';ctx.strokeStyle='#4de1e8';ctx.lineWidth=2;
+ ctx.beginPath();ctx.roundRect(-9,-20,18,40,9);ctx.fill();ctx.stroke();ctx.fillStyle='#4de1e8';ctx.beginPath();ctx.arc(0,-9,2,0,Math.PI*2);ctx.fill();ctx.restore();
+ ctx.restore();
+}
+function renderSensors(sensor,source,status){
+ if(!sensor||typeof sensor!=='object')return;
+ const values={front:numberOrNull(sensor.front),left:numberOrNull(sensor.left),right:numberOrNull(sensor.right),lower:numberOrNull(sensor.lower)};
+ for(const [key,value] of Object.entries(values)){
+  const node=$('sensor-'+key);node.classList.remove('warn','danger-state');
+  if(value===null||value>=900){$(key).innerHTML='— <small>cm</small>';continue}
+  $(key).innerHTML=value.toFixed(1)+' <small>cm</small>';
+  if(value<50)node.classList.add('danger-state');else if(value<120)node.classList.add('warn');
+ }
+ const valid=Object.values(values).filter(v=>v!==null&&v>=2&&v<=400);
+ const nearest=valid.length?Math.min(...valid):null;
+ $('nearest').innerHTML=nearest===null?'— <small>cm</small>':nearest.toFixed(1)+' <small>cm</small>';
+ $('nearest').className='metric '+(nearest===null?'amber':nearest<50?'red':nearest<120?'amber':'green');
+ $('obstacleState').textContent=nearest===null?'No valid sensor reading':nearest<50?'Warning · obstacle very close':nearest<120?'Caution · obstacle detected':'No close obstacle detected';
+ drawRadar(values);$('lastUpdate').textContent=new Date().toLocaleTimeString();$('source').textContent=source;
+ $('modeTag').textContent=source.toUpperCase();lastSource=source;
+ if(status){
+  $('deviceState').textContent=status.online===true?'Online':status.online===false?'Offline':'Unknown';
+  $('deviceStatusHint').textContent=status.online===true?'Device reports online':'Device status received';
+  $('wifiState').textContent=status.wifi===true?'Connected':status.wifi===false?'Disconnected':'Unknown';
+  $('bleState').textContent=status.bluetooth===true?'Available':status.bluetooth===false?'Unavailable':'Unknown';
+ }else if(source==='Simulated demo'){
+  $('deviceState').textContent='Demo';$('deviceStatusHint').textContent='Simulated values only';$('wifiState').textContent='Demo';$('bleState').textContent='Demo';
+ }else{$('deviceState').textContent='Data received';$('deviceStatusHint').textContent='Sensor readings received'}
+ setConnection(true,source);
+ if(nearest!==null&&nearest<50)addEvent('Obstacle warning · '+nearest.toFixed(0)+' cm');
+}
+function renderFirebaseDevice(device){
+ if(!device||typeof device!=='object')throw new Error('No device record found at devices/'+DEVICE_ID+'. The ESP32 may not have uploaded yet, or DEVICE_ID/database URL may differ.');
+ const sensor=device.sensor_data||device;
+ const status=device.device_status||null;
+ renderSensors(sensor,'Firebase cloud',status);
+ const loc=extractLocation(device);
+ if(loc)putMapPoint(loc.lat,loc.lon,'SMART SHOE · live GPS','live',true);
+ $('deviceId').textContent=DEVICE_ID;
+}
+function parseBlePayload(raw){
+ const clean=raw.trim();if(!clean)return false;
+ try{const obj=JSON.parse(clean);const sensor=obj.sensor_data||obj;renderSensors(sensor,'ESP32 BLE',obj.device_status||null);const loc=extractLocation(obj);if(loc)putMapPoint(loc.lat,loc.lon,'SMART SHOE · BLE GPS','live',true);return true}catch(_){}
+ const parts=clean.split(',').map(numberOrNull);
+ if(parts.length>=4&&parts.slice(0,4).every(v=>v!==null)){renderSensors({front:parts[0],left:parts[1],right:parts[2],lower:parts[3]},'ESP32 BLE',null);return true}
+ return false;
+}
+function explainFirebaseError(code,message){
+ const m=(code||message||'').toUpperCase();
+ if(m.includes('EMAIL_NOT_FOUND'))return 'এই email দিয়ে Firebase account পাওয়া যায়নি। Authentication → Users-এ account আছে কি না দেখুন।';
+ if(m.includes('INVALID_PASSWORD')||m.includes('INVALID_LOGIN_CREDENTIALS'))return 'Email অথবা password ভুল। Firebase Authentication-এর account credentials যাচাই করুন।';
+ if(m.includes('USER_DISABLED'))return 'এই Firebase user account disabled করা আছে। Firebase Console থেকে enable করুন।';
+ if(m.includes('OPERATION_NOT_ALLOWED'))return 'Firebase Authentication-এ Email/Password sign-in method enable করা নেই।';
+ if(m.includes('API_KEY_INVALID')||m.includes('INVALID_API_KEY'))return 'Firebase Web API key ভুল বা project-এর সঙ্গে মেলে না। Project settings থেকে Web API key যাচাই করুন।';
+ if(m.includes('API_KEY_SERVICE_BLOCKED')||m.includes('API_KEY_HTTP_REFERRER_BLOCKED'))return 'API key restriction এই website request block করছে। Firebase/Google Cloud API key-এর HTTP referrer settings যাচাই করুন।';
+ if(m.includes('TOO_MANY_ATTEMPTS'))return 'অনেকবার ভুল sign-in হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।';
+ if(m.includes('NETWORK')||m.includes('FAILED TO FETCH'))return 'Network request ব্যর্থ। Internet, browser extension এবং Firebase endpoint access যাচাই করুন।';
+ if(m.includes('PERMISSION_DENIED')||m.includes('403'))return 'Sign-in হয়েছে, কিন্তু Realtime Database Rules এই account-কে devices/smartshoe_001 read করতে দিচ্ছে না।';
+ if(m.includes('404'))return 'Database URL বা database instance ভুল, অথবা database path পাওয়া যায়নি। Firebase Console থেকে Realtime Database URL মিলিয়ে নিন।';
+ return message||'Firebase request failed. Firebase Console এবং browser network connection যাচাই করুন।';
+}
+async function firebaseLogin(){
+ const email=$('email').value.trim(),password=$('password').value;
+ if(!email||!password){$('firebaseError').textContent='Firebase email এবং password দিন।';return}
+ $('loginBtn').disabled=true;$('firebaseError').textContent='Firebase authentication চলছে…';$('authStatus').textContent='Signing in…';
+ try{
+  const response=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+encodeURIComponent(FIREBASE_API_KEY),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,returnSecureToken:true})});
+  const result=await response.json();
+  if(!response.ok)throw new Error(explainFirebaseError(result.error?.message,result.error?.message));
+  idToken=result.idToken;refreshToken=result.refreshToken;$('password').value='';$('authStatus').textContent='Authenticated';$('logoutBtn').disabled=false;$('firebaseError').textContent='';$('firebaseError').className='error success';
+  addEvent('Firebase authentication successful');
+  await pollFirebase();
+  if(cloudTimer)clearInterval(cloudTimer);cloudTimer=setInterval(pollFirebase,2500);
+  if(tokenTimer)clearInterval(tokenTimer);tokenTimer=setInterval(refreshFirebaseToken,45*60*1000);
+ }catch(error){
+  idToken='';refreshToken='';$('authStatus').textContent='Authentication failed';$('cloudStatus').textContent='Not connected';
+  $('firebaseError').className='error';$('firebaseError').textContent=error.message;addEvent('Firebase connection failed');
+ }finally{$('loginBtn').disabled=false}
+}
+async function refreshFirebaseToken(){
+ if(!refreshToken)return;
+ try{
+  const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+encodeURIComponent(FIREBASE_API_KEY),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'refresh_token',refresh_token:refreshToken})});
+  const d=await r.json();if(!r.ok)throw new Error(d.error?.message||'Token refresh failed');
+  idToken=d.id_token;refreshToken=d.refresh_token;
+ }catch(e){$('firebaseError').textContent='Firebase session expired. Please sign in again.';firebaseLogout()}
+}
+async function pollFirebase(){
+ if(!idToken)return;
+ try{
+  const url=DATABASE_URL+'/devices/'+encodeURIComponent(DEVICE_ID)+'.json?auth='+encodeURIComponent(idToken);
+  const response=await fetch(url,{cache:'no-store'});
+  const data=await response.json();
+  if(!response.ok)throw new Error(explainFirebaseError(data?.error,'HTTP '+response.status));
+  if(data===null)throw new Error('Database connection succeeded, but devices/'+DEVICE_ID+' is empty. Check ESP32 upload and device ID.');
+  renderFirebaseDevice(data);$('cloudStatus').textContent='Connected · '+new Date().toLocaleTimeString();$('firebaseError').textContent='';$('firebaseError').className='error success';
+  if(lastSource!=='Firebase cloud')addEvent('Firebase device data received');
+ }catch(error){$('cloudStatus').textContent='Database read failed';$('firebaseError').className='error';$('firebaseError').textContent=error.message;setConnection(false,'Firebase issue')}
+}
+function firebaseLogout(){
+ if(cloudTimer)clearInterval(cloudTimer);if(tokenTimer)clearInterval(tokenTimer);cloudTimer=tokenTimer=null;idToken='';refreshToken='';
+ $('logoutBtn').disabled=true;$('authStatus').textContent='Signed out';$('cloudStatus').textContent='Not connected';$('deviceState').textContent='Offline';
+ $('firebaseError').textContent='';$('firebaseError').className='error';setConnection(false,'Not connected');addEvent('Firebase signed out');
+}
+async function connectBLE(){
+ if(!navigator.bluetooth){$('bleStatus').textContent='Not supported';addEvent('Web Bluetooth unavailable — use Chrome/Edge over HTTPS');return}
+ try{
+  bleDevice=await navigator.bluetooth.requestDevice({filters:[{services:[SERVICE_UUID]}]});
+  bleDevice.addEventListener('gattserverdisconnected',()=>{$('bleStatus').textContent='Disconnected';$('disconnectBtn').disabled=true;setConnection(false,'BLE disconnected');addEvent('BLE disconnected')});
+  const server=await bleDevice.gatt.connect(),service=await server.getPrimaryService(SERVICE_UUID);
+  bleCharacteristic=await service.getCharacteristic(CHARACTERISTIC_UUID);
+  await bleCharacteristic.startNotifications();
+  bleCharacteristic.addEventListener('characteristicvaluechanged',event=>{
+   const view=event.target.value,bytes=new Uint8Array(view.buffer,view.byteOffset,view.byteLength),packet=new TextDecoder().decode(bytes);
+   if(!parseBlePayload(packet))addEvent('Unrecognized BLE packet: '+packet.slice(0,50));
+  });
+  $('bleStatus').textContent='Connected · '+(bleDevice.name||'SmartShoe');$('disconnectBtn').disabled=false;
+  addEvent('ESP32 BLE connected');setConnection(true,'ESP32 BLE');
+ }catch(error){$('bleStatus').textContent=error.message;addEvent('BLE connection error · '+error.message)}
+}
 function disconnectBLE(){if(bleDevice?.gatt?.connected)bleDevice.gatt.disconnect();$('disconnectBtn').disabled=true}
-function startDemo(){if(demoTimer){clearInterval(demoTimer);demoTimer=null;$('demoBtn').textContent='▶ Start demo';addEvent('Demo stopped');return}let n=0;$('demoBtn').textContent='Ⅱ Stop demo';demoTimer=setInterval(()=>{n++;renderSensors({front:35+Math.random()*130,left:50+Math.random()*120,right:25+Math.random()*160,lower:20+Math.random()*90},'Simulated demo',null);$('deviceId').textContent='DEMO-SHOE-01';$('deviceState').textContent='Demo';$('deviceStatusHint').textContent='Simulated values — not real device data';},1500);addEvent('Demo mode started — simulated readings only')}
-$('loginBtn').addEventListener('click',firebaseLogin);$('logoutBtn').addEventListener('click',firebaseLogout);$('bleBtn').addEventListener('click',connectBLE);$('disconnectBtn').addEventListener('click',disconnectBLE);$('demoBtn').addEventListener('click',startDemo);$('password').addEventListener('keydown',e=>{if(e.key==='Enter')firebaseLogin()});
-setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString(),1000);initMap();drawRadar();setConnection(false,'Not connected');
+function stopDemo(){if(demoTimer){clearInterval(demoTimer);demoTimer=null}$('demoBtn').textContent='▶  Start demo';if(lastSource==='Simulated demo'){setConnection(false,'Demo stopped');$('modeTag').textContent='DEMO STOPPED'}addEvent('Demo stopped')}
+function startDemo(){
+ if(demoTimer){stopDemo();return}
+ if(!mapReady){addEvent('Map library is not ready; demo sensor readings will still run')}
+ demoIndex=0;$('demoBtn').textContent='Ⅱ  Stop demo';addEvent('Demo started · simulated data and route only');
+ const baseLat=22.9734,baseLon=78.6569;
+ function tick(){
+  demoIndex++;
+  const front=42+Math.abs(Math.sin(demoIndex*.55))*145,left=58+Math.abs(Math.cos(demoIndex*.38))*110,right=34+Math.abs(Math.sin(demoIndex*.31))*155,lower=28+Math.abs(Math.cos(demoIndex*.48))*90;
+  renderSensors({front,left,right,lower},'Simulated demo',null);$('deviceId').textContent='DEMO-SHOE-01';
+  const lat=baseLat+Math.sin(demoIndex*.13)*.025,lon=baseLon+Math.cos(demoIndex*.13)*.03;
+  putMapPoint(lat,lon,'SIMULATED DEMO POSITION','demo',demoIndex===1);
+ }
+ tick();demoTimer=setInterval(tick,1700);
+}
+$('loginBtn').addEventListener('click',firebaseLogin);$('logoutBtn').addEventListener('click',firebaseLogout);
+$('bleBtn').addEventListener('click',connectBLE);$('disconnectBtn').addEventListener('click',disconnectBLE);$('demoBtn').addEventListener('click',startDemo);
+$('password').addEventListener('keydown',e=>{if(e.key==='Enter')firebaseLogin()});
+setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString(),1000);
+$('bleSupport').textContent=navigator.bluetooth?'Available in this browser':'Use Chrome/Edge over HTTPS';
+initMap();drawRadar({});setConnection(false,'Not connected');
 </script>
 </body>
 </html>
