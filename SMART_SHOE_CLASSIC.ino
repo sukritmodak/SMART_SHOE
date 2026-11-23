@@ -37,6 +37,8 @@ float rightDistance = INVALID_DISTANCE;
 float lowerDistance = INVALID_DISTANCE;
 uint32_t lastBtSend = 0;
 uint32_t lastSerialPrint = 0;
+bool previousBtClientState = false;
+uint32_t lastBtStatusPrint = 0;
 
 float readDistance(uint8_t trigPin, uint8_t echoPin) {
   digitalWrite(trigPin, LOW);
@@ -118,6 +120,15 @@ void loop() {
   updateBuzzer();
 
   const uint32_t now = millis();
+  const bool btClientConnected = SerialBT.hasClient();
+  if (btClientConnected != previousBtClientState) {
+    previousBtClientState = btClientConnected;
+    Serial.println(btClientConnected ? "Bluetooth SPP client CONNECTED." : "Bluetooth SPP client DISCONNECTED.");
+  }
+  if (!btClientConnected && now - lastBtStatusPrint >= 5000) {
+    lastBtStatusPrint = now;
+    Serial.println("Bluetooth waiting for Windows outgoing COM-port connection...");
+  }
   if (now - lastBtSend >= BT_SEND_INTERVAL_MS) {
     lastBtSend = now;
     sendSensorData();
