@@ -288,13 +288,6 @@ function renderFirebaseDevice(device){
  if(loc)putMapPoint(loc.lat,loc.lon,'SMART SHOE · live GPS','live',true);
  $('deviceId').textContent=DEVICE_ID;
 }
-function parseBlePayload(raw){
- const clean=raw.trim();if(!clean)return false;
- try{const obj=JSON.parse(clean);const sensor=obj.sensor_data||obj;renderSensors(sensor,'ESP32 Classic SPP',obj.device_status||null);const loc=extractLocation(obj);if(loc)putMapPoint(loc.lat,loc.lon,'SMART SHOE · phone GPS','live',true);return true}catch(_){}
- const parts=clean.split(',').map(numberOrNull);
- if(parts.length>=4&&parts.slice(0,4).every(v=>v!==null)){renderSensors({front:parts[0],left:parts[1],right:parts[2],lower:parts[3]},'ESP32 BLE',null);return true}
- return false;
-}
 function explainFirebaseError(code,message){
  const m=(code||message||'').toUpperCase();
  if(m.includes('EMAIL_NOT_FOUND'))return 'এই email দিয়ে Firebase account পাওয়া যায়নি। Authentication → Users-এ account আছে কি না দেখুন।';
