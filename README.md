@@ -1,76 +1,103 @@
 # SMART SHOE — Parent Safety Dashboard
 
-A responsive web dashboard for a smart-shoe prototype. It is designed to display a child's shared GPS position, route, movement, step count, obstacle range readings, accelerometer data and battery status.
+A responsive GitHub Pages dashboard for the SMART SHOE ESP32-S3 prototype.
 
-## Live website
+## Website
 
-After GitHub Pages deployment completes, the site should be available at:
+After GitHub Pages is enabled, open:
+
 https://sukritmodak.github.io/SMART_SHOE/
 
-## Current capabilities
+In **Repository → Settings → Pages**, select **Deploy from a branch**, branch **main**, folder **/(root)**, then Save. The site is static HTML; no build command is required.
 
-- Responsive parent dashboard for phone and desktop
-- OpenStreetMap location map and breadcrumb route
-- BLE UART connection in supported browsers (Nordic UART Service UUID)
-- Wi-Fi/cloud JSON polling endpoint (HTTPS, CORS required)
-- Phone GPS permission flow
-- Front/left/right/rear distance visualization and proximity warnings
-- Clearly labelled simulated demo mode
+## What this version connects to
 
-## Important hardware integration notes
+- **Firebase Realtime Database over Wi-Fi:** signs in through Firebase Email/Password Authentication in the browser, then reads the latest device record every 2 seconds.
+- **ESP32-S3 BLE:** uses the custom service and characteristic UUIDs from the current ESP32 sketch and parses the four comma-separated distance values.
+- **Four ultrasonic readings:** front, left, right and lower.
+- **Obstacle radar and nearest-obstacle warning.**
+- **Demo mode:** simulated readings are clearly labelled as simulated and are not mixed with real device readings.
 
-**This repository was empty when this website was added.** The website therefore uses an adaptable JSON interface rather than claiming to know the shoe firmware packet format.
+## Firebase data structure
 
-### Suggested telemetry JSON
+The current ESP32 firmware writes to:
 
-Send one JSON object per line over BLE, or expose the latest JSON object from your HTTPS endpoint:
+```text
+devices/
+  smartshoe_001/
+    sensor_data/
+      front: number
+      left: number
+      right: number
+      lower: number
+    device_status/
+      wifi: boolean
+      bluetooth: boolean
+      online: boolean
+```
+
+The dashboard reads `devices/smartshoe_001.json`. It therefore expects the device ID to remain `smartshoe_001`, matching the firmware.
+
+### Firebase setup checklist
+
+1. In Firebase Console → Authentication → Sign-in method, enable **Email/Password**.
+2. Create/confirm the account that the ESP32 firmware uses.
+3. Create a **Realtime Database** in the same Firebase project and confirm its database URL matches the firmware.
+4. Configure Realtime Database Rules so unauthenticated visitors cannot read or write device data. The dashboard signs in and sends its Firebase ID token when reading.
+5. Enter the Firebase email and password into the dashboard at runtime. The website does not store the password in its source code.
+
+For a prototype where the same Firebase account is used by the device and parent dashboard, a minimal authenticated-only rule for this device path can be used:
 
 ```json
 {
-  "device_id": "smart-shoe-01",
-  "lat": 28.6139,
-  "lon": 77.2090,
-  "activity": "Walking",
-  "steps": 1250,
-  "front_cm": 42,
-  "left_cm": 85,
-  "right_cm": 110,
-  "rear_cm": 140,
-  "accel": {"x": 0.12, "y": -0.08, "z": 9.78},
-  "battery_percent": 88
+  "rules": {
+    "devices": {
+      "smartshoe_001": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    }
+  }
 }
 ```
 
-Accepted location aliases include latitude/longitude, lng, location.lat/location.lon and gps.lat/gps.lon. Distance aliases include distance_front, frontDistance and distances.front (and corresponding left/right/rear fields).
+This is a basic prototype rule, not a production access-control design. For deployment, use separate device and parent identities with narrowly scoped rules and validate the authenticated user's UID/device ownership. Never set public read/write access.
 
-### Bluetooth
+The Firebase Web API key used by a browser app is a client identifier, not a database password. Protect the data with Authentication and Database Rules. Never put a service-account key or admin credential in this repository.
 
-The browser BLE connector currently expects the Nordic UART Service:
-- Service: `6e400001-b5a3-f393-e0a9-e50e24dcca9e`
-- Notify characteristic: `6e400003-b5a3-f393-e0a9-e50e24dcca9e`
+## ESP32-S3 BLE protocol
 
-It expects newline-delimited UTF-8 JSON. If the ESP32 uses a different BLE service/characteristic or Bluetooth Classic (for example HC-05 SPP), the firmware/protocol or a companion phone bridge must be adapted. Web Bluetooth does not support every Bluetooth Classic serial module.
+The website now uses the exact custom UUIDs from the current firmware:
 
-### Wi-Fi and remote parent access
+- Service: `12345678-1234-1234-1234-123456789000`
+- Notify characteristic: `12345678-1234-1234-1234-123456789001`
 
-The dashboard polls an HTTPS JSON URL every 2 seconds. The endpoint must return the latest device object and allow browser CORS requests. For a real remote parent dashboard, the shoe/child phone must upload telemetry to a cloud service (for example a properly secured Firebase Realtime Database or your own API). The parent dashboard then reads that shared record. A GitHub Pages static site cannot itself receive or relay live ESP32 data.
+The current firmware notification is comma-separated in this order:
 
-Do not put private API keys, database admin credentials or unrestricted write rules in this public repository. Use authentication and per-device access rules.
+```text
+front,left,right,lower
+```
 
-### GPS and location accuracy
+Example:
 
-Phone GPS sharing uses the browser's geolocation permission on the device where the page is open. For parents to see a child's location remotely, the child's phone/device must share the location to the configured cloud endpoint. Wi-Fi network visibility by itself does not provide precise GPS coordinates.
+```text
+45.2,30.5,80.0,25.4
+```
 
-### Obstacle mapping limitations
+The website parses each BLE notification directly; it does not require Nordic UART UUIDs or newline-delimited JSON. Use a Web Bluetooth-compatible browser (for example Chrome or Edge) on HTTPS, and allow Bluetooth access when prompted.
 
-The radar-style display plots the range values by sensor direction. A real spatial map requires known sensor orientation and multiple directional sensors or angle-tagged LiDAR/radar samples. A single distance reading only reports range along its sensing direction; it cannot reconstruct an object's full shape or position.
+## Location limitation
 
-## Deployment
+The current ESP32 firmware uploads only four ultrasonic distances and device status. It does **not** send GPS coordinates, step count, accelerometer data or battery level. Therefore this dashboard will not invent a child location or show a fake live route. The map will show a marker only after GPS fields are added to the device/cloud data. A GPS source is required on the shoe or a paired child-side phone, and its coordinates must be uploaded to Firebase.
 
-## Publish with GitHub Pages
+## Troubleshooting
 
-This is a static HTML/CSS/JavaScript site. In **Settings → Pages**, choose **Deploy from a branch** (if the Source selector offers it), select branch **`main`** and folder **`/(root)`**, then click **Save**. GitHub Pages will publish `index.html` directly. No Java server or build step is needed for the dashboard.
+- **Firebase sign-in failed:** check Email/Password Authentication, account credentials, API key/project, and browser network access.
+- **Firebase permission denied:** check that Realtime Database exists and its Rules allow authenticated reads for `devices/smartshoe_001`.
+- **No device record:** confirm the ESP32 has successfully authenticated and uploaded to the same database URL and device ID.
+- **BLE device not listed:** ensure the ESP32 is powered, advertising, and using the service UUID above. Use HTTPS and a supported browser.
+- **BLE connects but values do not change:** verify the characteristic UUID and that notifications contain four comma-separated numeric values in front,left,right,lower order.
 
 ## Safety and privacy
 
-This is an academic prototype, not a certified child-safety or emergency-response system. Use location tracking transparently with the child's and guardian's knowledge and consent. Protect all live data with authentication, limit retention, and never rely on this dashboard as the sole safety measure.
+This is an academic prototype, not a certified child-safety or emergency-response system. Use location tracking transparently with appropriate knowledge and consent. Protect live telemetry with authentication, least-privilege rules and sensible retention. Do not rely on this dashboard as the sole safety measure.
