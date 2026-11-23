@@ -106,3 +106,15 @@ The current ESP32 firmware uploads only four ultrasonic distances and device sta
 ## Safety and privacy
 
 This is an academic prototype, not a certified child-safety or emergency-response system. Use location tracking transparently with appropriate knowledge and consent. Protect live telemetry with authentication, least-privilege rules and sensible retention. Do not rely on this dashboard as the sole safety measure.
+
+## Phone GPS sharing and accessible voice alerts
+
+The dashboard can use the **phone's own GPS** while the shoe sends obstacle distances over BLE:
+
+1. Open the GitHub Pages dashboard on an Android phone in Chrome (HTTPS).
+2. Sign in to Firebase with an account allowed to read/write `devices/smartshoe_001`.
+3. Connect the shoe using **Connect SmartShoe BLE**. The website continues to receive the existing `front,left,right,lower` BLE distance packet; no ESP32 GPS module is needed for phone-based location.
+4. Tap **Share phone live location** and allow the browser's location permission. The phone browser uses Geolocation API and writes `lat`, `lon`, `accuracy_m`, `source`, and `timestamp` to `devices/smartshoe_001/location` in Realtime Database. A parent dashboard signed into the same project can then read and show this location.
+5. Tap **Enable voice alerts** once (a user action is required by browser audio policies). When a valid sensor reading reaches 30 cm or less, the browser speaks the direction and distance. Thresholds are 30, 20, 10, 8, 7, 6, 5, 4, 3, 2 and 1 cm. The browser's speech engine and phone media volume control loudness.
+
+**Important limitations:** keep the phone with the person wearing the shoe; phone GPS locates the phone, not the shoe independently. Location sharing needs HTTPS, location permission, internet access and Firebase authentication/database rules that permit the signed-in user to write the location child path. Web Bluetooth is supported by compatible browsers such as Chrome on Android; iOS browser support is limited. Voice announcements need the page open and the browser active; this is a prototype feature, not a certified assistive or emergency system. Sensor distances are ultrasonic measurements, not object identification.
