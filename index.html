@@ -273,7 +273,8 @@ function renderSensors(sensor,source,status){
   $('deviceState').textContent=status.online===true?'Online':status.online===false?'Offline':'Unknown';
   $('deviceStatusHint').textContent=status.online===true?'Device reports online':'Device status received';
   $('wifiState').textContent=status.wifi===true?'Connected':status.wifi===false?'Disconnected':'Unknown';
-  $('bleState').textContent=status.bluetooth===true?'Available':status.bluetooth===false?'Unavailable':'Unknown';
+  $('bleState').textContent=status.bluetooth===true?'Classic SPP bridge':status.bluetooth===false?'Unavailable':'Unknown';
+  $('bleStatus').textContent=status.transport==='classic_bluetooth_spp'?'Classic Bluetooth bridge connected':'Firebase device data received';
  }else if(source==='Simulated demo'){
   $('deviceState').textContent='Demo';$('deviceStatusHint').textContent='Simulated values only';$('wifiState').textContent='Demo';$('bleState').textContent='Demo';
  }else{$('deviceState').textContent='Data received';$('deviceStatusHint').textContent='Sensor readings received'}
