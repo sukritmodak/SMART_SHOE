@@ -51,7 +51,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  </div>
 
  <div class="section-head"><h2>Location map</h2><span class="tag">OPENSTREETMAP</span></div>
- <div class="card map-card"><div class="map-actions"><button class="primary" id="gpsStartBtn">⌖ Share phone live location</button><button class="soft" id="gpsStopBtn" disabled>Stop location sharing</button><span class="gps-status" id="gpsStatus">Phone GPS not started</span></div><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">The map is ready. A live marker requires actual latitude and longitude from the device or a paired phone.</div></div>
+ <div class="card map-card"><div class="map-actions"><button class="primary" id="gpsStartBtn">⌖ Share phone live location</button><button class="soft" id="gpsStopBtn" disabled>Stop location sharing</button><span class="gps-status" id="gpsStatus">Phone GPS not started</span></div><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">Open this page on the phone, connect the shoe by BLE, sign in to Firebase, then enable phone GPS sharing. Location sharing requires browser permission.</div></div>
 
  <div class="section-head"><h2>Four-direction obstacle monitor</h2><small>FRONT · LEFT · RIGHT · LOWER</small></div>
  <div class="two-col">
@@ -132,7 +132,7 @@ function startPhoneGPS(){
  $('gpsStatus').textContent='Requesting phone location permission…';
  phoneGpsWatch=navigator.geolocation.watchPosition(async position=>{
   const {latitude,longitude,accuracy}=position.coords;
-  const ok=putMapPoint(latitude,longitude,'PHONE GPS · live position','live',!marker);
+  const ok=putMapPoint(latitude,longitude,'PHONE GPS · live position','live',mapMode!=='live');
   $('gpsStatus').textContent='Live phone GPS · accuracy ±'+Math.round(accuracy)+' m';
   $('gpsStartBtn').disabled=true;$('gpsStopBtn').disabled=false;
   if(ok){$('locationState').textContent='Phone GPS live';$('locationState').className='metric green';$('coordinates').textContent=latitude.toFixed(5)+', '+longitude.toFixed(5)+' · ±'+Math.round(accuracy)+' m'}
@@ -144,7 +144,7 @@ function startPhoneGPS(){
     const response=await fetch(DATABASE_URL+'/devices/'+encodeURIComponent(DEVICE_ID)+'/location.json?auth='+encodeURIComponent(idToken),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     if(!response.ok){const err=await response.json().catch(()=>({}));throw new Error(err.error||('HTTP '+response.status))}
     $('gpsStatus').textContent='GPS live · shared to Firebase · ±'+Math.round(accuracy)+' m';
-   }catch(error){$('gpsStatus').textContent='GPS visible here, Firebase share failed: '+error.message}
+   }catch(error){$('gpsStatus').textContent='GPS visible on this phone, but remote sharing failed: '+error.message}
   }else if(!idToken){$('gpsStatus').textContent='GPS live on this phone · sign in to Firebase to share remotely'}
  },error=>{
   const messages={1:'Location permission denied. Allow location access in browser settings.',2:'Phone GPS location is unavailable. Check location services.',3:'Phone GPS request timed out. Try again.'};
@@ -208,7 +208,7 @@ function putMapPoint(lat,lon,label,kind,follow){
  const point=[lat,lon];
  if(!marker){marker=L.marker(point).addTo(map)}else marker.setLatLng(point);
  marker.bindPopup('<b>'+label+'</b><br>'+lat.toFixed(5)+', '+lon.toFixed(5));
- const latlngs=route.getLatLngs();latlngs.push(point);if(latlngs.length>250)latlngs.shift();route.setLatLngs(latlngs);
+ const latlngs=route.getLatLngs(),last=latlngs[latlngs.length-1];if(!last||map.distance(last,point)>3){latlngs.push(point);if(latlngs.length>250)latlngs.shift();route.setLatLngs(latlngs)}
  if(follow)map.setView(point,16);
  $('locationState').textContent=kind==='demo'?'Demo route':'GPS available';
  $('locationState').className='metric '+(kind==='demo'?'amber':'green');
