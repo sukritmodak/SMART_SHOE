@@ -3,7 +3,7 @@
 
 Run from the repository root:
     py -m pip install pyserial requests
-    py bridge\\smartshoe_bridge.py
+    py bridge\smartshoe_bridge.py
 
 Choose USB cable or Bluetooth, then select the COM port shown by Windows.
 The ESP32 sends: front,left,right,lower\n
