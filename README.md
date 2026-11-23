@@ -66,6 +66,12 @@ This is a basic prototype rule, not a production access-control design. For depl
 
 The Firebase Web API key used by a browser app is a client identifier, not a database password. Protect the data with Authentication and Database Rules. Never put a service-account key or admin credential in this repository.
 
+## Arduino IDE firmware
+
+Open `SMART_SHOE_CLASSIC.ino` in Arduino IDE. Select **ESP32 Dev Module** (the original ESP32-D0WD-V3), choose the correct USB COM port, and upload. The sketch keeps the existing sensor pin mapping and active-HIGH buzzer. It sends one CSV line over Classic Bluetooth SPP every 500 ms. The Arduino Serial Monitor runs at 115200 baud for sensor diagnostics.
+
+Required Arduino library: `BluetoothSerial`, included with the Espressif ESP32 Arduino board package. No BLE libraries or Firebase credentials are required in the ESP32 sketch; the Windows bridge handles Firebase authentication and upload.
+
 ## Classic Bluetooth SPP protocol (ESP32-D0WD-V3)
 
 This project uses **Bluetooth Classic SPP**, not Web Bluetooth BLE. The browser cannot directly connect to an SPP serial port from a GitHub Pages HTTPS page. The supported path is:
@@ -139,7 +145,7 @@ Demo mode draws a clearly labelled simulated marker and short route so the map c
 
 
 
-The current ESP32 firmware uploads only four ultrasonic distances and device status. It does **not** send GPS coordinates, step count, accelerometer data or battery level. Therefore this dashboard will not invent a child location or show a fake live route. The map will show a marker only after GPS fields are added to the device/cloud data. A GPS source is required on the shoe or a paired child-side phone, and its coordinates must be uploaded to Firebase.
+The ESP32 firmware sends four ultrasonic distances to the Windows bridge; the bridge uploads sensor data and device status to Firebase. It does **not** send GPS coordinates, step count, accelerometer data or battery level. Therefore this dashboard will not invent a child location or show a fake live route. The map will show a marker only after GPS fields are added to the device/cloud data. A GPS source is required on the shoe or a paired child-side phone, and its coordinates must be uploaded to Firebase.
 
 ## Troubleshooting
 
@@ -155,7 +161,7 @@ This is an academic prototype, not a certified child-safety or emergency-respons
 
 ## Phone GPS sharing and accessible voice alerts
 
-The dashboard can use the **phone's own GPS** while the shoe sends obstacle distances over BLE:
+The dashboard can use the **phone's own GPS** while the shoe sends obstacle distances through the Classic Bluetooth SPP bridge:
 
 1. Open the GitHub Pages dashboard on an Android phone in Chrome (HTTPS).
 2. Sign in to Firebase with an account allowed to read/write `devices/smartshoe_001`.
