@@ -8,7 +8,7 @@ After GitHub Pages is enabled, open:
 
 https://sukritmodak.github.io/SMART_SHOE/
 
-In **Repository → Settings → Pages**, select **Deploy from a branch**, branch **main**, folder **/(root)**, then Save. The site is static HTML; no build command is required.
+In **Repository → Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**. The workflow `.github/workflows/deploy-pages.yml` deploys the root `index.html` whenever a commit is pushed to `main`. The site is static HTML; no build command is required.
 
 ## What this version connects to
 
@@ -118,7 +118,7 @@ The repository root contains `SMART_SHOE_CLASSIC.ino`, which already applies thi
 3. Open Command Prompt in the downloaded repository folder and install dependencies:
 
    ```bat
-   py -m pip install pyserial requests
+   py -m pip install --upgrade pyserial requests
    ```
 
 4. Start the unified bridge:
@@ -130,10 +130,10 @@ The repository root contains `SMART_SHOE_CLASSIC.ino`, which already applies thi
 5. In the terminal menu, choose:
    - `1` for **USB cable / USB Serial COM port**
    - `2` for **Bluetooth / Classic Bluetooth SPP**
-6. Select the matching COM port from the detected list. For Bluetooth, choose the **outgoing** COM port assigned to SmartShoe. For USB, choose the serial port that appears when the ESP32 is plugged in.
+6. Select the matching COM port from the detected list. For Bluetooth, choose the **outgoing** COM port assigned to SmartShoe (not the incoming port). Opening this port should establish the SPP connection to the ESP32. For USB, choose the serial port that appears when the ESP32 is plugged in.
 7. Enter the Firebase Email/Password account when prompted. Keep this terminal window open while using the dashboard.
 
-The bridge uploads `sensor_data` and `device_status` to `devices/smartshoe_001`. It labels the transport as `usb_serial` or `classic_bluetooth_spp`. Close Arduino Serial Monitor before starting the bridge because only one program can normally use a COM port at a time.
+The bridge uploads `sensor_data` and `device_status` to `devices/smartshoe_001`. It labels the transport as `usb_serial` or `classic_bluetooth_spp`. It prints the first few non-sensor lines and periodic waiting messages to help diagnose a wrong port or missing Bluetooth connection. Close Arduino Serial Monitor before starting the bridge because only one program can normally use a COM port at a time.
 
 **Important:** GitHub Pages is a hosted website and cannot enumerate or open the COM ports on your Windows computer. COM-port selection therefore happens in the local bridge terminal, not inside the website. The dashboard receives the data from Firebase.
 
