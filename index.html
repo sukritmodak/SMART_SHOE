@@ -9,6 +9,14 @@
 <style>
 :root{--bg:#07131d;--panel:#0d202c;--panel2:#102936;--line:#244451;--text:#effbff;--muted:#91aeb8;--cyan:#50e2e0;--mint:#63e6ad;--amber:#ffc66d;--red:#ff7185;--blue:#75aaff;--shadow:0 18px 48px #0005}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 12% -5%,#164052 0,transparent 34%),radial-gradient(ellipse at 100% 20%,#112b42 0,transparent 30%),var(--bg);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button{font:inherit;cursor:pointer;color:inherit}.topbar{position:sticky;top:0;z-index:900;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px clamp(16px,4vw,54px);border-bottom:1px solid #ffffff16;background:#07131deF;backdrop-filter:blur(16px)}.brand{display:flex;align-items:center;gap:11px;font-weight:950;letter-spacing:.12em}.brand-mark{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#17485a,#102d3b);border:1px solid #3a7180;font-size:20px}.brand small{display:block;font-size:9px;letter-spacing:.18em;color:var(--muted);font-weight:800;margin-top:2px}.top-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.status-chip,.eyebrow,.tag{font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:850}.status-chip{border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted)}.status-chip.online{border-color:#286e58;color:var(--mint);background:#0c3027}.status-chip.offline{color:var(--amber)}main{max-width:1480px;margin:auto;padding:28px clamp(14px,3vw,42px) 64px}.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:22px;align-items:stretch;margin-bottom:20px}.hero-copy,.connect-card,.panel,.metric{background:linear-gradient(145deg,#122d3aee,#0b1d29f5);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow)}.hero-copy{padding:clamp(22px,4vw,38px);position:relative;overflow:hidden}.hero-copy:after{content:"";position:absolute;width:270px;height:270px;border:1px solid #54e0df22;border-radius:50%;right:-90px;top:-100px;box-shadow:0 0 0 25px #54e0df08,0 0 0 55px #54e0df06}.eyebrow{color:var(--cyan)}h1{font-size:clamp(30px,4vw,52px);line-height:1.04;letter-spacing:-.045em;margin:12px 0}.hero-copy p{color:var(--muted);max-width:680px;margin:0;font-size:14px}.hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:23px}.btn{border:1px solid #345564;background:#142f3d;padding:11px 15px;border-radius:11px;font-size:12px;font-weight:850;transition:.18s}.btn:hover{transform:translateY(-1px);border-color:var(--cyan)}.btn.primary{background:linear-gradient(120deg,var(--cyan),#83b9ff);color:#06141d;border:0}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.btn.active{border-color:var(--mint);color:var(--mint)}.connect-card{padding:21px;display:flex;flex-direction:column;justify-content:space-between}.connect-card h2{font-size:16px;margin:0 0 5px}.connect-card p{font-size:12px;color:var(--muted);margin:0 0 15px}.step{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-top:1px solid #ffffff12}.step-num{width:25px;height:25px;flex:0 0 25px;border-radius:8px;display:grid;place-items:center;background:#153b49;color:var(--cyan);font-weight:900;font-size:11px}.step b{font-size:12px;display:block}.step span{font-size:11px;color:var(--muted)}.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 2px 12px}.section-head h2{font-size:17px;letter-spacing:-.02em;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:3px 0 0}.tag{color:var(--cyan);border:1px solid #285365;border-radius:8px;padding:6px 9px;white-space:nowrap}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.metric{padding:17px 18px}.metric-label{font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:900}.metric-value{font-size:clamp(24px,3vw,34px);font-weight:950;letter-spacing:-.04em;margin:8px 0 1px}.metric-sub{font-size:11px;color:var(--muted)}.good{color:var(--mint)}.warn{color:var(--amber)}.bad{color:var(--red)}.alert-panel{margin-top:14px;border:1px solid #286e58;background:linear-gradient(120deg,#0c3027,#102a2d);border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:13px}.alert-panel.active{border-color:#a84c61;background:linear-gradient(120deg,#381b29,#241c2b);box-shadow:0 0 30px #ff71851b}.alert-symbol{width:42px;height:42px;border-radius:13px;background:#ffffff0b;display:grid;place-items:center;font-size:22px}.alert-copy{min-width:0;flex:1}.alert-copy strong{font-size:14px;letter-spacing:.04em}.alert-copy p{margin:3px 0 0;color:#b5cbd2;font-size:12px}.alert-actions{display:flex;gap:8px;flex-wrap:wrap}.directions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:12px}.direction{border:1px solid #286e58;background:#0b2926;border-radius:14px;padding:15px;min-height:112px;position:relative;overflow:hidden}.direction:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-45px;bottom:-52px;background:#64e6ad0b}.direction.warning{border-color:#9a713c;background:#2c2519}.direction.danger{border-color:#a84c61;background:#351b27}.direction.critical{border-color:#ff415e;background:#4a1725;box-shadow:inset 0 0 22px #ff415e19}.dir-name{font-size:9px;color:var(--muted);letter-spacing:.15em;font-weight:950}.dir-state{font-size:17px;font-weight:950;margin-top:9px}.dir-distance{font-size:11px;color:#c3d5da;margin-top:2px}.workspace{display:grid;grid-template-columns:1.1fr .9fr;gap:13px;align-items:stretch}.panel{padding:18px;min-width:0}.panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.panel-title h3{font-size:14px;margin:0}.panel-title span{font-size:9px;letter-spacing:.12em;color:var(--muted)}.radar-stage{border:1px solid #245568;border-radius:16px;background:radial-gradient(circle at 50% 48%,#154456 0,#0a202c 65%,#071923 100%);overflow:hidden;position:relative}.radar-svg{display:block;width:100%;height:auto;min-height:260px}.radar-sweep{transform-origin:250px 190px;animation:sweep 3s linear infinite}.radar-blip{filter:drop-shadow(0 0 8px currentColor)}.radar-pulse{transform-origin:center;animation:blip 1.1s ease-in-out infinite alternate}@keyframes sweep{to{transform:rotate(360deg)}}@keyframes blip{to{opacity:.35;transform:scale(1.55)}}.radar-caption{display:flex;gap:13px;flex-wrap:wrap;padding:10px 3px 0;color:var(--muted);font-size:10px}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}.map-panel{padding:0;overflow:hidden}.map-head{padding:18px 18px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.map-head h3{font-size:14px;margin:0}.map-actions{display:flex;gap:7px;flex-wrap:wrap}.map-actions .btn{padding:8px 10px;font-size:10px}.map-status{padding:0 18px 11px;font-size:11px;color:var(--muted)}#map{height:390px;width:100%;background:#102531;z-index:1}.map-foot{padding:11px 18px 15px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:10px}.leaflet-container{background:#102531;font:inherit}.leaflet-control-attribution{font-size:9px!important}.map-fallback{display:none;padding:30px;text-align:center;color:var(--muted);min-height:300px}.map-fallback a{color:var(--cyan)}.sensor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sensor-box{padding:15px;border:1px solid var(--line);border-radius:13px;background:#091a25}.sensor-box.warning{border-color:#9a713c}.sensor-box.danger,.sensor-box.critical{border-color:#a84c61}.sensor-top{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.13em}.sensor-num{font-size:27px;font-weight:950;margin:7px 0 2px}.sensor-state{font-size:10px;color:var(--muted)}.bar{height:5px;border-radius:9px;background:#1b3541;margin-top:11px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--mint);border-radius:9px;transition:width .2s}.sensor-box.warning .bar i{background:var(--amber)}.sensor-box.danger .bar i,.sensor-box.critical .bar i{background:var(--red)}.chart-wrap{height:210px;border:1px solid var(--line);border-radius:13px;background:#081923;padding:8px}#historyChart{width:100%;height:100%;display:block}.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:10px}.legend .dot{vertical-align:middle}.diagnostics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.diag{padding:13px;border-radius:12px;border:1px solid var(--line);background:#091a25}.diag small{font-size:9px;color:var(--muted);letter-spacing:.12em;font-weight:900}.diag strong{display:block;font-size:13px;margin-top:5px;overflow-wrap:anywhere}.raw{font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;background:#06131c;border:1px solid var(--line);border-radius:12px;padding:12px;color:#9de9df;min-height:42px;overflow-wrap:anywhere}.helper{color:var(--muted);font-size:11px;line-height:1.6}.footer{margin-top:32px;padding:19px 5px;border-top:1px solid #ffffff17;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:10px}.toast{position:fixed;right:18px;bottom:18px;z-index:2000;max-width:min(360px,calc(100vw - 36px));padding:13px 16px;border:1px solid #3c6b7b;border-radius:12px;background:#102b38;color:var(--text);box-shadow:var(--shadow);display:none}.toast.show{display:block;animation:toastIn .2s ease-out}@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}@media(max-width:1000px){.hero{grid-template-columns:1fr}.workspace{grid-template-columns:1fr}.directions{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.metrics{grid-template-columns:repeat(2,1fr)}.directions{grid-template-columns:repeat(2,1fr)}.diagnostics{grid-template-columns:1fr 1fr}.alert-panel{align-items:flex-start;flex-wrap:wrap}.alert-actions{width:100%}#map{height:330px}.topbar{align-items:flex-start}.status-chip{font-size:9px}}@media(max-width:390px){.metrics{grid-template-columns:1fr 1fr}.metric{padding:13px}.metric-value{font-size:23px}.directions{gap:7px}.direction{padding:12px}.dir-state{font-size:14px}.diagnostics{grid-template-columns:1fr}}
+
+.parent-panel{margin-top:14px;border:1px solid #285365;border-radius:16px;background:linear-gradient(145deg,#102a37,#0a1c27);padding:17px 18px}
+.parent-grid{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:9px;align-items:end}
+.parent-field label{display:block;font-size:9px;letter-spacing:.13em;color:var(--muted);font-weight:900;margin:0 0 6px}
+.parent-field input{width:100%;min-width:0;border:1px solid #345564;background:#061923;color:var(--text);border-radius:10px;padding:11px 12px;font:inherit}
+.parent-note{font-size:11px;color:var(--muted);margin:9px 0 0;line-height:1.5}
+@media(max-width:650px){.parent-grid{grid-template-columns:1fr 1fr}.parent-field{grid-column:1/-1}.parent-grid button{width:100%}}
+
 </style>
 </head>
 <body>
@@ -48,6 +56,15 @@
     <div class="alert-symbol" id="alertSymbol">✓</div>
     <div class="alert-copy"><strong id="alertHeading">SYSTEM CLEAR</strong><p id="alertMessage">Connect the shoe to start live obstacle monitoring.</p></div>
     <div class="alert-actions"><button class="btn" id="repeatAlertBtn">Repeat warning</button></div>
+  </section>
+  <section class="parent-panel" aria-label="Parent safety notification">
+    <div class="panel-title"><h3>Parent safety notification</h3><span>WHATSAPP · MANUAL SEND</span></div>
+    <div class="parent-grid">
+      <div class="parent-field"><label for="parentPhone">PARENT WHATSAPP NUMBER</label><input id="parentPhone" type="tel" inputmode="tel" placeholder="10-digit Indian number or country code" autocomplete="tel"></div>
+      <button class="btn" id="saveParentBtn">Save number</button>
+      <button class="btn primary" id="sendParentBtn" disabled>Send alert + location</button>
+    </div>
+    <p class="parent-note" id="parentStatus">Save a parent's number. When an obstacle is detected, press Send alert + location to open WhatsApp with the latest distances and available live map link. You must press Send in WhatsApp.</p>
   </section>
   <section class="directions" aria-label="Four direction alerts">
     <div class="direction" id="direction-front"><div class="dir-name">01 · FRONT</div><div class="dir-state" id="state-front">WAITING</div><div class="dir-distance" id="distance-front">— cm</div></div>
@@ -120,25 +137,40 @@ const $=id=>document.getElementById(id);
 const keys=['front','left','right','lower'];
 const labels={front:'Front',left:'Left',right:'Right',lower:'Down'};
 const history={front:[],left:[],right:[],lower:[]};
-let packetTotal=0,lastPacketTime=0,rateSamples=[],lastRaw='',lastAlertSignature='',voiceEnabled=false,lastSpeechAt=0;
+let packetTotal=0,lastPacketTime=0,rateSamples=[],lastRaw='',lastAlertSignature='',voiceEnabled=false,lastSpeechAt=0,voiceQueue=[],lastValues=null,parentPhone='';
 let port=null,reader=null,reading=false,rawBuffer='',map=null,tileLayer=null,browserMarker=null,deviceMarker=null,browserTrail=null,deviceTrail=null,browserPoints=[],devicePoints=[],watchId=null,followMap=true,lastBrowserPosition=null,lastDevicePosition=null;
 function toast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3300);}
 function setConnection(online,message){const el=$('connectionStatus');el.textContent=online?'● DEVICE CONNECTED':'● DEVICE OFFLINE';el.className='status-chip '+(online?'online':'offline');if(message)toast(message);}
 function level(v){if(!Number.isFinite(v)||v<0||v>=999)return 'nodata';if(v<=5)return 'critical';if(v<=10)return 'danger';if(v<=20)return 'warning';return 'clear';}
 function valid(v){return Number.isFinite(v)&&v>=0&&v<999;}
-function speak(text){if(!voiceEnabled||!('speechSynthesis'in window))return;const now=Date.now();if(now-lastSpeechAt<350)return;lastSpeechAt=now;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=1.18;u.pitch=1;u.volume=1;window.speechSynthesis.speak(u);}
+function pumpSpeech(){
+ if(!voiceEnabled||!('speechSynthesis'in window)||!voiceQueue.length)return;
+ if(window.speechSynthesis.speaking||window.speechSynthesis.pending)return;
+ const text=voiceQueue.shift(),u=new SpeechSynthesisUtterance(text);
+ const voices=window.speechSynthesis.getVoices();
+ u.voice=voices.find(v=>/^en-IN/i.test(v.lang))||voices.find(v=>/^en-GB/i.test(v.lang))||voices.find(v=>/^en-US/i.test(v.lang))||null;
+ u.lang=u.voice?.lang||'en-IN';u.rate=0.92;u.pitch=1.05;u.volume=1;
+ u.onend=()=>setTimeout(pumpSpeech,180);u.onerror=()=>setTimeout(pumpSpeech,250);
+ window.speechSynthesis.speak(u);
+}
+function speak(text){
+ if(!voiceEnabled||!('speechSynthesis'in window))return;
+ const now=Date.now();if(now-lastSpeechAt<500)return;lastSpeechAt=now;
+ if(voiceQueue.length>2)voiceQueue.shift();
+ voiceQueue.push(text);window.speechSynthesis.resume();pumpSpeech();
+}
 function currentActive(values){return keys.filter(k=>valid(values[k])&&values[k]<=20).map(k=>({key:k,value:values[k]}));}
 function updateVoice(active){
- const signature=active.map(x=>x.key+':'+Math.floor(x.value/5)).join('|');
- if(!active.length){lastAlertSignature='';return;}
+ const signature=active.map(x=>x.key+':'+level(x.value)).join('|');
+ if(!active.length){lastAlertSignature='';$('parentStatus').textContent=parentPhone?'No current obstacle. Parent number is saved.':'Save a parent number to enable WhatsApp alerts.';return;}
  if(signature===lastAlertSignature)return;
  lastAlertSignature=signature;
  const names=active.map(x=>labels[x.key].toLowerCase());
- let phrase;
- if(active.length===1)phrase='Warning. Obstacle detected on the '+names[0]+' side.';
- else phrase='Warning. Multiple obstacles detected at the same time: '+names.slice(0,-1).join(', ')+' and '+names[names.length-1]+' sides.';
+ const phrase=active.length===1?'Warning. Obstacle detected in the '+names[0]+' direction.':'Warning. Multiple obstacles detected at the same time: '+names.join(' and ')+'.';
  const measurements=active.map(x=>names[active.indexOf(x)]+' '+Math.round(x.value)+' centimetres').join('. ');
  speak(phrase+' '+measurements+'.');
+ $('sendParentBtn').disabled=!parentPhone;
+ $('parentStatus').textContent='Obstacle detected. Press Send alert + location to prepare a WhatsApp message.';
 }
 function renderDirections(values,active){
  const activeKeys=active.map(x=>x.key);
@@ -215,6 +247,7 @@ function drawChart(){
 }
 function render(packet){
  const values={front:Number(packet.front),left:Number(packet.left),right:Number(packet.right),lower:Number(packet.lower)};
+ lastValues=values;
  const active=currentActive(values).sort((a,b)=>a.value-b.value);
  renderDirections(values,active);drawRadar(values);updateSensors(values);updateVoice(active);
  const all=keys.filter(k=>valid(values[k])).map(k=>({key:k,value:values[k]})).sort((a,b)=>a.value-b.value);
@@ -274,15 +307,42 @@ async function disconnect(){
 $('connectBtn').addEventListener('click',connect);$('disconnectBtn').addEventListener('click',disconnect);
 if('serial'in navigator)navigator.serial.addEventListener('disconnect',()=>{reading=false;setConnection(false,'Bluetooth device was removed.');$('connectBtn').disabled=false;$('disconnectBtn').disabled=true;});
 $('voiceBtn').addEventListener('click',()=>{
- if(!('speechSynthesis'in window)){toast('This browser does not support speech alerts.');return;}
+ if(!('speechSynthesis'in window)){toast('Speech is not supported. Please use Chrome or Edge.');return;}
  voiceEnabled=!voiceEnabled;$('voiceBtn').textContent=voiceEnabled?'Voice alerts: ON':'Enable voice alerts';$('voiceBtn').classList.toggle('active',voiceEnabled);$('diagVoice').textContent=voiceEnabled?'Enabled':'Disabled';
- if(voiceEnabled){speak('Voice alerts enabled.');toast('Fast voice alerts enabled.');}else{window.speechSynthesis.cancel();toast('Voice alerts disabled.');}
+ if(voiceEnabled){voiceQueue=[];window.speechSynthesis.cancel();window.speechSynthesis.resume();speak('Voice alert test. Smart shoe audio is working.');toast('Voice enabled. Listen for the test announcement.');}
+ else{voiceQueue=[];window.speechSynthesis.cancel();toast('Voice alerts disabled.');}
 });
 $('repeatAlertBtn').addEventListener('click',()=>{
- const vals={front:Number($('sensor-value-front').textContent.replace(' cm','')),left:Number($('sensor-value-left').textContent.replace(' cm','')),right:Number($('sensor-value-right').textContent.replace(' cm','')),lower:Number($('sensor-value-lower').textContent.replace(' cm',''))};
- const active=currentActive(vals);if(!active.length){toast('No active obstacle warning to repeat.');return;}
- const names=active.map(x=>labels[x.key].toLowerCase());speak('Warning. '+(active.length>1?'Multiple obstacles detected: ':'Obstacle detected: ')+names.join(', ')+'.');
+ const active=currentActive(lastValues||{}).sort((a,b)=>a.value-b.value);
+ if(!active.length){toast('No active obstacle warning to repeat.');return;}
+ if(!voiceEnabled){toast('First enable voice alerts.');return;}
+ const names=active.map(x=>labels[x.key].toLowerCase());
+ speak('Warning. '+(active.length>1?'Multiple obstacles detected: ':'Obstacle detected: ')+names.join(', ')+'. '+active.map(x=>Math.round(x.value)+' centimetres').join('. '));
 });
+function sendParentAlert(){
+ if(!parentPhone){toast('Save the parent WhatsApp number first.');return;}
+ const active=currentActive(lastValues||{}).sort((a,b)=>a.value-b.value);
+ if(!active.length){toast('No obstacle is currently detected.');return;}
+ const location=lastDevicePosition||lastBrowserPosition;
+ const mapLink=location?'https://www.google.com/maps?q='+location[0].toFixed(6)+','+location[1].toFixed(6):'Location is not available yet. Open the dashboard and press Locate me to obtain browser GPS.';
+ const distances=active.map(x=>labels[x.key]+': '+x.value.toFixed(1)+' cm').join(', ');
+ const message='SMART SHOE SAFETY ALERT\\nAn obstacle has been detected.\\n'+distances+'\\nLive location: '+mapLink+'\\nPlease contact/check on me.';
+ const digits=parentPhone.replace(/\\D/g,'');
+ const normalized=digits.length===10?'91'+digits:digits;
+ if(normalized.length<10||normalized.length>15){toast('Enter a valid WhatsApp number with country code.');return;}
+ window.open('https://wa.me/'+normalized+'?text='+encodeURIComponent(message),'_blank','noopener');
+ $('parentStatus').textContent='WhatsApp opened with the alert. Press Send in WhatsApp to deliver it.';
+}
+$('saveParentBtn').addEventListener('click',()=>{
+ const digits=$('parentPhone').value.trim().replace(/\\D/g,'');
+ if(digits.length<10||digits.length>15){toast('Enter a valid phone number. For India, a 10-digit number is accepted.');return;}
+ parentPhone=digits;try{localStorage.setItem('smartShoeParentPhone',parentPhone);}catch(e){}
+ $('sendParentBtn').disabled=!currentActive(lastValues||{}).length;
+ $('parentStatus').textContent='Parent number saved in this browser. Obstacle alerts can now be prepared for WhatsApp.';
+ toast('Parent number saved on this device.');
+});
+$('sendParentBtn').addEventListener('click',sendParentAlert);
+try{parentPhone=localStorage.getItem('smartShoeParentPhone')||'';$('parentPhone').value=parentPhone;}catch(e){}
 
 function setMapStatus(text,isBad){$('mapStatus').textContent=text;$('mapChip').textContent=isBad?'MAP ISSUE':'MAP READY';$('mapChip').className='status-chip '+(isBad?'offline':'online');}
 function initMap(){
