@@ -67,7 +67,9 @@ The radar-style display plots the range values by sensor direction. A real spati
 
 ## Deployment
 
-GitHub Actions deploys the static site to GitHub Pages on pushes to `main`. In GitHub, open **Settings → Pages** and select **GitHub Actions** as the build and deployment source if it is not already selected. The workflow run is visible in the Actions tab.
+## Publish with GitHub Pages
+
+This is a static HTML/CSS/JavaScript site. In **Settings → Pages**, choose **Deploy from a branch** (if the Source selector offers it), select branch **`main`** and folder **`/(root)`**, then click **Save**. GitHub Pages will publish `index.html` directly. No Java server or build step is needed for the dashboard.
 
 ## Safety and privacy
 
