@@ -13,7 +13,7 @@ In **Repository → Settings → Pages**, select **Deploy from a branch**, branc
 ## What this version connects to
 
 - **Firebase Realtime Database over Wi-Fi:** signs in through Firebase Email/Password Authentication in the browser, then reads the latest device record every 2 seconds.
-- **classic ESP32 (ESP32-D0WD-V3) BLE:** uses the custom service and characteristic UUIDs from the current ESP32 sketch and parses the four comma-separated distance values.
+- **Classic Bluetooth SPP:** the original ESP32 sends readings over `BluetoothSerial`; a Windows Python bridge reads its paired outgoing COM port and uploads readings to Firebase. GitHub Pages itself cannot open a Classic Bluetooth SPP COM port.
 - **Four ultrasonic readings:** front, left, right and lower.
 - **Obstacle radar and nearest-obstacle warning.**
 - **Demo mode:** simulated readings are clearly labelled as simulated and are not mixed with real device readings.
@@ -66,26 +66,72 @@ This is a basic prototype rule, not a production access-control design. For depl
 
 The Firebase Web API key used by a browser app is a client identifier, not a database password. Protect the data with Authentication and Database Rules. Never put a service-account key or admin credential in this repository.
 
-## classic ESP32 (ESP32-D0WD-V3) BLE protocol
+## Classic Bluetooth SPP protocol (ESP32-D0WD-V3)
 
-The website now uses the exact custom UUIDs from the current firmware:
+This project uses **Bluetooth Classic SPP**, not Web Bluetooth BLE. The browser cannot directly connect to an SPP serial port from a GitHub Pages HTTPS page. The supported path is:
 
-- Service: `12345678-1234-1234-1234-123456789000`
-- Notify characteristic: `12345678-1234-1234-1234-123456789001`
+```text
+ESP32 BluetoothSerial -> Windows Bluetooth outgoing COM port
+                       -> bridge/smartshoe_classic_bridge.py
+                       -> Firebase Realtime Database
+                       -> GitHub Pages dashboard
+```
 
-The current firmware notification is comma-separated in this order:
+The ESP32 must send one newline-terminated CSV packet for each sensor update, in this exact order:
 
 ```text
 front,left,right,lower
-```
-
-Example:
-
-```text
 45.2,30.5,80.0,25.4
 ```
 
-The website parses each BLE notification directly; it does not require Nordic UART UUIDs or newline-delimited JSON. Use a Web Bluetooth-compatible browser (for example Chrome or Edge) on HTTPS, and allow Bluetooth access when prompted.
+### ESP32 firmware requirement
+
+Use the original ESP32 Bluetooth Classic SPP library (not `BLEDevice.h` / `BLEServer.h`):
+
+```cpp
+#include "BluetoothSerial.h"
+BluetoothSerial SerialBT;
+
+void setup() {
+  Serial.begin(115200);
+  SerialBT.begin("SmartShoe");  // Windows Bluetooth pairing name
+}
+
+// Call this after reading the four ultrasonic sensors:
+void sendDistances(float front, float left, float right, float lower) {
+  SerialBT.printf("%.1f,%.1f,%.1f,%.1f\\n", front, left, right, lower);
+}
+```
+
+Keep the existing ultrasonic pin mapping and sensor measurement code. Replace BLE advertising/notifications with the SPP send function above. This Classic Bluetooth method is for the original ESP32 (ESP32-D0WD-V3); ESP32-S3 does not support Bluetooth Classic SPP.
+
+### Windows bridge setup
+
+1. Power the ESP32 and pair **SmartShoe** in Windows Settings → Bluetooth & devices.
+2. Open Device Manager → Ports (COM & LPT), or Windows Bluetooth COM port settings, and identify the **outgoing** COM port assigned to SmartShoe.
+3. Install dependencies from the repository folder:
+
+   ```bat
+   py -m pip install pyserial requests
+   ```
+
+4. Run the bridge, replacing COM7 with the outgoing port:
+
+   ```bat
+   py bridge\\smartshoe_classic_bridge.py COM7
+   ```
+
+5. Enter the Firebase Email/Password account when prompted. Do not put the password in the source code. The account must be permitted by Realtime Database Rules to write `devices/smartshoe_001`.
+6. Sign in to the dashboard with an account permitted to read the same device path:
+
+   https://sukritmodak.github.io/SMART_SHOE/
+
+The bridge uploads `sensor_data` and `device_status` to the existing `smartshoe_001` device record. The website continues to poll Firebase; no BLE browser connection is needed. Keep the bridge window running while using Classic Bluetooth.
+
+Troubleshooting:
+- **COM port cannot open:** check pairing, choose the outgoing rather than incoming COM port, and close other serial terminal/bridge programs.
+- **No CSV packets:** confirm firmware calls `SerialBT.begin("SmartShoe")` and sends newline-terminated comma-separated values.
+- **Firebase authentication/permission error:** check the bridge account, Email/Password provider, internet access, database URL and authenticated write rules.
 
 ## Demo map and location limitation
 
