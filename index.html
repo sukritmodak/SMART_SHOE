@@ -93,11 +93,10 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
    <div class="fineprint">Uses Firebase Email/Password Authentication and reads <code>devices/smartshoe_001</code>. Password is used only for sign-in and is not stored in this page. A database permission error means your Realtime Database Rules need to allow this signed-in account to read the device path.</div>
   </div>
   <div class="card">
-   <div class="section-head" style="margin:0 0 8px"><h2>Bluetooth connection</h2><span class="tag">BLE</span></div>
-   <p class="hint">Connect to the ESP32 using Bluetooth Low Energy (BLE). In the device picker, select your shoe board (usually named SmartShoe).</p>
-   <div class="actions"><button class="primary" id="bleBtn">Connect SmartShoe BLE</button><button class="danger" id="disconnectBtn" disabled>Disconnect</button></div>
-   <div class="status-list"><div class="status-row"><b>BLE status</b><span id="bleStatus">Disconnected</span></div><div class="status-row"><b>Browser support</b><span id="bleSupport">Checking…</span></div></div>
-   <div class="fineprint">Use Chrome or Edge on HTTPS. The picker scans nearby Bluetooth devices; select the ESP32 shoe board. Its firmware must expose the configured BLE service and notification characteristic. Data format remains <code>front,left,right,lower</code>.</div>
+   <div class="section-head" style="margin:0 0 8px"><h2>Classic Bluetooth connection</h2><span class="tag">SPP · COM PORT</span></div>
+   <p class="hint">This dashboard receives Classic Bluetooth data through the Windows Bluetooth COM-port bridge. Pair the ESP32 as <b>SmartShoe</b>, then run the bridge on your computer.</p>
+   <div class="status-list"><div class="status-row"><b>Transport</b><span>Classic Bluetooth SPP</span></div><div class="status-row"><b>Bridge status</b><span id="bleStatus">Waiting for Firebase data</span></div></div>
+   <div class="fineprint">Run <code>python bridge/smartshoe_classic_bridge.py COM7</code> (replace COM7 with the outgoing Bluetooth COM port). The bridge sends the existing <code>front,left,right,lower</code> readings to Firebase. GitHub Pages cannot access a Classic Bluetooth COM port directly.</div>
   </div>
  </div>
 
@@ -355,55 +354,8 @@ function firebaseLogout(){
  $('logoutBtn').disabled=true;$('authStatus').textContent='Signed out';$('cloudStatus').textContent='Not connected';$('deviceState').textContent='Offline';
  $('firebaseError').textContent='';$('firebaseError').className='error';setConnection(false,'Not connected');addEvent('Firebase signed out');
 }
-async function connectBLE(){
- if(!navigator.bluetooth){$('bleStatus').textContent='Not supported';addEvent('Web Bluetooth unavailable — open this page in Chrome/Edge over HTTPS');return}
- $('bleStatus').textContent='Searching for nearby Bluetooth devices…';
- $('bleBtn').disabled=true;
- try{
-  // Scan all nearby devices: some ESP32 boards do not advertise the service UUID.
-  bleDevice=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:[SERVICE_UUID]});
-  if(!bleDevice)throw new Error('No Bluetooth device was selected.');
-  bleDevice.removeEventListener?.('gattserverdisconnected',onBLEDisconnected);
-  bleDevice.addEventListener('gattserverdisconnected',onBLEDisconnected);
-  $('bleStatus').textContent='Selected · '+(bleDevice.name||'ESP32 device')+' — connecting…';
-  const server=await bleDevice.gatt.connect();
-  let service;
-  try{service=await server.getPrimaryService(SERVICE_UUID)}
-  catch(e){throw new Error('ESP32 found, but its BLE service UUID does not match this website. Check the ESP32 firmware service UUID.')}
-  try{bleCharacteristic=await service.getCharacteristic(CHARACTERISTIC_UUID)}
-  catch(e){throw new Error('BLE service found, but the data characteristic UUID is missing or different in ESP32 firmware.')}
-  if(!bleCharacteristic.properties.notify&&!bleCharacteristic.properties.indicate)throw new Error('BLE characteristic does not support notifications. Enable NOTIFY or INDICATE in ESP32 firmware.');
-  bleCharacteristic.removeEventListener?.('characteristicvaluechanged',onBLEData);
-  bleCharacteristic.addEventListener('characteristicvaluechanged',onBLEData);
-  await bleCharacteristic.startNotifications();
-  $('bleStatus').textContent='Connected · '+(bleDevice.name||'ESP32');
-  $('disconnectBtn').disabled=false;
-  addEvent('ESP32 BLE connected; waiting for sensor notifications');
-  setConnection(true,'ESP32 BLE');
- }catch(error){
-  const msg=error?.name==='NotFoundError'?'No device selected. Select the ESP32 shoe board in the Bluetooth picker.':
-   error?.name==='NotAllowedError'?'Bluetooth permission was cancelled or blocked. Allow Bluetooth access and try again.':
-   error?.name==='SecurityError'?'Web Bluetooth requires HTTPS and a supported browser (Chrome/Edge).':
-   error?.name==='NetworkError'?'Could not connect to the ESP32. Keep it powered on and close other apps already connected to it.':
-   error?.message||String(error);
-  $('bleStatus').textContent=msg;
-  addEvent('BLE connection error · '+msg);
-  setConnection(false,'BLE connection failed');
- }finally{$('bleBtn').disabled=false}
-}
-function onBLEDisconnected(){
- $('bleStatus').textContent='Disconnected';
- $('disconnectBtn').disabled=true;
- setConnection(false,'BLE disconnected');
- addEvent('BLE disconnected — press Connect SmartShoe BLE to reconnect');
-}
-function onBLEData(event){
- const view=event.target.value;
- const bytes=new Uint8Array(view.buffer,view.byteOffset,view.byteLength);
- const packet=new TextDecoder().decode(bytes).trim();
- if(!parseBlePayload(packet))addEvent('BLE data format not recognized: '+packet.slice(0,50));
-}
-function disconnectBLE(){if(bleDevice?.gatt?.connected)bleDevice.gatt.disconnect();$('disconnectBtn').disabled=true}
+// Classic Bluetooth SPP is handled by bridge/smartshoe_classic_bridge.py; the dashboard reads Firebase.
+
 function stopDemo(){if(demoTimer){clearInterval(demoTimer);demoTimer=null}$('demoBtn').textContent='▶  Start demo';if(lastSource==='Simulated demo'){setConnection(false,'Demo stopped');$('modeTag').textContent='DEMO STOPPED'}addEvent('Demo stopped')}
 function startDemo(){
  if(demoTimer){stopDemo();return}
