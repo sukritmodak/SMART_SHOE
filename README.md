@@ -1,75 +1,45 @@
-# SMART SHOE — Direct USB / Bluetooth Dashboard
+# SMART SHOE — Direct Bluetooth Browser Dashboard
 
-A local Windows dashboard for the original ESP32 SMART SHOE prototype. **Firebase has been removed from the application code and data path.** The ESP32 connects directly to the Windows computer through USB Serial or Bluetooth Classic SPP COM port.
+The dashboard reads the ESP32's Bluetooth Classic SPP serial stream directly in the browser using the Web Serial API. **No Python bridge, local relay server, CMD window, Firebase, or cloud database is required.**
 
-## Run the live dashboard
+## Connect directly
 
-1. Download or clone this repository to your Windows computer.
-2. Install Python 3 if needed.
-3. Open Command Prompt in the repository folder and install the only dependency:
+1. Upload `SMART_SHOE_CLASSIC.ino` to an original ESP32 board.
+2. In Windows Bluetooth settings, pair with **SmartShoe**.
+3. Ensure Windows has created the device's **outgoing Bluetooth SPP COM port**.
+4. Open the GitHub Pages dashboard in the latest desktop Google Chrome or Microsoft Edge:
+   `https://sukritmodak.github.io/SMART_SHOE/`
+5. Click **Connect Bluetooth COM**.
+6. In the browser's serial-port chooser, select the outgoing COM port associated with **Standard Serial over Bluetooth link / SmartShoe** and grant permission.
+7. The page reads raw newline-terminated CSV packets at **115200 baud**, parses `front,left,right,lower\n`, and processes sensor readings directly in JavaScript.
+8. Click **Disconnect** when finished.
 
-   ```bat
-   py -m pip install --upgrade pyserial
-   ```
+## Browser requirements and limitations
 
-4. Close Arduino Serial Monitor.
-5. Start the bridge:
+- Use desktop Chrome or Edge with Web Serial support. The feature requires a secure context such as GitHub Pages HTTPS or localhost.
+- Pair the ESP32 in Windows first. Select the outgoing SPP COM port, not the incoming port.
+- Keep the dashboard tab open while monitoring. Browser serial permission is granted by the user through the browser chooser.
+- Close Arduino Serial Monitor or any other application using the same COM port.
+- Some browser/OS combinations may not expose Bluetooth SPP ports to Web Serial. If the ESP32 COM port does not appear in the chooser, direct browser connection is not supported on that setup; do not use Web Bluetooth because this firmware uses Classic SPP, not BLE GATT.
+- Internet is required for OpenStreetMap tiles. Browser geolocation maps the phone/laptop, not the shoe itself.
 
-   ```bat
-   py bridge\\smartshoe_bridge.py
-   ```
+## Sensor packet and alerts
 
-6. Choose `1` for USB cable or `2` for Bluetooth Classic.
-7. Select the correct COM port. For Bluetooth, pair `SmartShoe` in Windows first and choose its **outgoing** SPP COM port.
-8. Open **http://127.0.0.1:8080** in Chrome or Edge.
-9. Keep the command window open while monitoring.
+Current firmware sends four comma-separated ultrasonic distances: `front,left,right,lower\n`. The dashboard processes the raw values locally and shows the four sensor cards, directional obstacle radar, nearest obstacle, and alert severity. Visual/audio alert levels: below 20 cm warning, 10 cm or less danger, 5 cm or less critical. The ESP32 buzzer is configured to activate below 20 cm.
 
-The Python program reads the selected COM port and serves the dashboard locally. The page polls the local bridge for live sensor packets. No Firebase login, API key, database rules, cloud upload or internet account is required. Internet is needed only for online map tiles.
+The current firmware has no GPS receiver. For an independent shoe geographic marker, add a GPS module and send `front,left,right,lower,latitude,longitude\n`.
 
-## Live map and GPS
+## ESP32 hardware configuration
 
-The current ESP32 firmware sends four ultrasonic distances only: `front,left,right,lower`. It has no GPS receiver, so it cannot independently report the shoe's geographic position.
-
-The dashboard's **Start live map** button uses browser geolocation (phone/laptop GPS, if available) and draws a live marker and movement trail. This marks the phone/laptop carrying or running the dashboard, not the shoe independently. A laptop without GPS may provide only approximate or no location.
-
-For independent shoe mapping, add a GPS module such as NEO-6M to the shoe and update the firmware to send latitude and longitude. The local bridge already accepts an optional six-field packet:
-`front,left,right,lower,latitude,longitude`.
-The present four-sensor firmware does not send those GPS fields yet.
-
-## ESP32 firmware
-
-Open `SMART_SHOE_CLASSIC.ino` in Arduino IDE. For the original ESP32-D0WD-V3 select:
+For original ESP32-D0WD-V3:
 
 - Board: ESP32 Dev Module
-- Flash Size: **4MB (32Mb)**
+- Flash Size: 4MB (32Mb)
 - Flash Mode: DIO
 - Flash Frequency: 40MHz
 - Partition Scheme: Default 4MB with spiffs
 - Upload Speed: 115200
 
-If available, set Erase All Flash Before Sketch Upload to Enabled for one clean upload, then return it to Disabled. This corrects the 4 MB hardware / 16 MB firmware-header mismatch.
+HC-SR04 ECHO outputs must be reduced to 3.3 V with voltage dividers; share common ground.
 
-The sketch preserves the sensor pin map and outputs four comma-separated readings at 115200 baud over USB Serial and Bluetooth Classic SPP. HC-SR04 ECHO outputs must be reduced to 3.3 V using a voltage divider; share common ground.
-
-## Optional PlatformIO build
-
-```bash
-python -m pip install --upgrade platformio
-pio run
-```
-
-The `platformio.ini` sets the target flash size to 4 MB.
-
-## Dashboard hosting
-
-The GitHub Pages workflow can still publish the static dashboard, but **GitHub Pages cannot directly access a Windows COM port**. For direct COM operation, use the local dashboard at `http://127.0.0.1:8080` while the Python bridge is running.
-
-## Troubleshooting
-
-- COM port unavailable: close Arduino Serial Monitor and other serial programs.
-- Bluetooth not connecting: pair `SmartShoe` and select its outgoing Bluetooth SPP COM port.
-- No live sensor data: confirm the firmware is uploaded, baud rate is 115200, and the selected COM port is correct.
-- Flash mismatch: rebuild/upload with 4 MB Flash Size, not 16 MB.
-- Map not locating: allow browser location permission; phone/laptop location requires an available GPS/location provider.
-
-This is an academic prototype, not a certified child-safety or emergency-response system.
+This is an academic prototype, not a certified safety or emergency-response system.
