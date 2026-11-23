@@ -68,7 +68,7 @@ The Firebase Web API key used by a browser app is a client identifier, not a dat
 
 ## Arduino IDE firmware
 
-Open `SMART_SHOE_CLASSIC.ino` in Arduino IDE. Select **ESP32 Dev Module** (the original ESP32-D0WD-V3), choose the correct USB COM port, and upload. The sketch keeps the existing sensor pin mapping and active-HIGH buzzer. It sends one CSV line over Classic Bluetooth SPP every 500 ms. The Arduino Serial Monitor runs at 115200 baud for sensor diagnostics.
+Open `SMART_SHOE_CLASSIC.ino` in Arduino IDE. Select **ESP32 Dev Module** (the original ESP32-D0WD-V3), choose the correct USB COM port, and upload. The sketch keeps the existing sensor pin mapping and active-HIGH buzzer. It sends the same four-value CSV line over USB Serial and Classic Bluetooth SPP every 500 ms. Use either connection with the Windows bridge; USB Serial runs at 115200 baud.
 
 Required Arduino library: `BluetoothSerial`, included with the Espressif ESP32 Arduino board package. No BLE libraries or Firebase credentials are required in the ESP32 sketch; the Windows bridge handles Firebase authentication and upload.
 
@@ -111,32 +111,36 @@ void sendDistances(float front, float left, float right, float lower) {
 
 The repository root contains `SMART_SHOE_CLASSIC.ino`, which already applies this SPP method while retaining the original sensor pin mapping. This is for the original ESP32 (ESP32-D0WD-V3); ESP32-S3 does not support Bluetooth Classic SPP.
 
-### Windows bridge setup
+### Windows bridge setup (USB cable or Bluetooth)
 
-1. Power the ESP32 and pair **SmartShoe** in Windows Settings → Bluetooth & devices.
-2. Open Device Manager → Ports (COM & LPT), or Windows Bluetooth COM port settings, and identify the **outgoing** COM port assigned to SmartShoe.
-3. Install dependencies from the repository folder:
+1. Power the ESP32.
+2. For **USB**, connect the ESP32 to the PC with a data-capable USB cable. For **Bluetooth**, pair **SmartShoe** in Windows Settings → Bluetooth & devices.
+3. Open Command Prompt in the downloaded repository folder and install dependencies:
 
    ```bat
    py -m pip install pyserial requests
    ```
 
-4. Run the bridge, replacing COM7 with the outgoing port:
+4. Start the unified bridge:
 
    ```bat
-   py bridge\\smartshoe_classic_bridge.py COM7
+   py bridge\\smartshoe_bridge.py
    ```
 
-5. Enter the Firebase Email/Password account when prompted. Do not put the password in the source code. The account must be permitted by Realtime Database Rules to write `devices/smartshoe_001`.
-6. Sign in to the dashboard with an account permitted to read the same device path:
+5. In the terminal menu, choose:
+   - `1` for **USB cable / USB Serial COM port**
+   - `2` for **Bluetooth / Classic Bluetooth SPP**
+6. Select the matching COM port from the detected list. For Bluetooth, choose the **outgoing** COM port assigned to SmartShoe. For USB, choose the serial port that appears when the ESP32 is plugged in.
+7. Enter the Firebase Email/Password account when prompted. Keep this terminal window open while using the dashboard.
 
-   https://sukritmodak.github.io/SMART_SHOE/
+The bridge uploads `sensor_data` and `device_status` to `devices/smartshoe_001`. It labels the transport as `usb_serial` or `classic_bluetooth_spp`. Close Arduino Serial Monitor before starting the bridge because only one program can normally use a COM port at a time.
 
-The bridge uploads `sensor_data` and `device_status` to the existing `smartshoe_001` device record. The website continues to poll Firebase; no BLE browser connection is needed. Keep the bridge window running while using Classic Bluetooth.
+**Important:** GitHub Pages is a hosted website and cannot enumerate or open the COM ports on your Windows computer. COM-port selection therefore happens in the local bridge terminal, not inside the website. The dashboard receives the data from Firebase.
 
 Troubleshooting:
-- **COM port cannot open:** check pairing, choose the outgoing rather than incoming COM port, and close other serial terminal/bridge programs.
-- **No CSV packets:** confirm firmware calls `SerialBT.begin("SmartShoe")` and sends newline-terminated comma-separated values.
+- **COM port not listed:** reconnect the USB cable, use a data cable, check Device Manager → Ports (COM & LPT), or re-pair SmartShoe for Bluetooth.
+- **COM port cannot open:** close Arduino Serial Monitor and other serial tools; verify the selected port.
+- **No sensor values:** upload the latest `SMART_SHOE_CLASSIC.ino` firmware, confirm the CSV output in Arduino Serial Monitor, and verify the correct port.
 - **Firebase authentication/permission error:** check the bridge account, Email/Password provider, internet access, database URL and authenticated write rules.
 
 ## Demo map and location limitation
