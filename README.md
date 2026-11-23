@@ -1,6 +1,6 @@
 # SMART SHOE — Parent Safety Dashboard
 
-A responsive GitHub Pages dashboard for the SMART SHOE ESP32-S3 prototype.
+A responsive GitHub Pages dashboard for the SMART SHOE classic ESP32 (ESP32-D0WD-V3) prototype.
 
 ## Website
 
@@ -13,7 +13,7 @@ In **Repository → Settings → Pages**, select **Deploy from a branch**, branc
 ## What this version connects to
 
 - **Firebase Realtime Database over Wi-Fi:** signs in through Firebase Email/Password Authentication in the browser, then reads the latest device record every 2 seconds.
-- **ESP32-S3 BLE:** uses the custom service and characteristic UUIDs from the current ESP32 sketch and parses the four comma-separated distance values.
+- **classic ESP32 (ESP32-D0WD-V3) BLE:** uses the custom service and characteristic UUIDs from the current ESP32 sketch and parses the four comma-separated distance values.
 - **Four ultrasonic readings:** front, left, right and lower.
 - **Obstacle radar and nearest-obstacle warning.**
 - **Demo mode:** simulated readings are clearly labelled as simulated and are not mixed with real device readings.
@@ -41,10 +41,11 @@ The dashboard reads `devices/smartshoe_001.json`. It therefore expects the devic
 ### Firebase setup checklist
 
 1. In Firebase Console → Authentication → Sign-in method, enable **Email/Password**.
-2. Create/confirm the account that the ESP32 firmware uses.
-3. Create a **Realtime Database** in the same Firebase project and confirm its database URL matches the firmware.
-4. Configure Realtime Database Rules so unauthenticated visitors cannot read or write device data. The dashboard signs in and sends its Firebase ID token when reading.
-5. Enter the Firebase email and password into the dashboard at runtime. The website does not store the password in its source code.
+2. In Authentication → Settings → Authorized domains, add `sukritmodak.github.io` (the GitHub Pages hostname) if it is not already listed.
+3. Create/confirm the account that the ESP32 firmware uses.
+4. Create a **Realtime Database** in the same Firebase project and confirm its database URL matches the firmware.
+5. Configure Realtime Database Rules so unauthenticated visitors cannot read or write device data. The dashboard signs in and sends its Firebase ID token when reading.
+6. Enter the Firebase email and password into the dashboard at runtime. The website does not store the password in its source code.
 
 For a prototype where the same Firebase account is used by the device and parent dashboard, a minimal authenticated-only rule for this device path can be used:
 
@@ -65,7 +66,7 @@ This is a basic prototype rule, not a production access-control design. For depl
 
 The Firebase Web API key used by a browser app is a client identifier, not a database password. Protect the data with Authentication and Database Rules. Never put a service-account key or admin credential in this repository.
 
-## ESP32-S3 BLE protocol
+## classic ESP32 (ESP32-D0WD-V3) BLE protocol
 
 The website now uses the exact custom UUIDs from the current firmware:
 
@@ -86,7 +87,11 @@ Example:
 
 The website parses each BLE notification directly; it does not require Nordic UART UUIDs or newline-delimited JSON. Use a Web Bluetooth-compatible browser (for example Chrome or Edge) on HTTPS, and allow Bluetooth access when prompted.
 
-## Location limitation
+## Demo map and location limitation
+
+Demo mode draws a clearly labelled simulated marker and short route so the map can be checked without GPS. This is not the user's or shoe's real location. In live mode, the marker is shown only when valid GPS coordinates are uploaded.
+
+
 
 The current ESP32 firmware uploads only four ultrasonic distances and device status. It does **not** send GPS coordinates, step count, accelerometer data or battery level. Therefore this dashboard will not invent a child location or show a fake live route. The map will show a marker only after GPS fields are added to the device/cloud data. A GPS source is required on the shoe or a paired child-side phone, and its coordinates must be uploaded to Firebase.
 
