@@ -74,17 +74,18 @@ void updateBuzzer() {
   digitalWrite(BUZZER_PIN, obstacle ? HIGH : LOW);
 }
 
-void sendClassicBluetoothData() {
-  if (!SerialBT.hasClient()) return;
-  SerialBT.printf("%.1f,%.1f,%.1f,%.1f\n",
-                  frontDistance, leftDistance,
-                  rightDistance, lowerDistance);
-}
+void sendSensorData() {
+  // Same CSV packet is available over USB Serial and Bluetooth SPP.
+  // The bridge ignores non-CSV boot messages if the board prints any.
+  Serial.printf("%.1f,%.1f,%.1f,%.1f\\n",
+                frontDistance, leftDistance,
+                rightDistance, lowerDistance);
 
-void printDebugData() {
-  Serial.printf("Front %.1f cm | Left %.1f cm | Right %.1f cm | Lower %.1f cm | SPP: %s\n",
-                frontDistance, leftDistance, rightDistance, lowerDistance,
-                SerialBT.hasClient() ? "connected" : "waiting");
+  if (SerialBT.hasClient()) {
+    SerialBT.printf("%.1f,%.1f,%.1f,%.1f\\n",
+                    frontDistance, leftDistance,
+                    rightDistance, lowerDistance);
+  }
 }
 
 void setup() {
@@ -119,10 +120,6 @@ void loop() {
   const uint32_t now = millis();
   if (now - lastBtSend >= BT_SEND_INTERVAL_MS) {
     lastBtSend = now;
-    sendClassicBluetoothData();
-  }
-  if (now - lastSerialPrint >= SERIAL_PRINT_INTERVAL_MS) {
-    lastSerialPrint = now;
-    printDebugData();
+    sendSensorData();
   }
 }
