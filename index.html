@@ -65,7 +65,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
    <div class="status-list">
     <div class="status-row"><b>Device ID</b><span id="deviceId">smartshoe_001</span></div>
     <div class="status-row"><b>Wi-Fi</b><span id="wifiState">Unknown</span></div>
-    <div class="status-row"><b>Bluetooth</b><span id="bleState">Unknown</span></div>
+    <div class="status-row"><b>Serial / Bluetooth</b><span id="bleState">Unknown</span></div>
    </div>
   </div>
   <div class="card radar-card">
@@ -270,9 +270,9 @@ function renderSensors(sensor,source,status){
  if(status){
   $('deviceState').textContent=status.online===true?'Online':status.online===false?'Offline':'Unknown';
   $('deviceStatusHint').textContent=status.online===true?'Device reports online':'Device status received';
-  $('wifiState').textContent=status.transport==='classic_bluetooth_spp'?'Not used':status.wifi===true?'Connected':status.wifi===false?'Disconnected':'Unknown';
-  $('bleState').textContent=status.bluetooth===true?'Connected · Classic SPP':status.bluetooth===false?'Disconnected':'Waiting for bridge';
-  $('bleStatus').textContent=status.transport==='classic_bluetooth_spp'?'Classic Bluetooth bridge connected':'Waiting for Classic Bluetooth bridge';
+  $('wifiState').textContent=(status.transport==='classic_bluetooth_spp'||status.transport==='usb_serial')?'Not used':status.wifi===true?'Connected':status.wifi===false?'Disconnected':'Unknown';
+  $('bleState').textContent=status.transport==='usb_serial'?'Connected · USB Serial':status.transport==='classic_bluetooth_spp'?'Connected · Classic SPP':status.bluetooth===true?'Connected · Classic SPP':status.bluetooth===false?'Disconnected':'Waiting for bridge';
+  $('bleStatus').textContent=status.transport==='usb_serial'?'USB Serial bridge connected':status.transport==='classic_bluetooth_spp'?'Classic Bluetooth bridge connected':'Waiting for serial bridge';
  }else if(source==='Simulated demo'){
   $('deviceState').textContent='Demo';$('deviceStatusHint').textContent='Simulated values only';$('wifiState').textContent='Demo';$('bleState').textContent='Demo';
  }else{$('deviceState').textContent='Data received';$('deviceStatusHint').textContent='Sensor readings received'}
