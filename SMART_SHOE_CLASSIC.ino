@@ -25,7 +25,7 @@ BluetoothSerial SerialBT;
 #define BUZZER_PIN 4
 
 const float INVALID_DISTANCE = 999.0f;
-const float ALERT_DISTANCE_CM = 80.0f;
+const float ALERT_DISTANCE_CM = 20.0f;
 const uint32_t ECHO_TIMEOUT_US = 30000UL;
 const uint32_t SENSOR_GAP_MS = 60;
 const uint32_t BT_SEND_INTERVAL_MS = 500;
@@ -68,10 +68,10 @@ void readAllSensors() {
 
 void updateBuzzer() {
   const bool obstacle =
-    frontDistance <= ALERT_DISTANCE_CM ||
-    leftDistance <= ALERT_DISTANCE_CM ||
-    rightDistance <= ALERT_DISTANCE_CM ||
-    lowerDistance <= ALERT_DISTANCE_CM;
+    frontDistance < ALERT_DISTANCE_CM ||
+    leftDistance < ALERT_DISTANCE_CM ||
+    rightDistance < ALERT_DISTANCE_CM ||
+    lowerDistance < ALERT_DISTANCE_CM;
   // Assumes an active-HIGH active buzzer module.
   digitalWrite(BUZZER_PIN, obstacle ? HIGH : LOW);
 }
