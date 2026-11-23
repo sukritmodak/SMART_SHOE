@@ -51,7 +51,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  </div>
 
  <div class="section-head"><h2>Location map</h2><span class="tag">OPENSTREETMAP</span></div>
- <div class="card map-card"><div class="map-actions"><button class="primary" id="gpsStartBtn">⌖ Share phone live location</button><button class="soft" id="gpsStopBtn" disabled>Stop location sharing</button><span class="gps-status" id="gpsStatus">Phone GPS not started</span></div><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">Open this page on the phone, connect the shoe by BLE, sign in to Firebase, then enable phone GPS sharing. Location sharing requires browser permission.</div></div>
+ <div class="card map-card"><div class="map-actions"><button class="primary" id="gpsStartBtn">⌖ Share phone live location</button><button class="soft" id="gpsStopBtn" disabled>Stop location sharing</button><span class="gps-status" id="gpsStatus">Phone GPS not started</span></div><div class="map-wrap"><div id="map"></div><div class="map-status" id="mapBadge">MAP READY · WAITING FOR GPS</div></div><div class="map-caption" id="mapNote">Open this page on the phone, sign in to Firebase, then enable phone GPS sharing. Keep the Windows Classic Bluetooth bridge running for shoe sensor data.</div></div>
 
  <div class="section-head"><h2>Four-direction obstacle monitor</h2><small>FRONT · LEFT · RIGHT · LOWER</small></div>
  <div class="two-col">
@@ -79,7 +79,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  <div class="section-head"><h2>Accessible voice guidance</h2><span class="tag">FOR BLIND / LOW-VISION USERS</span></div>
  <div class="card voice-card"><div><h3>Spoken obstacle warnings</h3><p>Enable audio once. When an obstacle approaches within 30 cm, the phone speaks the direction and distance, then updates the warning as it gets closer. Keep phone media volume audible.</p><div class="voice-live" id="voiceStatus">Voice alerts are off</div></div><div class="actions"><button class="primary" id="voiceBtn">🔊 Enable voice alerts</button><button class="soft" id="voiceTestBtn">Test announcement</button></div></div>
 
- <div class="section-head"><h2>Device connections</h2><small>CONNECT THROUGH FIREBASE OR BLE</small></div>
+ <div class="section-head"><h2>Device connections</h2><small>FIREBASE CLOUD + CLASSIC BLUETOOTH SPP</small></div>
  <div class="two-col">
   <div class="card">
    <div class="section-head" style="margin:0 0 8px"><h2>Firebase cloud</h2><span class="tag">WI-FI</span></div>
@@ -93,7 +93,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
    <div class="fineprint">Uses Firebase Email/Password Authentication and reads <code>devices/smartshoe_001</code>. Password is used only for sign-in and is not stored in this page. A database permission error means your Realtime Database Rules need to allow this signed-in account to read the device path.</div>
   </div>
   <div class="card">
-   <div class="section-head" style="margin:0 0 8px"><h2>Classic Bluetooth connection</h2><span class="tag">SPP · COM PORT</span></div>
+   <div class="section-head" style="margin:0 0 8px"><h2>Classic Bluetooth SPP bridge</h2><span class="tag">SPP · COM PORT</span></div>
    <p class="hint">This dashboard receives Classic Bluetooth data through the Windows Bluetooth COM-port bridge. Pair the ESP32 as <b>SmartShoe</b>, then run the bridge on your computer.</p>
    <div class="status-list"><div class="status-row"><b>Transport</b><span>Classic Bluetooth SPP</span></div><div class="status-row"><b>Bridge status</b><span id="bleStatus">Waiting for Firebase data</span></div></div>
    <div class="fineprint">Run <code>python bridge/smartshoe_classic_bridge.py COM7</code> (replace COM7 with the outgoing Bluetooth COM port). The bridge sends the existing <code>front,left,right,lower</code> readings to Firebase. GitHub Pages cannot access a Classic Bluetooth COM port directly.</div>
@@ -104,7 +104,7 @@ footer{border-top:1px solid #ffffff12;padding:22px clamp(16px,4vw,60px);color:va
  <div class="card activity" id="events"><div class="event"><span>Dashboard initialized</span><time>Just now</time></div></div>
  <div class="notice"><span class="notice-icon">⚠</span><div><strong>Prototype notice.</strong> This is an academic prototype, not a certified child-safety or emergency-response service. Secure Firebase Database Rules are required. Do not use public read/write rules or rely on this dashboard as the only safety measure.</div></div>
 </main>
-<footer>SMART SHOE · Parent Safety Dashboard · GitHub Pages · Firebase Realtime Database · ESP32 BLE · © Prototype interface</footer>
+<footer>SMART SHOE · Parent Safety Dashboard · GitHub Pages · Firebase Realtime Database · ESP32 Classic Bluetooth SPP · © Prototype interface</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -113,10 +113,8 @@ const $=id=>document.getElementById(id);
 const FIREBASE_API_KEY='AIzaSyA6PudM6OhefgQBPtFdeXvP6gVw6EferN8';
 const DATABASE_URL='https://smart-shoe-af984-default-rtdb.asia-southeast1.firebasedatabase.app';
 const DEVICE_ID='smartshoe_001';
-const SERVICE_UUID='12345678-1234-1234-1234-123456789000';
-const CHARACTERISTIC_UUID='12345678-1234-1234-1234-123456789001';
 let map=null,marker=null,route=null,mapMode='',demoTimer=null,cloudTimer=null,tokenTimer=null;
-let bleDevice=null,bleCharacteristic=null,idToken='',refreshToken='',demoIndex=0;
+let idToken='',refreshToken='',demoIndex=0;
 let mapReady=false,lastSource='';
 let phoneGpsWatch=null,lastGpsUpload=0,voiceEnabled=false,lastAnnounced={front:Infinity,left:Infinity,right:Infinity,lower:Infinity},lastSpeechAt=0;
 
@@ -273,8 +271,8 @@ function renderSensors(sensor,source,status){
   $('deviceState').textContent=status.online===true?'Online':status.online===false?'Offline':'Unknown';
   $('deviceStatusHint').textContent=status.online===true?'Device reports online':'Device status received';
   $('wifiState').textContent=status.wifi===true?'Connected':status.wifi===false?'Disconnected':'Unknown';
-  $('bleState').textContent=status.bluetooth===true?'Classic SPP bridge':status.bluetooth===false?'Unavailable':'Unknown';
-  $('bleStatus').textContent=status.transport==='classic_bluetooth_spp'?'Classic Bluetooth bridge connected':'Firebase device data received';
+  $('bleState').textContent=status.bluetooth===true?'Connected · Classic SPP':status.bluetooth===false?'Disconnected':'Waiting for bridge';
+  $('bleStatus').textContent=status.transport==='classic_bluetooth_spp'?'Classic Bluetooth bridge connected':'Waiting for Classic Bluetooth bridge';
  }else if(source==='Simulated demo'){
   $('deviceState').textContent='Demo';$('deviceStatusHint').textContent='Simulated values only';$('wifiState').textContent='Demo';$('bleState').textContent='Demo';
  }else{$('deviceState').textContent='Data received';$('deviceStatusHint').textContent='Sensor readings received'}
@@ -292,7 +290,7 @@ function renderFirebaseDevice(device){
 }
 function parseBlePayload(raw){
  const clean=raw.trim();if(!clean)return false;
- try{const obj=JSON.parse(clean);const sensor=obj.sensor_data||obj;renderSensors(sensor,'ESP32 BLE',obj.device_status||null);const loc=extractLocation(obj);if(loc)putMapPoint(loc.lat,loc.lon,'SMART SHOE · BLE GPS','live',true);return true}catch(_){}
+ try{const obj=JSON.parse(clean);const sensor=obj.sensor_data||obj;renderSensors(sensor,'ESP32 Classic SPP',obj.device_status||null);const loc=extractLocation(obj);if(loc)putMapPoint(loc.lat,loc.lon,'SMART SHOE · phone GPS','live',true);return true}catch(_){}
  const parts=clean.split(',').map(numberOrNull);
  if(parts.length>=4&&parts.slice(0,4).every(v=>v!==null)){renderSensors({front:parts[0],left:parts[1],right:parts[2],lower:parts[3]},'ESP32 BLE',null);return true}
  return false;
@@ -373,12 +371,11 @@ function startDemo(){
  tick();demoTimer=setInterval(tick,1700);
 }
 $('loginBtn').addEventListener('click',firebaseLogin);$('logoutBtn').addEventListener('click',firebaseLogout);
-$('bleBtn').addEventListener('click',connectBLE);$('disconnectBtn').addEventListener('click',disconnectBLE);$('demoBtn').addEventListener('click',startDemo);
+$('demoBtn').addEventListener('click',startDemo);
 $('gpsStartBtn').addEventListener('click',startPhoneGPS);$('gpsStopBtn').addEventListener('click',stopPhoneGPS);
 $('voiceBtn').addEventListener('click',enableVoice);$('voiceTestBtn').addEventListener('click',testVoice);
 $('password').addEventListener('keydown',e=>{if(e.key==='Enter')firebaseLogin()});
 setInterval(()=>$('clock').textContent=new Date().toLocaleTimeString(),1000);
-$('bleSupport').textContent=navigator.bluetooth?'Available in this browser':'Use Chrome/Edge over HTTPS';
 initMap();drawRadar({});setConnection(false,'Not connected');
 </script>
 </body>
